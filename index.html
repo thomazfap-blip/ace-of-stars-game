@@ -358,6 +358,16 @@ td .lifebar{margin:0;width:58px}
 .outtag{font-size:10px;background:var(--danger);color:#2b0700;border-radius:6px;padding:1px 6px;margin-left:4px;font-weight:800}
 .sheet .row{justify-content:center}
 .winner{width:120px;margin:0 auto}
+.rankov{z-index:30}
+.ranksheet{width:min(560px,100%)}
+.ranksheet .tabs{justify-content:center}
+.ranktbl td.nm{max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.ranktbl td.pts{color:var(--gold);font-family:var(--f-display);font-size:20px}
+.ranktbl tr.me td{background:rgba(245,201,79,.18)}
+.ranktbl tr.gap td{text-align:center;color:var(--muted);border-top:none;padding:0}
+.rankme{font-weight:700;color:var(--gold)}
+.rankfoot,.rankhow{font-size:12px;color:rgba(255,245,226,.75)}
+.rankpts{font-family:var(--f-display);font-size:26px;color:var(--gold);letter-spacing:.03em}
 .coach{background:#fffaf0;color:#2a0a10;border:3px solid var(--gold);border-radius:16px;padding:10px 14px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 20px rgba(0,0,0,.5)}
 .coach small{font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--rim);font-size:11px}
 .coach p{margin:0;font-size:15px;line-height:1.4}
@@ -506,6 +516,7 @@ const TXT={
     roles:{producer:'Produtor',guitarVox:'Guitarra',drums:'Bateria',bassVox:'Baixo',voxKeys:'Teclado e violão',guitar:'Guitarra',sound:'Técnico de som',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipe', allTab:g=>g==='band'?'Chamar a banda toda':'Chamar a equipe toda', crewSub:'A equipe que roda com a StarAce. Nível mais alto que o da banda: aqui o jogo é sério.',
     party:['TEEEEEM QUE','COMEMORAR!'],
+    rankT:'Ranking', rankWeek:'Semana', rankAll:'Geral', rankBtn:'Ranking', rankLoading:'Carregando…', rankOff:'O ranking funciona no jogo do site: staraceband.com/game', rankEmpty:'Ninguém pontuou ainda. Seja o primeiro!', rankHow:'Toda partida dá pontos pela sua colocação: o 1º lugar ganha mais, mas 2º e 3º também pontuam. Mesa maior e com a equipe vale mais.', rankCols:['#','Ace','Pts','Vit.','Pedidos','★'], rankPts:p=>`+${p} pontos no ranking`, rankClose:'Fechar', rankFoot:'★ = Matazaps feitos. Pedidos = % de mãos em que acertou o pedido.', rankYourPos:(p,n)=>`Você está em ${p}º de ${n}`,
     tutBtn:'Aprender jogando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jogar agora',
     tutOfferT:'Primeira vez na mesa?', tutOfferSub:'Jogue duas mãos guiadas contra o Julio e a Bia e aprenda as regras em 1 minuto.', tutYes:'Aprender jogando', tutSkip:'Pular, já sei jogar',
     tutDoneT:'Você já sabe jogar!', tutDoneSub:'Resumo: peça quantas rodadas vai fazer, acerte o pedido e não perca vidas. Quem sobrar com vida por último vence.',
@@ -524,7 +535,7 @@ const TXT={
       h2after:'MATAZAP! O Julio guardou o Zap e você matou ele com o Ás de Estrelas. Você pediu 2 e fez 2: pedido certinho.',
     },
     duelT:'FINAL!', duelSub:'Um contra um. Não importa quantas vidas sobraram: agora cada um tem só 1. Errou o pedido, perdeu.', duelGo:'Bora!',
-    aceT:'Seu nome de Ace', aceSub:'É assim que a banda vai te chamar na mesa.', acePh:'Digite seu nome',
+    aceT:'Seu nome de Ace', aceSub:'É assim que a banda vai te chamar na mesa e no ranking.', acePh:'Digite seu nome',
     beerT:'Toma uma cerveja e volta?', beerSub:'Você volta pro jogo com 1 vida. Só vale uma vez: perdeu essa, tá fora de vez.', beerYes:'Tomar uma cerveja', beerDrink:'Saúde!', beerBack:'Você voltou com 1 vida!', beerGone:'A cerveja já foi. Dessa vez não tem volta.',
     fullBtn:'Regras completas', fullT:'Como jogar', closeRules:'Entendi',
     full:[
@@ -585,6 +596,7 @@ const TXT={
     roles:{producer:'Producer',guitarVox:'Guitar',drums:'Drums',bassVox:'Bass',voxKeys:'Keys & acoustic guitar',guitar:'Guitar',sound:'Sound engineer',roadie:'Roadie',video:'Video maker'},
     tabBand:'Band', tabCrew:'Crew', allTab:g=>g==='band'?'Call the whole band':'Call the whole crew', crewSub:'The crew that tours with StarAce. A higher level than the band: this is the serious table.',
     party:['WE GOTTA','CELEBRATE!'],
+    rankT:'Leaderboard', rankWeek:'This week', rankAll:'All time', rankBtn:'Leaderboard', rankLoading:'Loading…', rankOff:'The leaderboard works in the game on the site: staraceband.com/game', rankEmpty:'No one has scored yet. Be the first!', rankHow:'Every game gives points for where you finish: 1st place gets the most, but 2nd and 3rd score too. Bigger tables and the crew are worth more.', rankCols:['#','Ace','Pts','Wins','Bids','★'], rankPts:p=>`+${p} leaderboard points`, rankClose:'Close', rankFoot:'★ = Zap kills. Bids = % of hands where you hit your bid.', rankYourPos:(p,n)=>`You’re #${p} of ${n}`,
     tutBtn:'Learn by playing', tutLabel:'Tutorial', tutNext:'Continue', tutPlay:'Play now',
     tutOfferT:'First time at the table?', tutOfferSub:'Play two guided hands against Julio and Bia and learn the rules in a minute.', tutYes:'Learn by playing', tutSkip:'Skip, I know how to play',
     tutDoneT:'You know how to play!', tutDoneSub:'In short: bid how many tricks you’ll take, hit your bid and keep your lives. The last player with lives left wins.',
@@ -603,7 +615,7 @@ const TXT={
       h2after:'ZAP KILLER! Julio was holding the Zap and you killed it with the Ace of Stars. You bid 2 and took 2: right on.',
     },
     duelT:'FINAL!', duelSub:'One on one. No matter how many lives were left: now each player has just 1. Miss your bid and you’re out.', duelGo:'Let’s go!',
-    aceT:'Your Ace name', aceSub:'This is what the band will call you at the table.', acePh:'Type your name',
+    aceT:'Your Ace name', aceSub:'This is what the band will call you at the table and on the leaderboard.', acePh:'Type your name',
     beerT:'Grab a beer and get back in?', beerSub:'You come back with 1 life. Only once: lose it and you’re out for good.', beerYes:'Grab a beer', beerDrink:'Cheers!', beerBack:'You’re back with 1 life!', beerGone:'The beer’s gone. No coming back this time.',
     fullBtn:'Full rules', fullT:'How to play', closeRules:'Got it',
     full:[
@@ -664,6 +676,7 @@ const TXT={
     roles:{producer:'Productor',guitarVox:'Guitarra',drums:'Batería',bassVox:'Bajo',voxKeys:'Teclado y guitarra acústica',guitar:'Guitarra',sound:'Técnico de sonido',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipo', allTab:g=>g==='band'?'Llamar a toda la banda':'Llamar a todo el equipo', crewSub:'El equipo que sale de gira con StarAce. Nivel más alto que la banda: acá se juega en serio.',
     party:['¡HAAAAAY QUE','CELEBRAR!'],
+    rankT:'Ranking', rankWeek:'Semana', rankAll:'General', rankBtn:'Ranking', rankLoading:'Cargando…', rankOff:'El ranking funciona en el juego del sitio: staraceband.com/game', rankEmpty:'Nadie sumó puntos todavía. ¡Sé el primero!', rankHow:'Cada partida da puntos según tu posición: el 1º gana más, pero el 2º y el 3º también suman. Las mesas más grandes y con el equipo valen más.', rankCols:['#','Ace','Pts','Vict.','Apuestas','★'], rankPts:p=>`+${p} puntos en el ranking`, rankClose:'Cerrar', rankFoot:'★ = Matazaps. Apuestas = % de manos en que acertaste.', rankYourPos:(p,n)=>`Estás en el puesto ${p} de ${n}`,
     tutBtn:'Aprender jugando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jugar ahora',
     tutOfferT:'¿Primera vez en la mesa?', tutOfferSub:'Juega dos manos guiadas contra Julio y Bia y aprende las reglas en un minuto.', tutYes:'Aprender jugando', tutSkip:'Saltar, ya sé jugar',
     tutDoneT:'¡Ya sabes jugar!', tutDoneSub:'En resumen: apuesta cuántas rondas vas a hacer, acierta tu apuesta y no pierdas vidas. El último que queda con vidas gana.',
@@ -682,7 +695,7 @@ const TXT={
       h2after:'¡MATAZAP! Julio tenía el Zap y lo mataste con el As de Estrellas. Apostaste 2 e hiciste 2: justo.',
     },
     duelT:'¡FINAL!', duelSub:'Uno contra uno. No importa cuántas vidas quedaban: ahora cada uno tiene solo 1. Si fallas la apuesta, pierdes.', duelGo:'¡Vamos!',
-    aceT:'Tu nombre de Ace', aceSub:'Así te va a llamar la banda en la mesa.', acePh:'Escribe tu nombre',
+    aceT:'Tu nombre de Ace', aceSub:'Así te va a llamar la banda en la mesa y en el ranking.', acePh:'Escribe tu nombre',
     beerT:'¿Te tomas una cerveza y vuelves?', beerSub:'Vuelves al juego con 1 vida. Solo una vez: si la pierdes, quedas afuera de verdad.', beerYes:'Tomar una cerveza', beerDrink:'¡Salud!', beerBack:'¡Volviste con 1 vida!', beerGone:'La cerveza ya se tomó. Esta vez no hay vuelta.',
     fullBtn:'Reglas completas', fullT:'Cómo jugar', closeRules:'Entendido',
     full:[
@@ -1278,7 +1291,7 @@ function startGame(){
   S.players=[human,...bots].map(p=>({...p,lives:S.startLives,alive:true,hand:[],bet:null,made:0}));
   const N=S.players.length;
   S.players.forEach((p,k)=>{ const a=(90+k*360/N)*Math.PI/180; p.cx=+Math.cos(a).toFixed(4); p.cy=+Math.sin(a).toFixed(4); });
-  Object.assign(S,{duelDone:false,tut:false,coach:null,tutAllow:null,beerUsed:false,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null});
+  Object.assign(S,{st:{hands:0,nailed:0,mz:0},place:null,reported:false,lastPts:null,duelDone:false,tut:false,coach:null,tutAllow:null,beerUsed:false,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null});
   S.dealer=Math.floor(Math.random()*N);
   S.phase='table';
   runGame(tok).catch(e=>{ if(!(e instanceof Abort)) console.error(e); });
@@ -1300,6 +1313,7 @@ async function resolveTrick(tok){
       const wi=trickWinnerIdx(S.trick.map(x=>x.card),S.mr), w=byId(S.trick[wi].pid);
       w.made++; S.trickWinner=wi; S.turn=null;
       const wc=S.trick[wi].card;
+      if(wc.star && w.isHuman && !S.tut) S.st.mz++;
       if(wc.star){ setMsg(()=>T().starKill); S.splash={type:'matazap',fresh:true}; Music.duck(2600); Snd.boom(); Snd.star(); Snd.speak('Matazap!'); say(w,()=>T().starBubble); }
       else if(isZap(wc,S.mr)){ setMsg(()=>T().zapWins(nm(w))); S.splash={type:'zap',fresh:true}; Music.duck(1800); Snd.zap(); Snd.speak('Zap!'); }
       else { setMsg(()=>w.isHuman?T().youTake:T().takes(w.short)); if(w.isHuman){ if(w.made===w.bet) Snd.nailed(); else if(w.made<w.bet) Snd.youWin(); else Snd.oops(); } else Snd.bell(1568,0,.1,.8); }
@@ -1374,6 +1388,7 @@ async function runGame(tok){
 
     const results=alive().map(p=>({p,bet:p.bet,made:p.made,lost:Math.abs(p.bet-p.made)}));
     results.forEach(r=>{ r.p.lives-=r.lost; if(r.p.lives<=0){ r.p.alive=false; r.out=true; } });
+    { const yr=results.find(r=>r.p.isHuman); if(yr){ S.st.hands++; if(!yr.lost) S.st.nailed++; } }
     S.turn=null; setMsg(null); render();
     if(alive().length===0){
       const best=Math.max(...results.map(r=>r.p.lives));
@@ -1384,19 +1399,21 @@ async function runGame(tok){
     if(S.dir>0 && S.n>=max) S.dir=-1; else if(S.dir<0 && S.n<=1) S.dir=1;
     const nextN=Math.max(1,Math.min(max,S.n+S.dir));
 
+    if(!byId('you').alive && S.place==null) S.place=alive().length+1;
     const youR=results.find(r=>r.p.isHuman);
     if(youR && youR.out && !byId('you').alive && !S.beerUsed && !S.fast){
       // eliminado pela primeira vez: oferece a cerveja
       Snd.elim();
       await askModal({type:'summary',results,nextN}); S.modal=null;
       const choice=await askModal({type:'out',beer:true}); S.modal=null;
+      if(choice!=='beer') finishFor(S.place);
       if(choice==='setup'){ S.token++; S.phase='setup'; render(); return; }
       if(choice==='again'){ startGame(); return; }
       if(choice==='beer'){
         S.beerUsed=true; S.modal={type:'beer'}; render();
         Music.duck(4200); Snd.canOpen(); Snd.gulps(.9);
         await wait(3600,tok);
-        const y=byId('you'); y.alive=true; y.lives=1; S.modal=null;
+        const y=byId('you'); y.alive=true; y.lives=1; S.modal=null; S.place=null;
         setMsg(()=>T().beerBack); Snd.ok2(); render();
         await wait(1300,tok);
       } else S.fast=true;
@@ -1404,6 +1421,7 @@ async function runGame(tok){
       if(youR && youR.out) Snd.elim(); else if(youR && youR.lost) Snd.lose(); else Snd.ok2();
       await askModal({type:'summary',results,nextN}); S.modal=null;
       if(!byId('you').alive && !S.fast){
+        finishFor(S.place);
         const choice=await askModal({type:'out'}); S.modal=null;
         if(choice==='setup'){ S.token++; S.phase='setup'; render(); return; }
         if(choice==='again'){ startGame(); return; }
@@ -1413,10 +1431,68 @@ async function runGame(tok){
     S.n=nextN; S.dealer=nextAliveIdx(S.dealer);
   }
   const winners=alive();
+  if(winners.length===1 && winners[0].isHuman) finishFor(1); else finishFor(S.place||2);
   if(winners.length===1 && winners[0].isHuman){ Music.duck(9000); Snd.fanfare(); Snd.applause(.4,6); Snd.cheer(.3); FX.start(); } else Snd.bell(784,0,.15,1.6);
   await askModal({type:'over',winners});
 }
 
+
+
+/* ================= Ranking ================= */
+// Pontos por colocação: 1º = 10, último = 0, proporcional no meio; mesa maior e com a equipe multiplica.
+const RANK_URL='ranking.php';
+let DEVICE_ID='';
+try{ DEVICE_ID=localStorage.getItem('fodinha-id')||''; }catch(e){}
+if(!DEVICE_ID){ DEVICE_ID=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():('id'+Date.now()+Math.random().toString(36).slice(2)); try{ localStorage.setItem('fodinha-id',DEVICE_ID); }catch(e){} }
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const Rank={
+  data:null, ok:null, loading:false, tab:'week',
+  async load(){
+    this.loading=true; render();
+    try{ const r=await fetch(RANK_URL+'?id='+encodeURIComponent(DEVICE_ID),{cache:'no-store'}); if(!r.ok) throw 0; this.data=await r.json(); this.ok=true; }
+    catch(e){ this.ok=false; }
+    this.loading=false; render();
+  },
+  async submit(g){
+    try{
+      const r=await fetch(RANK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(g)});
+      if(r.ok){ this.data=await r.json(); this.ok=true; }
+    }catch(e){}
+  },
+};
+function tableMult(){
+  const opp=S.players.length-1; let m=1+.2*(opp-1);
+  S.players.forEach(p=>{ if(p.group==='crew') m+=p.id==='david'?.4:.2; });
+  return m;
+}
+function placePoints(place){ const N=S.players.length; return Math.round(10*(N-place)/Math.max(1,N-1)*tableMult()); }
+function finishFor(place){
+  if(S.tut||S.reported||!place) return;
+  S.reported=true; S.place=place;
+  const pts=placePoints(place); S.lastPts=pts;
+  Rank.submit({id:DEVICE_ID,name:(ACE||T().you).trim(),pts,win:place===1,nailed:S.st.nailed,hands:S.st.hands,mz:S.st.mz,place,n:S.players.length});
+}
+function rankingHTML(){
+  if(!S.rankOpen) return '';
+  const t=T(), d=Rank.data&&Rank.data[Rank.tab];
+  let body;
+  if(Rank.loading&&!Rank.data) body=`<p class="hint">${t.rankLoading}</p>`;
+  else if(Rank.ok===false) body=`<p class="hint">${t.rankOff}</p>`;
+  else if(!d||!d.top.length) body=`<p class="hint">${t.rankEmpty}</p>`;
+  else {
+    const row=r=>`<tr class="${r.me?'me':''}"><td class="n">${r.pos<=3?['🥇','🥈','🥉'][r.pos-1]:r.pos}</td><td class="nm">${esc(r.name)}</td><td class="n pts">${r.pts}</td><td class="n">${r.wins}</td><td class="n">${r.acc}%</td><td class="n">${r.mz}</td></tr>`;
+    const meOut=d.me&&!d.top.some(r=>r.me);
+    body=`<div class="tbl"><table class="ranktbl"><thead><tr>${t.rankCols.map((c,i)=>`<th class="${i===1?'':'n'}">${c}</th>`).join('')}</tr></thead><tbody>${d.top.map(row).join('')}${meOut?`<tr class="gap"><td colspan="6">…</td></tr>${row(d.me)}`:''}</tbody></table></div>
+      ${d.me?`<p class="rankme">${t.rankYourPos(d.me.pos,d.total)}</p>`:''}<p class="rankfoot">${t.rankFoot}</p>`;
+  }
+  return `<div class="overlay rankov"><div class="sheet ranksheet" role="dialog" aria-label="${t.rankT}">
+    <h2>🏆 ${t.rankT}</h2>
+    <div class="tabs" role="tablist"><button role="tab" data-rtab="week" aria-selected="${Rank.tab==='week'}">${t.rankWeek}</button><button role="tab" data-rtab="all" aria-selected="${Rank.tab==='all'}">${t.rankAll}</button></div>
+    ${body}
+    <p class="rankhow">${t.rankHow}</p>
+    <div class="row"><button class="cta" id="closerank">${t.rankClose}</button></div>
+  </div></div>`;
+}
 
 /* ================= Tutorial ================= */
 // Duas mãos com cartas combinadas: na testa + regra do pé, depois manilha, Zap e Matazap.
@@ -1540,7 +1616,7 @@ function setupHTML(){
     <div>
       <h1><img src="${LOGO_C}" alt="StarAce">Ace of Stars <em>Game</em></h1>
       <p>${T().intro}</p>
-      <div class="quick tutq"><button class="chipbtn" id="tutbtn">★ ${T().tutBtn}</button></div>
+      <div class="quick tutq"><button class="chipbtn" id="tutbtn">★ ${T().tutBtn}</button><button class="chipbtn" id="rankbtn">🏆 ${T().rankBtn}</button></div>
     </div>
   </section>
   <section class="box">
@@ -1725,7 +1801,7 @@ function modalHTML(){
         <button class="ghost" id="fullrules">${t.fullBtn}</button>
       </div>
       <div class="row"><button class="ghost" id="gohome">${t.home}</button><button class="ghost" id="restart">${t.again}</button></div>
-      <div class="row"><button class="ghost" id="tutbtn">★ ${t.tutBtn}</button></div>
+      <div class="row"><button class="ghost" id="tutbtn">★ ${t.tutBtn}</button><button class="ghost" id="rankbtn">🏆 ${t.rankBtn}</button></div>
       <div class="row"><button class="cta" id="closemenu">${t.close}</button></div>
     </div></div>`;
   const m=S.modal; if(!m) return '';
@@ -1767,6 +1843,7 @@ function modalHTML(){
     </div></div>`;
   if(m.type==='out') return `<div class="overlay"><div class="sheet" role="dialog" aria-label="${t.noLives}">
       <h2>${t.noLives}</h2><p>${S.beerUsed?t.beerGone+' ':''}${t.bandGoes}</p>
+      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}</p>`:''}
       <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="ghost" data-modal="again">${t.again}</button></div>
       <div class="row"><button class="cta" data-modal="watch">${t.watch}</button></div>
     </div></div>`;
@@ -1778,13 +1855,15 @@ function modalHTML(){
       <div class="big"><span class="l1">${t.party[0]}</span><span>${t.party[1]}</span></div>
       <div class="sub">${title}</div>
       <p>${t.youWonSub}</p>
-      <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="cta" data-modal="again">${t.again}</button></div>
+      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}</p>`:''}
+      <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="ghost" id="rankbtn">🏆 ${t.rankBtn}</button><button class="cta" data-modal="again">${t.again}</button></div>
     </div></div>`;
     return `<div class="overlay"><div class="sheet" role="dialog" aria-label="${title}">
       ${w.length===1?`<div class="winner frame">${avatarHTML(w[0])}</div>`:''}
       <h2>${title}</h2>
       <p>${youWon?t.youWonSub:t.hands(S.handNo)}</p>
-      <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="cta" data-modal="again">${t.again}</button></div>
+      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}</p>`:''}
+      <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="ghost" id="rankbtn">🏆 ${t.rankBtn}</button><button class="cta" data-modal="again">${t.again}</button></div>
     </div></div>`;
   }
   return '';
@@ -1796,7 +1875,7 @@ function render(){
   const app=document.getElementById('app'), game=S.phase!=='setup';
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = game ? tableHTML()+modalHTML() : setupHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:'');
+  app.innerHTML = game ? tableHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:'');
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);
@@ -1826,6 +1905,9 @@ document.addEventListener('click',e=>{
   if(t.id==='start'){ if(!tutSeen()){ S.tutOffer=true; render(); return; } startGame(); return; }
   if(t.id==='tutyes'){ S.tutOffer=false; startTutorial(); return; }
   if(t.id==='tutskip'){ S.tutOffer=false; markTutSeen(); startGame(); return; }
+  if(t.id==='rankbtn'){ S.rankOpen=true; S.menu=false; Rank.load(); return; }
+  if(t.id==='closerank'){ S.rankOpen=false; render(); return; }
+  if(t.dataset.rtab){ Rank.tab=t.dataset.rtab; render(); return; }
   if(t.id==='tutbtn'){ S.menu=false; S.rulesOpen=false; startTutorial(); return; }
   if(t.id==='coachok' && S.coach){ const r=S.coach.res; S.coach=null; render(); r(); return; }
   if(t.id==='snd'||t.id==='snd2'){ Snd.on=!Snd.on; saveSnd(); Music.sync(); if(Snd.on){ Snd.init(); Snd.bell(1318.5,0,.12,.6);} render(); return; }

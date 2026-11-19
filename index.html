@@ -404,7 +404,11 @@ td .lifebar{margin:0;width:58px}
 .acerow{display:flex;align-items:center;gap:12px}
 .acebtn{background:none;border:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:4px;flex:none}
 .acebtn .frame{width:68px}
-.acebtn small{font-size:11px;font-weight:800;color:var(--gold)}
+.acebtn .frame{position:relative}
+.pencil{position:absolute;right:-8px;bottom:-8px;width:28px;height:28px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.aceinvite{margin-top:12px;width:100%;border:2px dashed var(--gold);background:rgba(245,201,79,.1);color:var(--gold);border-radius:14px;padding:12px;font-family:var(--f-display);font-size:24px;letter-spacing:.04em}
+.aceinvite.new{background:var(--gold);color:#2a1d00;border-style:solid;animation:aceglow 1.4s ease-in-out infinite}
+@keyframes aceglow{50%{box-shadow:0 0 0 4px rgba(245,201,79,.35),0 0 24px rgba(245,201,79,.7)}}
 .acerow .acefield{flex:1;min-width:0}
 .edov{z-index:30}
 .editor{width:min(560px,100%)}
@@ -579,7 +583,7 @@ const TXT={
     styles:{bold:'Ousado',sly:'Sagaz',careful:'Cauteloso',calc:'Calculista',wild:'Imprevisível',hooked:'Preciso',hooked2:'Agressivo',hooked3:'Frio',master:'Estrategista'},
     roles:{producer:'Produtor',guitarVox:'Guitarra',drums:'Bateria',bassVox:'Baixo',voxKeys:'Teclado e violão',guitar:'Guitarra',sound:'Técnico de som',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipe', allTab:g=>g==='band'?'Chamar a banda toda':'Chamar a equipe toda', crewSub:'A equipe que roda com a StarAce. Nível mais alto que o da banda: aqui o jogo é sério.',
-    edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereços (escolha vários)', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Criar meu Ace', edEdit:'Customizar',
+    edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereços (escolha vários)', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Monte seu personagem', edEdit:'Editar seu personagem',
     tWeak:'mais fraca', tStrong:'mais forte', tKills:'mata', tLoses:'perde pra', tWith:'com o Zap na rodada', tWithout:'sem o Zap: qualquer carta', tVira:'vira', tMani:'manilha',
     party:['TEEEEEM QUE','COMEMORAR!'],
     rankT:'Ranking', rankWeek:'Semana', rankAll:'Geral', rankBtn:'Ranking', rankLoading:'Carregando…', rankOff:'O ranking funciona no jogo do site: staraceband.com/game', rankEmpty:'Ninguém pontuou ainda. Seja o primeiro!', rankHow:'Toda partida dá pontos pela sua colocação: o 1º lugar ganha mais, mas 2º e 3º também pontuam. Mesa maior e com a equipe vale mais.', rankCols:['#','Ace','Pts','Vit.','Pedidos','★'], rankPts:p=>`+${p} pontos no ranking`, rankClose:'Fechar', rankFoot:'★ = Matazaps feitos. Pedidos = % de mãos em que acertou o pedido.', rankYourPos:(p,n)=>`Você está em ${p}º de ${n}`,
@@ -623,7 +627,7 @@ const TXT={
   en:{
     intro:'StarAce’s take on Fodinha, the Brazilian card game every crew plays with its own house rules. Pick which band members sit at the table with you. The Ace of Stars joins the deck as the Zap Killer: the only card that takes down the Zap. The rest of the time, it passes as the lowest card on the table.',
     whoSits:'Who sits at the table', picked:(a,b)=>`${a} of ${b} at the table. Each one bids their own way.`,
-    allBand:'Call the whole band', clear:'Clear', lives:'Lives', livesSub:'Every round you lose costs a life.',
+    allBand:'Call the whole band', clear:'Clear', lives:'Lives', livesSub:'Every round you miss costs a life.',
     rulesT:'House rules',
     rules:[
       'Rank: 4, 5, 6, 7, Q, J, K, A, 2, 3. The <b>trump</b> is the rank right above the <b>flip card</b>.',
@@ -662,7 +666,7 @@ const TXT={
     styles:{bold:'Bold',sly:'Sharp',careful:'Careful',calc:'Calculating',wild:'Wild card',hooked:'Precise',hooked2:'Aggressive',hooked3:'Ice-cold',master:'Strategist'},
     roles:{producer:'Producer',guitarVox:'Guitar',drums:'Drums',bassVox:'Bass',voxKeys:'Keys & acoustic guitar',guitar:'Guitar',sound:'Sound engineer',roadie:'Roadie',video:'Video maker'},
     tabBand:'Band', tabCrew:'Crew', allTab:g=>g==='band'?'Call the whole band':'Call the whole crew', crewSub:'The crew that tours with StarAce. A higher level than the band: this is the serious table.',
-    edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessories (pick several)', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create my Ace', edEdit:'Customize',
+    edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessories (pick several)', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create your character', edEdit:'Edit your character',
     tWeak:'weakest', tStrong:'strongest', tKills:'kills', tLoses:'loses to', tWith:'with the Zap in the trick', tWithout:'no Zap: any card', tVira:'flip', tMani:'trump',
     party:['WE GOTTA','CELEBRATE!'],
     rankT:'Leaderboard', rankWeek:'This week', rankAll:'All time', rankBtn:'Leaderboard', rankLoading:'Loading…', rankOff:'The leaderboard works in the game on the site: staraceband.com/game', rankEmpty:'No one has scored yet. Be the first!', rankHow:'Every game gives points for where you finish: 1st place gets the most, but 2nd and 3rd score too. Bigger tables and the crew are worth more.', rankCols:['#','Ace','Pts','Wins','Bids','★'], rankPts:p=>`+${p} leaderboard points`, rankClose:'Close', rankFoot:'★ = Zap kills. Bids = % of hands where you hit your bid.', rankYourPos:(p,n)=>`You’re #${p} of ${n}`,
@@ -745,7 +749,7 @@ const TXT={
     styles:{bold:'Atrevido',sly:'Sagaz',careful:'Cauteloso',calc:'Calculadora',wild:'Impredecible',hooked:'Preciso',hooked2:'Agresivo',hooked3:'Frío',master:'Estratega'},
     roles:{producer:'Productor',guitarVox:'Guitarra',drums:'Batería',bassVox:'Bajo',voxKeys:'Teclado y guitarra acústica',guitar:'Guitarra',sound:'Técnico de sonido',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipo', allTab:g=>g==='band'?'Llamar a toda la banda':'Llamar a todo el equipo', crewSub:'El equipo que sale de gira con StarAce. Nivel más alto que la banda: acá se juega en serio.',
-    edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorios (elige varios)', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Crear mi Ace', edEdit:'Personalizar',
+    edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorios (elige varios)', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Arma tu personaje', edEdit:'Edita tu personaje',
     tWeak:'más baja', tStrong:'más alta', tKills:'mata', tLoses:'pierde con', tWith:'con el Zap en la ronda', tWithout:'sin el Zap: cualquier carta', tVira:'muestra', tMani:'manilla',
     party:['¡HAAAAAY QUE','CELEBRAR!'],
     rankT:'Ranking', rankWeek:'Semana', rankAll:'General', rankBtn:'Ranking', rankLoading:'Cargando…', rankOff:'El ranking funciona en el juego del sitio: staraceband.com/game', rankEmpty:'Nadie sumó puntos todavía. ¡Sé el primero!', rankHow:'Cada partida da puntos según tu posición: el 1º gana más, pero el 2º y el 3º también suman. Las mesas más grandes y con el equipo valen más.', rankCols:['#','Ace','Pts','Vict.','Apuestas','★'], rankPts:p=>`+${p} puntos en el ranking`, rankClose:'Cerrar', rankFoot:'★ = Matazaps. Apuestas = % de manos en que acertaste.', rankYourPos:(p,n)=>`Estás en el puesto ${p} de ${n}`,
@@ -1802,8 +1806,9 @@ function setupHTML(){
   <section class="box">
     <h2>${T().aceT}</h2>
     <p>${T().aceSub}</p>
-    <div class="acerow"><button class="acebtn" id="editace" aria-label="${ME?T().edEdit:T().edNew}"><span class="frame">${avatarHTML({isHuman:true})}</span><small>${ME?T().edEdit:T().edNew}</small></button>
+    <div class="acerow"><button class="acebtn" id="editace" aria-label="${ME?T().edEdit:T().edNew}"><span class="frame">${avatarHTML({isHuman:true})}<span class="pencil">✏️</span></span></button>
     <div class="acefield"><span class="acestar">★</span><input id="acename" type="text" maxlength="14" autocomplete="nickname" enterkeyhint="done" placeholder="${T().acePh}" value="${ACE.replace(/"/g,'&quot;')}" aria-label="${T().aceT}"></div></div>
+    <button class="aceinvite${ME?'':' new'}" id="editace2">✏️ ${ME?T().edEdit:T().edNew}</button>
   </section>
   <section class="box">
     <h2>${T().whoSits}</h2>
@@ -2104,7 +2109,7 @@ document.addEventListener('click',e=>{
   if(t.id==='start'){ if(!tutSeen()){ S.tutOffer=true; render(); return; } startGame(); return; }
   if(t.id==='tutyes'){ S.tutOffer=false; startTutorial(); return; }
   if(t.id==='tutskip'){ S.tutOffer=false; markTutSeen(); startGame(); return; }
-  if(t.id==='editace'){ S.draft=ME?{...ME}:randomAce(); S.editor=true; render(); return; }
+  if(t.id==='editace'||t.id==='editace2'){ S.draft=ME?{...ME}:randomAce(); S.editor=true; render(); return; }
   if(t.dataset.ed){ const [k,i]=t.dataset.ed.split(':'); if(k==='acc') S.draft.acc=toggleAcc(S.draft.acc,+i); else S.draft[k]=+i; keepScroll(render); return; }
   if(t.id==='edrand'){ S.draft=randomAce(); keepScroll(render); return; }
   if(t.id==='edcancel'){ S.editor=false; render(); return; }

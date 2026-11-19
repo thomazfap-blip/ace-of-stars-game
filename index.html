@@ -281,7 +281,8 @@ small{color:var(--muted)}
 .splash .word{position:relative;display:flex;flex-direction:column;align-items:center;line-height:.85}
 .splash b{font-family:var(--f-display);font-weight:400;font-size:clamp(60px,17vw,120px);letter-spacing:.02em;color:#fff;
   -webkit-text-stroke:3px var(--rim);paint-order:stroke fill;text-shadow:0 6px 0 var(--rim-dark), 0 0 40px rgba(245,201,79,.9)}
-.splash small{font-family:var(--f-display);font-size:clamp(20px,5vw,30px);color:var(--gold);letter-spacing:.06em;text-shadow:0 2px 0 #000}
+.splash small{font-family:var(--f-display);font-size:clamp(22px,5.6vw,32px);color:var(--gold);letter-spacing:.06em;text-shadow:0 2px 0 #000;background:rgba(10,2,4,.88);border:2px solid var(--gold);border-radius:999px;padding:4px 16px 2px;margin-top:10px}
+.splash::before{content:"";position:absolute;inset:-10%;background:radial-gradient(circle, rgba(10,2,4,.78) 0 30%, transparent 65%)}
 .splash .ministar{position:absolute;color:var(--gold);font-size:28px}
 .splash.matazap b{font-size:clamp(54px,16vw,120px);line-height:.85;text-align:center}
 .splash.matazap small{font-size:clamp(22px,5.4vw,32px)}
@@ -358,6 +359,42 @@ td .lifebar{margin:0;width:58px}
 .outtag{font-size:10px;background:var(--danger);color:#2b0700;border-radius:6px;padding:1px 6px;margin-left:4px;font-weight:800}
 .sheet .row{justify-content:center}
 .winner{width:120px;margin:0 auto}
+.coach.sheetmode{position:fixed;left:50%;bottom:max(12px, env(safe-area-inset-bottom, 0px));transform:translateX(-50%);width:min(540px, calc(100% - 24px));z-index:15;max-height:70vh;overflow:auto}
+.card.tc{--cw:27px}
+.card.tc .ix{font-size:13px;top:2px;left:3px}
+.card.tc .ix i{font-size:10px}
+.card.tc .pip{font-size:12px;padding-top:45%}
+.ladder{display:flex;justify-content:center;gap:3px;flex-wrap:wrap}
+.ladlab{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#7a5a3a}
+.ladlab i{flex:1;height:3px;background:linear-gradient(90deg,#ddd2bb,var(--rim));border-radius:2px;position:relative}
+.ladlab i::after{content:"";position:absolute;right:-2px;top:-4px;border:5px solid transparent;border-left:7px solid var(--rim)}
+.maniv{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.maniv > div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.maniv small{font-size:10px;font-weight:800;color:#2a0a10;text-transform:uppercase;letter-spacing:.04em}
+.maniv em{font-style:normal;color:var(--rim);font-weight:800}
+.maniv em.kill{font-family:var(--f-display);font-size:22px}
+.tsub{font-size:13px!important;color:#5a3a2a}
+.acerow{display:flex;align-items:center;gap:12px}
+.acebtn{background:none;border:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:4px;flex:none}
+.acebtn .frame{width:68px}
+.acebtn small{font-size:11px;font-weight:800;color:var(--gold)}
+.acerow .acefield{flex:1;min-width:0}
+.edov{z-index:30}
+.editor{width:min(560px,100%)}
+.edtop{display:flex;align-items:center;justify-content:center;gap:16px}
+.edbig{width:120px}
+.edrow{display:flex;flex-direction:column;gap:4px;min-width:0}
+.edrow small{font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:rgba(255,245,226,.8)}
+.edopts{display:flex;gap:6px;overflow-x:auto;padding:3px 2px 6px}
+.edopt{flex:none;background:rgba(0,0,0,.3);border:2px solid transparent;border-radius:12px;padding:3px;display:grid;place-items:center}
+.edopt[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,201,79,.3)}
+.edmini{display:block;width:50px;height:50px}
+.edmini svg{width:100%;height:100%;display:block}
+.sw{display:block;width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.edtxt{padding:6px 12px;font-weight:700}
+.rav{display:inline-block;width:24px;height:24px;vertical-align:middle;margin-right:6px;border-radius:5px;overflow:hidden}
+.rav svg{width:100%;height:100%;display:block}
+.rankpts small{display:block;font-family:var(--f-body);font-size:13px;color:var(--ink)}
 .rankov{z-index:30}
 .ranksheet{width:min(560px,100%)}
 .ranksheet .tabs{justify-content:center}
@@ -399,7 +436,7 @@ td .lifebar{margin:0;width:58px}
 .cheers{font-family:var(--f-display);font-size:clamp(48px,14vw,96px);color:var(--gold);-webkit-text-stroke:3px var(--rim);paint-order:stroke fill;text-shadow:0 5px 0 var(--rim-dark);animation:boom .55s 2.4s cubic-bezier(.2,1.7,.4,1) both}
 .beerbadge{position:absolute;left:-14%;bottom:8%;width:42%;z-index:4;transform:rotate(-12deg)}
 .beerbadge .beer .bub{animation:none}
-#fx{position:fixed;inset:0;width:100%;height:100%;z-index:19;pointer-events:none}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .overlay.party{background:radial-gradient(ellipse at 50% 40%, rgba(80,10,20,.55), rgba(5,1,2,.88))}
 .celebrate{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;position:relative;z-index:21;width:100%;max-width:520px;min-width:0}
 .celebrate .big{font-family:var(--f-display);font-weight:400;line-height:.85;letter-spacing:.02em;color:#fff;
@@ -463,7 +500,7 @@ details.rulesbox .rules{margin-top:8px}
 }
 @media (prefers-reduced-motion:reduce){
   .played.anim,.played.collect,.bubble.anim,.dealin,.splash.anim .burst,.splash.anim .word,.ring.shake,.played.lead .card{animation:none}
-  .tuthl,.beer.drink,.beer.drink .liquid,.beer.drink .foamtop,.beer .bub,.cheers,.seat.turn .frame::after,.manibadge,.celebrate .big,.celebrate .winner{animation:none}
+  .tuthl,.seat.turn .frame::after,.manibadge{animation:none}
   .cardbtn{transition:none}
 }
 </style>
@@ -515,6 +552,8 @@ const TXT={
     styles:{bold:'Ousado',sly:'Sagaz',careful:'Cauteloso',calc:'Calculista',wild:'Imprevisível',hooked:'Preciso',hooked2:'Agressivo',hooked3:'Frio',master:'Estrategista'},
     roles:{producer:'Produtor',guitarVox:'Guitarra',drums:'Bateria',bassVox:'Baixo',voxKeys:'Teclado e violão',guitar:'Guitarra',sound:'Técnico de som',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipe', allTab:g=>g==='band'?'Chamar a banda toda':'Chamar a equipe toda', crewSub:'A equipe que roda com a StarAce. Nível mais alto que o da banda: aqui o jogo é sério.',
+    edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereço', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Criar meu Ace', edEdit:'Editar',
+    tWeak:'mais fraca', tStrong:'mais forte', tKills:'mata', tElse:'Fora isso, o Ás de Estrelas vale menos que o 4.',
     party:['TEEEEEM QUE','COMEMORAR!'],
     rankT:'Ranking', rankWeek:'Semana', rankAll:'Geral', rankBtn:'Ranking', rankLoading:'Carregando…', rankOff:'O ranking funciona no jogo do site: staraceband.com/game', rankEmpty:'Ninguém pontuou ainda. Seja o primeiro!', rankHow:'Toda partida dá pontos pela sua colocação: o 1º lugar ganha mais, mas 2º e 3º também pontuam. Mesa maior e com a equipe vale mais.', rankCols:['#','Ace','Pts','Vit.','Pedidos','★'], rankPts:p=>`+${p} pontos no ranking`, rankClose:'Fechar', rankFoot:'★ = Matazaps feitos. Pedidos = % de mãos em que acertou o pedido.', rankYourPos:(p,n)=>`Você está em ${p}º de ${n}`,
     tutBtn:'Aprender jogando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jogar agora',
@@ -523,7 +562,8 @@ const TXT={
     tut:{
       intro:n=>`Bem-vindo à mesa, ${n}! Vou te ensinar jogando duas mãos rápidas contra o Julio e a Bia.`,
       h1a:'Mão 1: cada um recebe 1 carta, na testa. Você vê as cartas dos outros, mas não a sua.',
-      h1b:'A carta virada ao lado da plaquinha é a vira: um 7. A manilha é a carta logo acima na força: a Q (Dama). As manilhas ganham de todas as outras.',
+      ladder:'Primeiro, a força das cartas. Da mais fraca pra mais forte: 4, 5, 6, 7, Q, J, K, A, 2, 3. Em cada rodada, quem jogar a carta mais forte faz a rodada.',
+      h1b:'Agora a manilha. A carta virada ao lado da plaquinha é a vira: um 7. A manilha é a carta logo acima dela na força: a Q. As quatro Q passam a ganhar de todas as outras, e entre elas manda o naipe. A Q de paus é o Zap, a mais forte de todas.',
       h1bet:'Antes de jogar, cada um diz quantas rodadas vai fazer. O Julio pediu 1 e a Bia pediu 0. Você é o último a pedir (o pé), e o pé não pode deixar a soma igual ao número de cartas: o 0 está bloqueado. Peça 1.',
       h1play:'O Julio jogou um K e a Bia um 4. Sua vez: toque na sua carta pra jogar, mesmo sem ver.',
       h1after:'Sua carta era um 3, a mais forte depois das manilhas. Você fez a rodada e acertou o pedido, então não perde vida. O Julio pediu 1 e fez 0: perde uma vida.',
@@ -536,7 +576,7 @@ const TXT={
     },
     duelT:'FINAL!', duelSub:'Um contra um. Não importa quantas vidas sobraram: agora cada um tem só 1. Errou o pedido, perdeu.', duelGo:'Bora!',
     aceT:'Seu nome de Ace', aceSub:'É assim que a banda vai te chamar na mesa e no ranking.', acePh:'Digite seu nome',
-    beerT:'Toma uma cerveja e volta?', beerSub:'Você volta pro jogo com 1 vida. Só vale uma vez: perdeu essa, tá fora de vez.', beerYes:'Tomar uma cerveja', beerDrink:'Saúde!', beerBack:'Você voltou com 1 vida!', beerGone:'A cerveja já foi. Dessa vez não tem volta.',
+    beerT:'Toma uma cerveja e volta?', beerSub:'Você volta pro jogo com 1 vida, mas perde metade dos pontos desta partida no ranking. Só vale uma vez: perdeu essa, tá fora de vez.', beerYes:'Tomar uma cerveja (−50% pts)', beerTag:'🍺 −50% pela cerveja', beerDrink:'Saúde!', beerBack:'Você voltou com 1 vida!', beerGone:'A cerveja já foi. Dessa vez não tem volta.',
     fullBtn:'Regras completas', fullT:'Como jogar', closeRules:'Entendi',
     full:[
       ['O objetivo','<p>O Ace of Stars Game é a versão StarAce da Fodinha 2.0: a Fodinha de sempre, baseada no truco, com o Ás de Estrelas no papel de Matazap.</p><p>Em cada mão, você diz quantas rodadas vai fazer. Acertou na mosca, não perde nada. Errou, pra mais ou pra menos, perde uma vida por rodada de diferença. Quem sobrar com vida por último vence.</p>'],
@@ -595,6 +635,8 @@ const TXT={
     styles:{bold:'Bold',sly:'Sharp',careful:'Careful',calc:'Calculating',wild:'Wild card',hooked:'Precise',hooked2:'Aggressive',hooked3:'Ice-cold',master:'Strategist'},
     roles:{producer:'Producer',guitarVox:'Guitar',drums:'Drums',bassVox:'Bass',voxKeys:'Keys & acoustic guitar',guitar:'Guitar',sound:'Sound engineer',roadie:'Roadie',video:'Video maker'},
     tabBand:'Band', tabCrew:'Crew', allTab:g=>g==='band'?'Call the whole band':'Call the whole crew', crewSub:'The crew that tours with StarAce. A higher level than the band: this is the serious table.',
+    edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessory', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create my Ace', edEdit:'Edit',
+    tWeak:'weakest', tStrong:'strongest', tKills:'kills', tElse:'Otherwise, the Ace of Stars is worth less than a 4.',
     party:['WE GOTTA','CELEBRATE!'],
     rankT:'Leaderboard', rankWeek:'This week', rankAll:'All time', rankBtn:'Leaderboard', rankLoading:'Loading…', rankOff:'The leaderboard works in the game on the site: staraceband.com/game', rankEmpty:'No one has scored yet. Be the first!', rankHow:'Every game gives points for where you finish: 1st place gets the most, but 2nd and 3rd score too. Bigger tables and the crew are worth more.', rankCols:['#','Ace','Pts','Wins','Bids','★'], rankPts:p=>`+${p} leaderboard points`, rankClose:'Close', rankFoot:'★ = Zap kills. Bids = % of hands where you hit your bid.', rankYourPos:(p,n)=>`You’re #${p} of ${n}`,
     tutBtn:'Learn by playing', tutLabel:'Tutorial', tutNext:'Continue', tutPlay:'Play now',
@@ -603,7 +645,8 @@ const TXT={
     tut:{
       intro:n=>`Welcome to the table, ${n}! I’ll teach you with two quick hands against Julio and Bia.`,
       h1a:'Hand 1: everyone gets 1 card, on their forehead. You see everyone else’s card, but not your own.',
-      h1b:'The face-up card next to the badge is the flip card: a 7. The trump is the next rank up: the Queen. Trumps beat every other card.',
+      ladder:'First, card strength. From weakest to strongest: 4, 5, 6, 7, Q, J, K, A, 2, 3. In each trick, whoever plays the strongest card takes it.',
+      h1b:'Now the trump. The face-up card next to the badge is the flip card: a 7. The trump is the next rank up: the Queen. All four Queens now beat every other card, and among them the suit decides. The Queen of clubs is the Zap, the strongest of all.',
       h1bet:'Before playing, everyone bids how many tricks they’ll take. Julio bid 1 and Bia bid 0. You bid last, and the last bidder can’t make the total match the number of cards: 0 is blocked. Bid 1.',
       h1play:'Julio played a King and Bia a 4. Your turn: tap your card to play it, even without seeing it.',
       h1after:'Your card was a 3, the strongest card after the trumps. You took the trick and hit your bid, so you lose no life. Julio bid 1 and took 0: he loses a life.',
@@ -616,7 +659,7 @@ const TXT={
     },
     duelT:'FINAL!', duelSub:'One on one. No matter how many lives were left: now each player has just 1. Miss your bid and you’re out.', duelGo:'Let’s go!',
     aceT:'Your Ace name', aceSub:'This is what the band will call you at the table and on the leaderboard.', acePh:'Type your name',
-    beerT:'Grab a beer and get back in?', beerSub:'You come back with 1 life. Only once: lose it and you’re out for good.', beerYes:'Grab a beer', beerDrink:'Cheers!', beerBack:'You’re back with 1 life!', beerGone:'The beer’s gone. No coming back this time.',
+    beerT:'Grab a beer and get back in?', beerSub:'You come back with 1 life, but lose half of this game’s leaderboard points. Only once: lose it and you’re out for good.', beerYes:'Grab a beer (−50% pts)', beerTag:'🍺 −50% for the beer', beerDrink:'Cheers!', beerBack:'You’re back with 1 life!', beerGone:'The beer’s gone. No coming back this time.',
     fullBtn:'Full rules', fullT:'How to play', closeRules:'Got it',
     full:[
       ['The goal','<p>Ace of Stars Game is StarAce’s version of Fodinha 2.0, a Brazilian trick-taking game based on Truco, with the Ace of Stars as the Zap Killer.</p><p>Each hand, you say how many tricks you’ll win. Nail it and you lose nothing. Miss, over or under, and you lose one life for each trick off. The last player with lives left wins.</p>'],
@@ -675,6 +718,8 @@ const TXT={
     styles:{bold:'Atrevido',sly:'Sagaz',careful:'Cauteloso',calc:'Calculadora',wild:'Impredecible',hooked:'Preciso',hooked2:'Agresivo',hooked3:'Frío',master:'Estratega'},
     roles:{producer:'Productor',guitarVox:'Guitarra',drums:'Batería',bassVox:'Bajo',voxKeys:'Teclado y guitarra acústica',guitar:'Guitarra',sound:'Técnico de sonido',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipo', allTab:g=>g==='band'?'Llamar a toda la banda':'Llamar a todo el equipo', crewSub:'El equipo que sale de gira con StarAce. Nivel más alto que la banda: acá se juega en serio.',
+    edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorio', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Crear mi Ace', edEdit:'Editar',
+    tWeak:'más baja', tStrong:'más alta', tKills:'mata', tElse:'Si no, el As de Estrellas vale menos que el 4.',
     party:['¡HAAAAAY QUE','CELEBRAR!'],
     rankT:'Ranking', rankWeek:'Semana', rankAll:'General', rankBtn:'Ranking', rankLoading:'Cargando…', rankOff:'El ranking funciona en el juego del sitio: staraceband.com/game', rankEmpty:'Nadie sumó puntos todavía. ¡Sé el primero!', rankHow:'Cada partida da puntos según tu posición: el 1º gana más, pero el 2º y el 3º también suman. Las mesas más grandes y con el equipo valen más.', rankCols:['#','Ace','Pts','Vict.','Apuestas','★'], rankPts:p=>`+${p} puntos en el ranking`, rankClose:'Cerrar', rankFoot:'★ = Matazaps. Apuestas = % de manos en que acertaste.', rankYourPos:(p,n)=>`Estás en el puesto ${p} de ${n}`,
     tutBtn:'Aprender jugando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jugar ahora',
@@ -683,7 +728,8 @@ const TXT={
     tut:{
       intro:n=>`¡Bienvenido a la mesa, ${n}! Te enseño jugando dos manos rápidas contra Julio y Bia.`,
       h1a:'Mano 1: cada uno recibe 1 carta, en la frente. Ves las cartas de los demás, pero no la tuya.',
-      h1b:'La carta boca arriba al lado del cartel es la muestra: un 7. La manilla es la carta justo arriba en fuerza: la Reina. Las manillas le ganan a todas las demás.',
+      ladder:'Primero, la fuerza de las cartas. De la más baja a la más alta: 4, 5, 6, 7, Q, J, K, A, 2, 3. En cada ronda, quien juega la carta más fuerte hace la ronda.',
+      h1b:'Ahora la manilla. La carta boca arriba al lado del cartel es la muestra: un 7. La manilla es la carta justo arriba en fuerza: la Reina. Las cuatro Reinas le ganan a todas las demás, y entre ellas manda el palo. La Reina de tréboles es el Zap, la más fuerte de todas.',
       h1bet:'Antes de jugar, cada uno dice cuántas rondas va a hacer. Julio apostó 1 y Bia apostó 0. Eres el último en apostar, y el último no puede hacer que la suma sea igual al número de cartas: el 0 está bloqueado. Apuesta 1.',
       h1play:'Julio jugó un Rey y Bia un 4. Te toca: toca tu carta para jugarla, aunque no la veas.',
       h1after:'Tu carta era un 3, la más fuerte después de las manillas. Hiciste la ronda y acertaste tu apuesta, así que no pierdes vida. Julio apostó 1 e hizo 0: pierde una vida.',
@@ -696,7 +742,7 @@ const TXT={
     },
     duelT:'¡FINAL!', duelSub:'Uno contra uno. No importa cuántas vidas quedaban: ahora cada uno tiene solo 1. Si fallas la apuesta, pierdes.', duelGo:'¡Vamos!',
     aceT:'Tu nombre de Ace', aceSub:'Así te va a llamar la banda en la mesa y en el ranking.', acePh:'Escribe tu nombre',
-    beerT:'¿Te tomas una cerveza y vuelves?', beerSub:'Vuelves al juego con 1 vida. Solo una vez: si la pierdes, quedas afuera de verdad.', beerYes:'Tomar una cerveza', beerDrink:'¡Salud!', beerBack:'¡Volviste con 1 vida!', beerGone:'La cerveza ya se tomó. Esta vez no hay vuelta.',
+    beerT:'¿Te tomas una cerveza y vuelves?', beerSub:'Vuelves al juego con 1 vida, pero pierdes la mitad de los puntos de esta partida en el ranking. Solo una vez: si la pierdes, quedas afuera de verdad.', beerYes:'Tomar una cerveza (−50% pts)', beerTag:'🍺 −50% por la cerveza', beerDrink:'¡Salud!', beerBack:'¡Volviste con 1 vida!', beerGone:'La cerveza ya se tomó. Esta vez no hay vuelta.',
     fullBtn:'Reglas completas', fullT:'Cómo jugar', closeRules:'Entendido',
     full:[
       ['El objetivo','<p>Ace of Stars Game es la versión StarAce de la Fodinha 2.0, un juego brasileño basado en el truco, con el As de Estrellas como Matazap.</p><p>En cada mano, dices cuántas rondas vas a hacer. Si aciertas justo, no pierdes nada. Si fallas, por más o por menos, pierdes una vida por cada ronda de diferencia. El último que queda con vidas gana.</p>'],
@@ -885,7 +931,80 @@ const BAND=[
 let ACE='';
 try{ ACE=(localStorage.getItem('fodinha-ace')||'').slice(0,14); }catch(e){}
 const nm=p=>p.isHuman?(ACE||T().you):p.short;
-function avatarHTML(p){ return `<span class="avatar">${p.isHuman?youSVG():avatarSVG(LOOKS[p.look])}</span>`; }
+
+/* ================= Seu Ace (personagem do jogador) ================= */
+const SKINS=['#f6d3b8','#ecbd9c','#d99a72','#b97a52','#8d5a3b','#5e3a26'];
+const HAIRC=['#141014','#4a2c1c','#a2522a','#d8b25a','#c42326','#7b3fb3','#b9b9c0'];
+const BGS=['#c42326','#009cad','#f5c94f','#2f8f5b','#7a1f8f','#1d2a5c','#ee9467'];
+const ED_KEYS=['g','skin','hair','hc','beard','acc','out','bg'];
+const ED_OPTS={g:2,skin:SKINS.length,hair:6,hc:HAIRC.length,beard:5,acc:7,out:4,bg:BGS.length};
+function encodeAce(c){ return ED_KEYS.map(k=>c[k]).join('-'); }
+function decodeAce(str){
+  if(!str) return null; const a=String(str).split('-').map(Number);
+  if(a.length!==ED_KEYS.length||a.some(v=>isNaN(v))) return null;
+  const c={}; ED_KEYS.forEach((k,i)=>c[k]=Math.max(0,Math.min(ED_OPTS[k]-1,a[i]|0))); return c;
+}
+function randomAce(){ const c={}; ED_KEYS.forEach(k=>c[k]=Math.floor(Math.random()*ED_OPTS[k])); if(c.g===1&&Math.random()<.85) c.beard=0; return c; }
+let ME=null; try{ ME=decodeAce(localStorage.getItem('fodinha-me')||''); }catch(e){}
+function shade(hex,a){ const n=parseInt(hex.slice(1),16), f=v=>Math.round(a>0?v+(255-v)*a:v*(1+a)); return '#'+[n>>16,n>>8&255,n&255].map(v=>f(v).toString(16).padStart(2,'0')).join(''); }
+const TEE=c=>`<path d="M8 100 Q10 76 50 74 Q90 76 92 100Z" fill="${c}"/><path d="M40 74 Q50 80 60 74" stroke="${shade(c,-.25)}" stroke-width="3" fill="none"/>`;
+function composeLook(c){
+  const hc=HAIRC[c.hc], hl=shade(hc,.15);
+  const L={bg:BGS[c.bg], skin:SKINS[c.skin], hair:hc, beardColor:hc, brow:36, mouth:'grin'};
+  if(c.g===1){ L.lashes=true; L.lips='#c43a3a'; L.brow=37; }
+  switch(c.hair){
+    case 0: L.top=`<ellipse cx="43" cy="29" rx="7" ry="3" fill="#fff" opacity=".22"/>`; break;
+    case 1: L.top=`<path d="M28 42 Q26 18 50 16 Q74 18 72 42 Q68 28 56 26 Q50 30 42 27 Q32 30 28 42Z" fill="${hc}"/>${curls(50,30,16,200,340,5,5,hl)}`; break;
+    case 2: L.sides=`<path d="M30 40 Q30 26 40 22 L38 36Z M70 40 Q70 26 60 22 L62 36Z" fill="${hc}" opacity=".45"/>`;
+            L.top=`<path d="M40 30 Q38 10 50 4 Q62 10 60 30 Q55 22 50 22 Q45 22 40 30Z" fill="${hc}"/><path d="M44 22 Q46 10 52 6 M50 22 Q52 12 58 10" stroke="${hl}" stroke-width="2" fill="none"/>`; break;
+    case 3: L.back='shoulder'; L.top=`<path d="M24 50 Q18 16 50 14 Q82 16 76 50 Q74 36 66 30 Q60 38 52 30 Q42 36 34 30 Q26 38 24 50Z" fill="${hc}"/>${curls(50,40,28,195,345,7,6,hl)}`; break;
+    case 4: L.back='wild'; L.top=`<path d="M24 46 Q20 14 50 12 Q80 14 76 46 Q72 30 60 27 Q66 36 56 32 Q50 24 40 30 Q30 30 24 46Z" fill="${hc}"/>${curls(50,38,30,200,340,7,7,hl)}`; break;
+    case 5: L.back='long'; L.top=`<path d="M27 50 Q24 16 50 15 Q78 16 74 50 Q72 30 58 25 Q50 34 34 32 Q29 40 27 50Z" fill="${hc}"/><path d="M58 25 Q66 30 70 40" stroke="${hl}" stroke-width="2" fill="none"/>`; break;
+  }
+  if(c.beard===1) L.stache=true;
+  if(c.beard===2){ L.stache=true; L.beard='goatee'; }
+  if(c.beard===3){ L.beard='short'; L.stache=true; }
+  if(c.beard===4){ L.beard='full'; }
+  L.outfit=[
+    ()=>TEE('#17171b'),
+    ()=>TEE('#c42326')+`<text x="50" y="96" font-size="13" text-anchor="middle" fill="#fff">★</text>`,
+    s=>TEE('#e9e3d0')+`<path d="M8 100 Q10 80 34 76 L42 100Z M92 100 Q90 80 66 76 L58 100Z" fill="#1b1b1f"/><path d="M34 76 L42 100 M66 76 L58 100" stroke="#3a3a42" stroke-width="1.5"/>`,
+    s=>LOOKS.stars.outfit(s),
+  ][c.out];
+  L.extra=[
+    '',
+    `<rect x="33" y="41" width="15" height="9" rx="3" fill="#111"/><rect x="52" y="41" width="15" height="9" rx="3" fill="#111"/><path d="M48 44 L52 44" stroke="#111" stroke-width="2"/><path d="M36 43 L41 43 M55 43 L60 43" stroke="#666" stroke-width="1.3"/>`,
+    LOOKS.cowboy.top,
+    `<path d="M28 35 Q29 13 50 12 Q71 13 72 35Z" fill="#c42326"/><path d="M26 34 Q52 29 84 36 L84 41 Q52 34 26 39Z" fill="#8c1526"/><text x="50" y="30" font-size="11" text-anchor="middle" fill="#fff">★</text>`,
+    `<path d="M28 33 Q50 25 72 33 L72 39 Q50 31 28 39Z" fill="#c42326"/><path d="M72 35 L82 30 L80 40Z" fill="#8c1526"/>${[34,42,50,58,66].map(x=>`<circle cx="${x}" cy="34" r="1" fill="#fff"/>`).join('')}`,
+    `<path d="M23 52 Q22 12 50 12 Q78 12 77 52" stroke="#222" stroke-width="5" fill="none"/><rect x="17" y="42" width="11" height="17" rx="4" fill="#222"/><rect x="72" y="42" width="11" height="17" rx="4" fill="#222"/><rect x="19" y="45" width="4" height="11" rx="2" fill="#c42326"/><rect x="77" y="45" width="4" height="11" rx="2" fill="#c42326"/>`,
+    `<circle cx="27" cy="58" r="2.6" fill="#f5c94f"/><circle cx="73" cy="58" r="2.6" fill="#f5c94f"/><circle cx="27" cy="62" r="1.6" fill="#f5c94f"/><circle cx="73" cy="62" r="1.6" fill="#f5c94f"/>`,
+  ][c.acc];
+  return L;
+}
+const STAR_MINI=`<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="9" fill="#f5c94f"/><text x="50" y="70" font-size="60" text-anchor="middle" fill="#c42326">★</text></svg>`;
+function editorHTML(){
+  if(!S.editor) return '';
+  const t=T(), d=S.draft;
+  const prev=k=>i=>`<span class="edmini">${avatarSVG(composeLook({...d,...(k==='hair'&&(d.acc===2||d.acc===3)?{acc:0}:{}),[k]:i}))}</span>`;
+  const sw=arr=>i=>`<span class="sw" style="background:${arr[i]}"></span>`;
+  const rows=[['g',t.edSex,i=>`<span class="edtxt">${t.edSexes[i]}</span>`],['skin',t.edSkin,sw(SKINS)],['hair',t.edHair,prev('hair')],['hc',t.edHairColor,sw(HAIRC)],
+    ['beard',t.edBeard,prev('beard')],['acc',t.edAcc,prev('acc')],['out',t.edOut,prev('out')],['bg',t.edBg,sw(BGS)]];
+  return `<div class="overlay edov"><div class="sheet editor" role="dialog" aria-label="${t.edT}">
+    <h2>${t.edT}</h2>
+    <div class="edtop"><div class="frame edbig">${avatarSVG(composeLook(d))}</div><button class="ghost" id="edrand">${t.edRand}</button></div>
+    ${rows.map(([k,lab,fn])=>`<div class="edrow"><small>${lab}</small><div class="edopts">${Array.from({length:ED_OPTS[k]},(_,i)=>`<button class="edopt" data-ed="${k}:${i}" aria-pressed="${d[k]===i}" aria-label="${lab} ${i+1}">${fn(i)}</button>`).join('')}</div></div>`).join('')}
+    <div class="row"><button class="ghost" id="edcancel">${t.edCancel}</button><button class="cta" id="edsave">${t.edSave}</button></div>
+  </div></div>`;
+}
+function keepScroll(fn){
+  const ed=document.querySelector('.editor'), top=ed?ed.scrollTop:0, lefts=[...document.querySelectorAll('.edopts')].map(e=>e.scrollLeft);
+  fn();
+  const ed2=document.querySelector('.editor'); if(ed2) ed2.scrollTop=top;
+  document.querySelectorAll('.edopts').forEach((e,i)=>{ if(lefts[i]!=null) e.scrollLeft=lefts[i]; });
+}
+
+function avatarHTML(p){ return `<span class="avatar">${p.isHuman?(ME?avatarSVG(composeLook(ME)):youSVG()):avatarSVG(LOOKS[p.look])}</span>`; }
 
 /* ================= Sons ================= */
 const Snd={
@@ -906,7 +1025,7 @@ const Snd={
       if(this.ctx.state==='suspended') this.ctx.resume();
     }catch(e){}
   },
-  ok(){ return this.on && this.ctx && this.ctx.state==='running'; },
+  ok(){ if(this.ctx&&this.ctx.state==='suspended'){ try{ this.ctx.resume(); }catch(e){} } return this.on && this.ctx && this.ctx.state!=='closed'; },
   route(node,wet=true){ node.connect(this.out); if(wet) node.connect(this.verb); },
   // sininho: senoides com parciais inarmônicos e decaimento natural
   bell(f,t0=0,vol=.22,dec=1.1){
@@ -1094,6 +1213,7 @@ const Snd={
 try{ const s=JSON.parse(localStorage.getItem('fodinha-som')||'{}'); if(s.on===false) Snd.on=false; if(s.voice===false) Snd.voice=false; }catch(e){}
 function saveSnd(){ try{ localStorage.setItem('fodinha-som',JSON.stringify({on:Snd.on,voice:Snd.voice})); }catch(e){} }
 try{ speechSynthesis.getVoices(); }catch(e){}
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&Snd.ctx&&Snd.ctx.state==='suspended') Snd.ctx.resume().catch(()=>{}); });
 
 /* ================= Música da banda ================= */
 const TRACKS=["01_Right_in_the_Middle", "02_Dark_Side", "03_Mystical_Cat", "04_When_the_Light_Has_Gone", "05_My_America", "06_Break_Out_To_Mars", "07_One_More_Night_In_Nashville", "09_Thousand_Ways", "10_Fighting_My_Shadow", "12_Another_Day_Gone_By"].map(n=>({file:'music/'+n+'.mp3',title:n.replace(/^\d+_/,'').replace(/_/g,' ')}));
@@ -1133,7 +1253,6 @@ const FX={
   parts:[], conf:[], raf:0, t0:0, last:0, next:0,
   start(){
     this.stop(); this.parts=[]; this.conf=[]; this.t0=performance.now(); this.next=0;
-    if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const cols=['#f5c94f','#df292a','#36d2e2','#ffffff','#ff9a3c'];
     for(let i=0;i<140;i++) this.conf.push({x:Math.random(),y:-Math.random()*1.2,vy:.08+Math.random()*.12,vx:(Math.random()-.5)*.05,r:Math.random()*6,vr:(Math.random()-.5)*8,c:cols[i%cols.length],w:6+Math.random()*6});
     const loop=now=>{ this.frame(now); this.raf=requestAnimationFrame(loop); };
@@ -1291,7 +1410,7 @@ function startGame(){
   S.players=[human,...bots].map(p=>({...p,lives:S.startLives,alive:true,hand:[],bet:null,made:0}));
   const N=S.players.length;
   S.players.forEach((p,k)=>{ const a=(90+k*360/N)*Math.PI/180; p.cx=+Math.cos(a).toFixed(4); p.cy=+Math.sin(a).toFixed(4); });
-  Object.assign(S,{st:{hands:0,nailed:0,mz:0},place:null,reported:false,lastPts:null,duelDone:false,tut:false,coach:null,tutAllow:null,beerUsed:false,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null});
+  Object.assign(S,{beerTaken:false,st:{hands:0,nailed:0,mz:0},place:null,reported:false,lastPts:null,duelDone:false,tut:false,coach:null,tutAllow:null,beerUsed:false,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null});
   S.dealer=Math.floor(Math.random()*N);
   S.phase='table';
   runGame(tok).catch(e=>{ if(!(e instanceof Abort)) console.error(e); });
@@ -1410,7 +1529,7 @@ async function runGame(tok){
       if(choice==='setup'){ S.token++; S.phase='setup'; render(); return; }
       if(choice==='again'){ startGame(); return; }
       if(choice==='beer'){
-        S.beerUsed=true; S.modal={type:'beer'}; render();
+        S.beerUsed=true; S.beerTaken=true; S.modal={type:'beer'}; render();
         Music.duck(4200); Snd.canOpen(); Snd.gulps(.9);
         await wait(3600,tok);
         const y=byId('you'); y.alive=true; y.lives=1; S.modal=null; S.place=null;
@@ -1469,8 +1588,8 @@ function placePoints(place){ const N=S.players.length; return Math.round(10*(N-p
 function finishFor(place){
   if(S.tut||S.reported||!place) return;
   S.reported=true; S.place=place;
-  const pts=placePoints(place); S.lastPts=pts;
-  Rank.submit({id:DEVICE_ID,name:(ACE||T().you).trim(),pts,win:place===1,nailed:S.st.nailed,hands:S.st.hands,mz:S.st.mz,place,n:S.players.length});
+  const pts=Math.round(placePoints(place)*(S.beerTaken?.5:1)); S.lastPts=pts;
+  Rank.submit({id:DEVICE_ID,av:ME?encodeAce(ME):'',name:(ACE||T().you).trim(),pts,win:place===1,nailed:S.st.nailed,hands:S.st.hands,mz:S.st.mz,place,n:S.players.length});
 }
 function rankingHTML(){
   if(!S.rankOpen) return '';
@@ -1480,7 +1599,7 @@ function rankingHTML(){
   else if(Rank.ok===false) body=`<p class="hint">${t.rankOff}</p>`;
   else if(!d||!d.top.length) body=`<p class="hint">${t.rankEmpty}</p>`;
   else {
-    const row=r=>`<tr class="${r.me?'me':''}"><td class="n">${r.pos<=3?['🥇','🥈','🥉'][r.pos-1]:r.pos}</td><td class="nm">${esc(r.name)}</td><td class="n pts">${r.pts}</td><td class="n">${r.wins}</td><td class="n">${r.acc}%</td><td class="n">${r.mz}</td></tr>`;
+    const row=r=>`<tr class="${r.me?'me':''}"><td class="n">${r.pos<=3?['🥇','🥈','🥉'][r.pos-1]:r.pos}</td><td class="nm"><span class="rav">${(a=>a?avatarSVG(composeLook(a)):STAR_MINI)(decodeAce(r.av))}</span>${esc(r.name)}</td><td class="n pts">${r.pts}</td><td class="n">${r.wins}</td><td class="n">${r.acc}%</td><td class="n">${r.mz}</td></tr>`;
     const meOut=d.me&&!d.top.some(r=>r.me);
     body=`<div class="tbl"><table class="ranktbl"><thead><tr>${t.rankCols.map((c,i)=>`<th class="${i===1?'':'n'}">${c}</th>`).join('')}</tr></thead><tbody>${d.top.map(row).join('')}${meOut?`<tr class="gap"><td colspan="6">…</td></tr>${row(d.me)}`:''}</tbody></table></div>
       ${d.me?`<p class="rankme">${t.rankYourPos(d.me.pos,d.total)}</p>`:''}<p class="rankfoot">${t.rankFoot}</p>`;
@@ -1498,7 +1617,7 @@ function rankingHTML(){
 // Duas mãos com cartas combinadas: na testa + regra do pé, depois manilha, Zap e Matazap.
 const TUT_HANDS=[
   {n:1, dealer:0, vira:[3,'c'], cards:{you:[[9,'s']], julio:[[6,'h']], bia:[[0,'d']]},
-   bets:{julio:1,bia:0}, youBet:1, intro:['h1a','h1b'], bet:'h1bet',
+   bets:{julio:1,bia:0}, youBet:1, intro:['h1a','ladder','h1b'], bet:'h1bet',
    plays:[{julio:'Kh',bia:'4d',you:'3s'}], playTxt:['h1play'], after:['h1after']},
   {n:2, dealer:1, vira:[9,'h'], cards:{you:[['S'],[8,'d']], julio:[[0,'c'],[1,'s']], bia:[[7,'h'],[2,'d']]},
    bets:{bia:1,julio:1}, youBet:2, intro:['h2a','h2b'], bet:'h2bet',
@@ -1517,7 +1636,7 @@ function startTutorial(){
   S.players=[human,...bots].map(p=>({...p,lives:S.startLives,alive:true,hand:[],bet:null,made:0}));
   const N=S.players.length;
   S.players.forEach((p,k)=>{ const a=(90+k*360/N)*Math.PI/180; p.cx=+Math.cos(a).toFixed(4); p.cy=+Math.sin(a).toFixed(4); });
-  Object.assign(S,{tut:true,duelDone:true,beerUsed:true,coach:null,tutAllow:null,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null,tutOffer:false});
+  Object.assign(S,{tut:true,duelDone:true,beerUsed:true,beerTaken:false,coach:null,tutAllow:null,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null,tutOffer:false});
   S.phase='table';
   runTutorial(tok).catch(e=>{ if(!(e instanceof Abort)) console.error(e); });
 }
@@ -1589,7 +1708,7 @@ function cardHTML(c,o={}){
   if(!c||o.back) return `<div class="card back${cls}" aria-label="${T().facedown}">${tag}</div>`;
   if(c.star) return `<div class="card star${cls}${o.win?' win':''}" aria-label="${T().star}">${STAR_SVG}${tag}</div>`;
   const red=c.s==='h'||c.s==='d';
-  return `<div class="card face${cls}${red?' red':''}${o.win?' win':''}${maniOn(c)?' mani':''}" aria-label="${T().rank[c.r]} ${T().suit[c.s]}"><span class="ix">${RANKS[c.r]}<i>${SUIT_SYM[c.s]}</i></span><span class="pip">${SUIT_SYM[c.s]}</span>${tag}</div>`;
+  return `<div class="card face${cls}${red?' red':''}${o.win?' win':''}${maniOn(c)&&!o.nomani?' mani':''}" aria-label="${T().rank[c.r]} ${T().suit[c.s]}"><span class="ix">${RANKS[c.r]}<i>${SUIT_SYM[c.s]}</i></span><span class="pip">${SUIT_SYM[c.s]}</span>${tag}</div>`;
 }
 function lifebarHTML(p,max=S.startLives){
   const l=Math.max(0,p.lives); let s='';
@@ -1622,7 +1741,8 @@ function setupHTML(){
   <section class="box">
     <h2>${T().aceT}</h2>
     <p>${T().aceSub}</p>
-    <div class="acefield"><span class="acestar">★</span><input id="acename" type="text" maxlength="14" autocomplete="nickname" enterkeyhint="done" placeholder="${T().acePh}" value="${ACE.replace(/"/g,'&quot;')}" aria-label="${T().aceT}"></div>
+    <div class="acerow"><button class="acebtn" id="editace" aria-label="${ME?T().edEdit:T().edNew}"><span class="frame">${avatarHTML({isHuman:true})}</span><small>${ME?T().edEdit:T().edNew}</small></button>
+    <div class="acefield"><span class="acestar">★</span><input id="acename" type="text" maxlength="14" autocomplete="nickname" enterkeyhint="done" placeholder="${T().acePh}" value="${ACE.replace(/"/g,'&quot;')}" aria-label="${T().aceT}"></div></div>
   </section>
   <section class="box">
     <h2>${T().whoSits}</h2>
@@ -1654,7 +1774,7 @@ function seatHTML(p){
   const side=p.cy>-.5&&p.cx<-.5?'side-l':p.cy>-.5&&p.cx>.5?'side-r':'';
   return `<div class="seat ${side} ${S.turn===p.id?'turn':''} ${p.alive?'':'out'}" style="--cx:${p.cx};--cy:${p.cy}">
     ${bubble}
-    <div class="frame">${avatarHTML(p)}<span class="nametag">${nm(p)}</span>${p.isHuman&&S.beerUsed?`<span class="beerbadge">${beerSVG(false)}</span>`:''}
+    <div class="frame">${avatarHTML(p)}<span class="nametag">${nm(p)}</span>${p.isHuman&&S.beerTaken?`<span class="beerbadge">${beerSVG(false)}</span>`:''}
       ${S.players[S.dealer]===p?'<span class="dealer">D</span>':''}${chip}
       ${minis?`<div class="minis">${minis}</div>`:''}
     </div>
@@ -1676,10 +1796,17 @@ function pwFrac(){
   }
   return w;
 }
+function coachVis(key){
+  const t=T(), c=(r,su)=>cardHTML({id:RANKS[r]+su,r,s:su},{size:'tc',nomani:true});
+  if(key==='ladder'){ const su=['d','s','h','c','d','s','h','c','d','s']; return `<div class="ladder">${RANKS.map((_,r)=>c(r,su[r])).join('')}</div><div class="ladlab"><span>${t.tWeak}</span><i></i><span>${t.tStrong}</span></div>`; }
+  if(key==='h1b'||key==='h2a'){ const mr=key==='h1b'?4:0; return `<div class="maniv">${['c','h','s','d'].map((su,i)=>`<div>${c(mr,su)}<small>${t.maniNames[i]}</small></div>`).join('<em>›</em>')}</div>`; }
+  if(key==='h2b') return `<div class="maniv"><div>${cardHTML(mkCard(['S']),{size:'tc'})}<small>Matazap</small></div><em class="kill">${t.tKills}</em><div>${c(0,'c')}<small>Zap</small></div></div><p class="tsub">${t.tElse}</p>`;
+  return '';
+}
 function coachHTML(){
   if(!S.coach) return '';
   const t=T(), c=t.tut[S.coach.key], txt=typeof c==='function'?c(nm(byId('you'))):c;
-  return `<div class="coach" role="status" aria-live="polite"><small>★ ${t.tutLabel}</small><p>${txt}</p>${S.coach.btn?`<button class="cta" id="coachok">${t.tutNext}</button>`:''}</div>`;
+  return `<div class="coach${S.coach.btn?' sheetmode':''}" role="status" aria-live="polite"><small>★ ${t.tutLabel}</small><p>${txt}</p>${coachVis(S.coach.key)}${S.coach.btn?`<button class="cta" id="coachok">${t.tutNext}</button>`:''}</div>`;
 }
 function tableHTML(){
   const you=byId('you'), t=T();
@@ -1843,26 +1970,26 @@ function modalHTML(){
     </div></div>`;
   if(m.type==='out') return `<div class="overlay"><div class="sheet" role="dialog" aria-label="${t.noLives}">
       <h2>${t.noLives}</h2><p>${S.beerUsed?t.beerGone+' ':''}${t.bandGoes}</p>
-      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}</p>`:''}
+      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}${S.beerTaken?`<small>${t.beerTag}</small>`:''}</p>`:''}
       <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="ghost" data-modal="again">${t.again}</button></div>
       <div class="row"><button class="cta" data-modal="watch">${t.watch}</button></div>
     </div></div>`;
   if(m.type==='over'){
     const w=m.winners, youWon=w.length===1&&w[0].isHuman;
     const title=youWon?t.youWon:w.length===1?t.won(w[0].short):t.tie;
-    if(youWon) return `<canvas id="fx" aria-hidden="true"></canvas><div class="overlay party"><div class="celebrate" role="dialog" aria-label="${title}">
+    if(youWon) return `<div class="overlay party"><canvas id="fx" aria-hidden="true"></canvas><div class="celebrate" role="dialog" aria-label="${title}">
       <div class="winner frame">${avatarHTML(w[0])}</div>
       <div class="big"><span class="l1">${t.party[0]}</span><span>${t.party[1]}</span></div>
       <div class="sub">${title}</div>
       <p>${t.youWonSub}</p>
-      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}</p>`:''}
+      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}${S.beerTaken?`<small>${t.beerTag}</small>`:''}</p>`:''}
       <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="ghost" id="rankbtn">🏆 ${t.rankBtn}</button><button class="cta" data-modal="again">${t.again}</button></div>
     </div></div>`;
     return `<div class="overlay"><div class="sheet" role="dialog" aria-label="${title}">
       ${w.length===1?`<div class="winner frame">${avatarHTML(w[0])}</div>`:''}
       <h2>${title}</h2>
       <p>${youWon?t.youWonSub:t.hands(S.handNo)}</p>
-      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}</p>`:''}
+      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}${S.beerTaken?`<small>${t.beerTag}</small>`:''}</p>`:''}
       <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="ghost" id="rankbtn">🏆 ${t.rankBtn}</button><button class="cta" data-modal="again">${t.again}</button></div>
     </div></div>`;
   }
@@ -1875,7 +2002,7 @@ function render(){
   const app=document.getElementById('app'), game=S.phase!=='setup';
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = game ? tableHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:'');
+  app.innerHTML = game ? tableHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML()+editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:'');
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);
@@ -1905,6 +2032,11 @@ document.addEventListener('click',e=>{
   if(t.id==='start'){ if(!tutSeen()){ S.tutOffer=true; render(); return; } startGame(); return; }
   if(t.id==='tutyes'){ S.tutOffer=false; startTutorial(); return; }
   if(t.id==='tutskip'){ S.tutOffer=false; markTutSeen(); startGame(); return; }
+  if(t.id==='editace'){ S.draft=ME?{...ME}:randomAce(); S.editor=true; render(); return; }
+  if(t.dataset.ed){ const [k,i]=t.dataset.ed.split(':'); S.draft[k]=+i; keepScroll(render); return; }
+  if(t.id==='edrand'){ S.draft=randomAce(); keepScroll(render); return; }
+  if(t.id==='edcancel'){ S.editor=false; render(); return; }
+  if(t.id==='edsave'){ ME={...S.draft}; try{ localStorage.setItem('fodinha-me',encodeAce(ME)); }catch(e){} S.editor=false; render(); return; }
   if(t.id==='rankbtn'){ S.rankOpen=true; S.menu=false; Rank.load(); return; }
   if(t.id==='closerank'){ S.rankOpen=false; render(); return; }
   if(t.dataset.rtab){ Rank.tab=t.dataset.rtab; render(); return; }

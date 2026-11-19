@@ -34,6 +34,7 @@ function load_data($fh) {
 function add_game(&$map, $id, $g) {
     $r = isset($map[$id]) ? $map[$id] : ['pts' => 0, 'wins' => 0, 'games' => 0, 'nailed' => 0, 'hands' => 0, 'mz' => 0];
     $r['name'] = $g['name'];
+    if ($g['av'] !== '') $r['av'] = $g['av'];
     $r['pts'] += $g['pts'];
     $r['wins'] += $g['win'];
     $r['games'] += 1;
@@ -53,7 +54,7 @@ function board($map, $me) {
     $out = []; $mine = null;
     foreach ($rows as $i => $r) {
         $p = [
-            'pos' => $i + 1, 'name' => $r['name'], 'pts' => $r['pts'], 'wins' => $r['wins'], 'games' => $r['games'],
+            'pos' => $i + 1, 'name' => $r['name'], 'av' => $r['av'] ?? '', 'pts' => $r['pts'], 'wins' => $r['wins'], 'games' => $r['games'],
             'acc' => $r['hands'] ? (int)round(100 * $r['nailed'] / $r['hands']) : 0, 'mz' => $r['mz'], 'me' => $r['me'],
         ];
         if ($i < 50) $out[] = $p;
@@ -72,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nailed = clamp($in['nailed'] ?? 0, 0, 80);
     $g = [
         'name' => clean_name($in['name'] ?? ''),
+        'av' => substr(preg_replace('/[^0-9-]/', '', (string)($in['av'] ?? '')), 0, 40),
         'pts' => clamp($in['pts'] ?? 0, 0, 40),
         'win' => empty($in['win']) ? 0 : 1,
         'nailed' => $nailed,

@@ -730,7 +730,7 @@ const TXT={
     mailT1:p=>`🏆 +${p} points!`, mailT0:'Not this time!', mailSub1:'Save your points, play on any device and compete for StarAce prizes.', mailSub0:'Leave your email to keep your character and points, join the leaderboard and get your rematch: StarAce news and prizes.',
     mailSubGen:'With your email, your character, points and stock are saved and you can play on any device: in the app and on the site.', mailTGen:'Save my progress',
     mailPh:'your@email.com', mailOpt:'Send me StarAce news: shows, releases and leaderboard prizes.', mailPriv:'We only use your email to save your progress and, if you check the box, to send band news.',
-    mailSend:'Send code', mailLater:'Not now', mailCodeT:'Check your email', mailCodeSub:e=>`We sent a 6-digit code to ${e}. If it doesn’t arrive, check your spam folder.`, mailCodePh:'000000', mailConfirm:'Confirm', mailBack:'Change email',
+    mailSend:'Save', mailLater:'Not now', mailCodeT:'Check your email', mailCodeSub:e=>`We sent a 6-digit code to ${e}. If it doesn’t arrive, check your spam folder.`, mailCodePh:'000000', mailConfirm:'Confirm', mailBack:'Change email',
     mailDoneT:'Progress saved!', mailDoneSub:'Just sign in with this email on another device to pick up where you left off.', mailOk:'Rock on!',
     mailErrEmail:'That email doesn’t look right. Check it and try again.', mailErrCode:'Wrong code. Check the 6 digits.', mailErrExp:'The code expired. Ask for a new one.', mailErrWait:'Wait a minute before asking for another code.', mailErrNet:'Couldn’t reach the server. Try again.', mailErrMail:'We couldn’t send the email right now. Try again in a bit.',
     mailLink:'Save progress with email', mailLinked:e=>`✓ Progress saved to ${e}`,
@@ -825,7 +825,7 @@ const TXT={
     mailT1:p=>`🏆 ¡+${p} puntos!`, mailT0:'¡Esta vez no!', mailSub1:'Guarda tus puntos, juega en cualquier dispositivo y compite por premios de StarAce.', mailSub0:'Deja tu correo para guardar tu personaje y tus puntos, entrar al ranking y tener tu revancha: novedades y premios de StarAce.',
     mailSubGen:'Con tu correo, tu personaje, tus puntos y tu inventario quedan guardados y juegas en cualquier dispositivo: en la app y en el sitio.', mailTGen:'Guardar mi progreso',
     mailPh:'tu@correo.com', mailOpt:'Quiero recibir novedades de StarAce: shows, lanzamientos y premios del ranking.', mailPriv:'Usamos tu correo solo para guardar tu progreso y, si marcas la casilla, enviarte novedades de la banda.',
-    mailSend:'Enviar código', mailLater:'Ahora no', mailCodeT:'Revisa tu correo', mailCodeSub:e=>`Enviamos un código de 6 números a ${e}. Si no llega, revisa el spam.`, mailCodePh:'000000', mailConfirm:'Confirmar', mailBack:'Cambiar correo',
+    mailSend:'Guardar', mailLater:'Ahora no', mailCodeT:'Revisa tu correo', mailCodeSub:e=>`Enviamos un código de 6 números a ${e}. Si no llega, revisa el spam.`, mailCodePh:'000000', mailConfirm:'Confirmar', mailBack:'Cambiar correo',
     mailDoneT:'¡Progreso guardado!', mailDoneSub:'Entra con este correo en otro dispositivo para seguir donde lo dejaste.', mailOk:'¡Vamos!',
     mailErrEmail:'Ese correo no parece correcto. Revísalo e inténtalo de nuevo.', mailErrCode:'Código incorrecto. Revisa los 6 números.', mailErrExp:'El código venció. Pide uno nuevo.', mailErrWait:'Espera un minuto antes de pedir otro código.', mailErrNet:'No pudimos conectar con el servidor. Inténtalo de nuevo.', mailErrMail:'No pudimos enviar el correo ahora. Inténtalo en un rato.',
     mailLink:'Guardar progreso con correo', mailLinked:e=>`✓ Progreso guardado en ${e}`,
@@ -1826,10 +1826,9 @@ async function mailSend(){
   const M=S.mail, t=T(); M.err=''; M.email=(M.email||'').trim();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(M.email)){ M.err=t.mailErrEmail; render(); return; }
   M.busy=true; render();
-  try{ await Rank.post({a:'code',email:M.email}); M.step='code'; M.code=''; }
-  catch(e){ M.err=e==='email'?t.mailErrEmail:e==='wait'?t.mailErrWait:e==='mail'?t.mailErrMail:t.mailErrNet; }
+  try{ await Rank.post({a:'link',email:M.email,optin:M.optin,src:SRC,name:(ACE||T().you).trim(),av:ME?encodeAce(ME):''}); M.step='done'; Snd.nailed(); }
+  catch(e){ M.err=e==='email'?t.mailErrEmail:t.mailErrNet; }
   M.busy=false; render();
-  const ci=document.getElementById('codein'); if(ci) ci.focus();
 }
 async function mailVerify(){
   const M=S.mail, t=T(); M.err=''; M.busy=true; render();

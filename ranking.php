@@ -196,14 +196,18 @@ if ($a === 'code') {
     out($ok ? ['ok' => true] : ['error' => 'mail'], $ok ? 200 : 502);
 }
 
-if ($a === 'verify') {
+if ($a === 'verify' || $a === 'link') {
     $email = strtolower(trim((string)($in['email'] ?? '')));
-    $h = sha1($email); $c = $P['codes'][$h] ?? null;
-    if (!$c || ($c['exp'] ?? 0) < time() || ($c['tries'] ?? 0) >= 5) { flock($lock, LOCK_UN); out(['error' => 'expired'], 400); }
-    if (!hash_equals((string)$c['code'], preg_replace('/\D/', '', (string)($in['code'] ?? '')))) {
-        $P['codes'][$h]['tries'] = ($c['tries'] ?? 0) + 1; jsave($playFile, $P); flock($lock, LOCK_UN); out(['error' => 'code'], 400);
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 120) { flock($lock, LOCK_UN); out(['error' => 'email'], 400); }
+    $h = sha1($email);
+    if ($a === 'verify') {
+        $c = $P['codes'][$h] ?? null;
+        if (!$c || ($c['exp'] ?? 0) < time() || ($c['tries'] ?? 0) >= 5) { flock($lock, LOCK_UN); out(['error' => 'expired'], 400); }
+        if (!hash_equals((string)$c['code'], preg_replace('/\D/', '', (string)($in['code'] ?? '')))) {
+            $P['codes'][$h]['tries'] = ($c['tries'] ?? 0) + 1; jsave($playFile, $P); flock($lock, LOCK_UN); out(['error' => 'code'], 400);
+        }
+        unset($P['codes'][$h]);
     }
-    unset($P['codes'][$h]);
     $acctKey = 'u' . substr(sha1($email), 0, 16);
     $isNew = !isset($P['acc'][$acctKey]);
     // junta o progresso deste aparelho na conta

@@ -1809,7 +1809,7 @@ function setupHTML(){
     <p>${T().aceSub}</p>
     <div class="acerow"><button class="acebtn" id="editace" aria-label="${ME?T().edEdit:T().edNew}"><span class="frame">${avatarHTML({isHuman:true})}<span class="pencil">✏️</span></span></button>
     <div class="acefield"><span class="acestar">★</span><input id="acename" type="text" maxlength="14" autocomplete="nickname" enterkeyhint="done" placeholder="${T().acePh}" value="${ACE.replace(/"/g,'&quot;')}" aria-label="${T().aceT}"></div></div>
-    <button class="aceinvite${ME?'':' new'}" id="editace2">✏️ ${ME?T().edEdit:T().edNew}</button>
+    <button class="aceinvite${ME?'':' new'}" id="editace2">${ME?T().edEdit:T().edNew}</button>
   </section>
   <section class="box">
     <h2>${T().whoSits}</h2>

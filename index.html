@@ -373,6 +373,12 @@ td .lifebar{margin:0;width:58px}
 .pickacc .frame{width:84px}
 .pickacc b{font-family:var(--f-display);font-weight:400;font-size:22px;color:var(--gold)}
 .pickacc small{font-size:11px}
+.helpbtn{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid var(--gold);background:rgba(10,2,4,.85);color:var(--gold);font-family:var(--f-display);font-size:22px;line-height:1;padding-top:3px;display:grid;place-items:center}
+.cheat{text-align:center}
+.cheat h3{font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.03em;color:var(--gold);margin:6px 0 0}
+.cheat .ladlab{color:var(--muted)}
+.cheat .maniv small{color:var(--ink)}
+.cheat .tsub{color:var(--muted)!important;font-size:12px!important;margin:0}
 .linkbtn.inl{display:inline;font-size:12px}
 .linkbtn{align-self:flex-start;background:none;border:none;padding:2px 0;color:var(--teal-light);font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .pick.locked{cursor:not-allowed}
@@ -638,6 +644,7 @@ const TXT={
     edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereços (escolha vários)', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Monte seu personagem', edEdit:'Editar seu personagem',
     tWeak:'mais fraca', tStrong:'mais forte', tKills:'mata', tLoses:'perde pra', tWith:'com o Zap na rodada', tWithout:'sem o Zap: qualquer carta', tVira:'vira', tMani:'manilha',
     party:['TEEEEEM QUE','COMEMORAR!'],
+    cheatT:'Força das cartas', cheatRanks:'Ordem de força', cheatMani:r=>`Manilhas desta mão: ${r}`, cheatManiSub:'As manilhas ganham de todas as outras cartas. Entre elas, manda o naipe.', cheatNoVira:'A vira ainda não apareceu. Depois que aparecer, a manilha é a carta seguinte na força.', cheatMz:'O Ás de Estrelas só mata o Zap. Sem o Zap na rodada, perde pra qualquer carta.',
     lvNames:['Fã','Roadie','Backstage','Palco','Lenda'], lvT:'Níveis', lvLevel:n=>`Nível ${n}`, lvNext:(p,n)=>`faltam ${p} pts pro ${n}`, lvMax:'Nível máximo!', lvUpT:'Novo nível!', lvUpGo:'Show!', lvSeeAll:'Ver níveis e prêmios',
     lvRewards:['A banda inteira e os itens básicos do personagem','A Equipe (Tutuba, Rato e Fox), boné e camisetas StarAce, 🍺 +1','Jaqueta jeans, colar de estrela e fone, 🍺 +1','David Frangioni, fundos especiais e 🥃 Jack and Coke +1','Moldura dourada no ranking, chapéu da turnê, 🍺 +2 e 🥃 +1'],
     lvHow:'Seus pontos no ranking geral sobem seu nível. Cada nível libera adversários, itens e drinques que ficam guardados no seu estoque.',
@@ -733,6 +740,7 @@ const TXT={
     edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessories (pick several)', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create your character', edEdit:'Edit your character',
     tWeak:'weakest', tStrong:'strongest', tKills:'kills', tLoses:'loses to', tWith:'with the Zap in the trick', tWithout:'no Zap: any card', tVira:'flip', tMani:'trump',
     party:['WE GOTTA','CELEBRATE!'],
+    cheatT:'Card strength', cheatRanks:'Strength order', cheatMani:r=>`Trumps this hand: ${r}`, cheatManiSub:'Trumps beat every other card. Among them, the suit decides.', cheatNoVira:'The flip card hasn’t shown yet. Once it does, the trump is the next rank up.', cheatMz:'The Ace of Stars only kills the Zap. Without the Zap in the trick, it loses to any card.',
     lvNames:['Fan','Roadie','Backstage','Stage','Legend'], lvT:'Levels', lvLevel:n=>`Level: ${n}`, lvNext:(p,n)=>`${p} pts to ${n}`, lvMax:'Top level!', lvUpT:'New level!', lvUpGo:'Rock on!', lvSeeAll:'See levels and rewards',
     lvRewards:['The whole band and basic character items','The Crew (Tutuba, Rato and Fox), StarAce cap and tees, 🍺 +1','Denim jacket, star necklace and headphones, 🍺 +1','David Frangioni, special backgrounds and 🥃 Jack and Coke +1','Gold frame on the leaderboard, tour hat, 🍺 +2 and 🥃 +1'],
     lvHow:'Your all-time leaderboard points raise your level. Each level unlocks opponents, items and drinks that stay in your stock.',
@@ -828,6 +836,7 @@ const TXT={
     edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorios (elige varios)', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Arma tu personaje', edEdit:'Edita tu personaje',
     tWeak:'más baja', tStrong:'más alta', tKills:'mata', tLoses:'pierde con', tWith:'con el Zap en la ronda', tWithout:'sin el Zap: cualquier carta', tVira:'muestra', tMani:'manilla',
     party:['¡HAAAAAY QUE','CELEBRAR!'],
+    cheatT:'Fuerza de las cartas', cheatRanks:'Orden de fuerza', cheatMani:r=>`Manillas de esta mano: ${r}`, cheatManiSub:'Las manillas le ganan a todas las demás. Entre ellas, manda el palo.', cheatNoVira:'La muestra todavía no apareció. Cuando aparezca, la manilla es la carta siguiente en fuerza.', cheatMz:'El As de Estrellas solo mata al Zap. Sin el Zap en la ronda, pierde con cualquier carta.',
     lvNames:['Fan','Roadie','Backstage','Escenario','Leyenda'], lvT:'Niveles', lvLevel:n=>`Nivel ${n}`, lvNext:(p,n)=>`faltan ${p} pts para ${n}`, lvMax:'¡Nivel máximo!', lvUpT:'¡Nuevo nivel!', lvUpGo:'¡Vamos!', lvSeeAll:'Ver niveles y premios',
     lvRewards:['Toda la banda y los ítems básicos del personaje','El Equipo (Tutuba, Rato y Fox), gorra y camisetas StarAce, 🍺 +1','Chaqueta de jean, collar de estrella y auriculares, 🍺 +1','David Frangioni, fondos especiales y 🥃 Jack and Coke +1','Marco dorado en el ranking, sombrero de gira, 🍺 +2 y 🥃 +1'],
     lvHow:'Tus puntos en el ranking general suben tu nivel. Cada nivel desbloquea rivales, ítems y tragos que quedan en tu inventario.',
@@ -1792,6 +1801,26 @@ function levelStripHTML(){
     ${m.linked?`<p class="linked">${t.mailLinked(esc(m.email))} · <button class="linkbtn inl" id="mailopen">${t.mailSwitch}</button></p>`:`<button class="linkbtn" id="mailopen">${t.mailLink}</button>`}
   </div>`;
 }
+function cheatHTML(){
+  if(!S.cheat) return '';
+  const t=T(), su=['d','s','h','c','d','s','h','c','d','s'];
+  const c=(r,s)=>cardHTML({id:RANKS[r]+s,r,s},{size:'tc',nomani:true});
+  const mr=S.phase!=='setup'&&S.viraShown&&S.mr!=null?S.mr:null;
+  const maniRow=mr!=null?`<div class="maniv">${['c','h','s','d'].map((x,i)=>`<div>${c(mr,x)}<small>${t.maniNames[i]}</small></div>`).join('<em>›</em>')}</div>`:`<p class="tsub">${t.cheatNoVira}</p>`;
+  return `<div class="overlay rankov"><div class="sheet cheat" role="dialog" aria-label="${t.cheatT}">
+    <h2>${t.cheatT}</h2>
+    <h3>${t.cheatRanks}</h3>
+    <div class="ladder">${RANKS.map((_,r)=>c(r,su[r])).join('')}</div>
+    <div class="ladlab"><span>${t.tWeak}</span><i></i><span>${t.tStrong}</span></div>
+    <h3>${mr!=null?t.cheatMani(RANKS[mr]):t.tMani}</h3>
+    ${maniRow}
+    <p class="tsub">${t.cheatManiSub}</p>
+    <h3>Matazap</h3>
+    <div class="maniv"><div>${cardHTML(mkCard(['S']),{size:'tc'})}<small>Matazap</small></div><em class="kill">${t.tKills}</em><div>${mr!=null?c(mr,'c'):''}<small>Zap</small></div></div>
+    <p class="tsub">${t.cheatMz}</p>
+    <div class="row"><button class="cta" id="cheatclose">${t.rankClose}</button></div>
+  </div></div>`;
+}
 function levelsHTML(){
   if(!S.levelsOpen) return '';
   const t=T(), lv=myLevel();
@@ -2158,7 +2187,7 @@ function tableHTML(){
       ${splash}
     </div>
   </section>
-  <div class="infobar${S.coach&&['h1b','h2a'].includes(S.coach.key)?' tutfocus':''}"><div class="virabox">${viraHTML}</div><p class="ticker" aria-live="polite">${S.msg&&!S.betReq&&!S.playReq?S.msg():'&nbsp;'}</p></div>
+  <div class="infobar${S.coach&&['h1b','h2a'].includes(S.coach.key)?' tutfocus':''}"><div class="virabox">${viraHTML}</div><button class="helpbtn" id="cheat" aria-label="${t.cheatT}">?</button><p class="ticker" aria-live="polite">${S.msg&&!S.betReq&&!S.playReq?S.msg():'&nbsp;'}</p></div>
   ${coachHTML()}
   <section class="dock ${S.turn==='you'?'turn':''}">
     ${actions}
@@ -2319,7 +2348,7 @@ function render(){
   const app=document.getElementById('app'), game=S.phase!=='setup';
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML())+levelsHTML()+mailHTML()+levelUpHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML())+levelsHTML()+cheatHTML()+mailHTML()+levelUpHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);
@@ -2354,6 +2383,8 @@ document.addEventListener('click',e=>{
   if(t.id==='start'){ if(!tutSeen()){ S.tutOffer=true; render(); return; } startGame(); return; }
   if(t.id==='tutyes'){ S.tutOffer=false; startTutorial(); return; }
   if(t.id==='tutskip'){ S.tutOffer=false; markTutSeen(); startGame(); return; }
+  if(t.id==='cheat'){ S.cheat=true; render(); return; }
+  if(t.id==='cheatclose'){ S.cheat=false; render(); return; }
   if(t.id==='lvopen'){ S.levelsOpen=true; render(); return; }
   if(t.id==='lvclose'){ S.levelsOpen=false; render(); return; }
   if(t.id==='lvupok'){ S.levelUp=null; render(); return; }

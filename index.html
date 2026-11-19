@@ -367,6 +367,12 @@ td .lifebar{margin:0;width:58px}
 .lvbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-deep),var(--gold));border-radius:999px}
 .lvstrip small{font-size:12px}
 .linked{margin:2px 0 0;font-size:12px;color:var(--life);font-weight:700}
+.pickaccs{display:flex;gap:12px;justify-content:center}
+.pickacc{flex:1;max-width:150px;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(0,0,0,.25);border:2px solid rgba(245,201,79,.4);border-radius:16px;padding:12px}
+.pickacc:hover{border-color:var(--gold)}
+.pickacc .frame{width:84px}
+.pickacc b{font-family:var(--f-display);font-weight:400;font-size:22px;color:var(--gold)}
+.pickacc small{font-size:11px}
 .linkbtn.inl{display:inline;font-size:12px}
 .linkbtn{align-self:flex-start;background:none;border:none;padding:2px 0;color:var(--teal-light);font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .pick.locked{cursor:not-allowed}
@@ -639,7 +645,7 @@ const TXT={
     mailSend:'Salvar', mailLater:'Agora não', mailCodeT:'Confira seu e-mail', mailCodeSub:e=>`Mandamos um código de 6 números pra ${e}. Se não chegar, olhe a caixa de spam.`, mailCodePh:'000000', mailConfirm:'Confirmar', mailBack:'Trocar e-mail',
     mailDoneT:'Progresso salvo!', mailDoneSub:'Agora é só entrar com esse e-mail em outro aparelho pra continuar de onde parou.', mailOk:'Show!',
     mailErrEmail:'Esse e-mail não parece certo. Confira e tente de novo.', mailErrCode:'Código errado. Confira os 6 números.', mailErrExp:'O código expirou. Peça um novo.', mailErrWait:'Espere um minutinho antes de pedir outro código.', mailErrNet:'Não deu pra falar com o servidor. Tente de novo.', mailErrMail:'Não conseguimos mandar o e-mail agora. Tente de novo daqui a pouco.',
-    mailLink:'Já jogou antes? Entrar com e-mail', mailWelcome:n=>`Bem-vindo de volta, ${n}!`, mailSwitch:'Trocar conta', mailLinked:e=>`✓ Progresso salvo em ${e}`,
+    chooseT:'Qual personagem fica?', chooseSub:'Esse e-mail já tinha um personagem. Escolha qual vai ficar na sua conta. Os pontos dos dois se juntam.', chooseHere:'deste aparelho', chooseAcc:'já salvo na conta', mailLink:'Já jogou antes? Entrar com e-mail', mailWelcome:n=>`Bem-vindo de volta, ${n}!`, mailSwitch:'Trocar conta', mailLinked:e=>`✓ Progresso salvo em ${e}`,
     rankT:'Ranking', rankWeek:'Semana', rankAll:'Geral', rankBtn:'Ranking', rankLoading:'Carregando…', rankOff:'O ranking funciona no jogo do site: staraceband.com/game', rankEmpty:'Ninguém pontuou ainda. Seja o primeiro!', rankHow:'Toda partida dá pontos pela sua colocação: o 1º lugar ganha mais, mas 2º e 3º também pontuam. Mesa maior e com a equipe vale mais.', rankCols:['#','Ace','Pts','Vit.','Pedidos','★'], rankPts:p=>`+${p} pontos no ranking`, rankClose:'Fechar', rankFoot:'★ = Matazaps feitos. Pedidos = % de mãos em que acertou o pedido.', rankYourPos:(p,n)=>`Você está em ${p}º de ${n}`,
     tutBtn:'Aprender jogando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jogar agora',
     tutOfferT:'Primeira vez na mesa?', tutOfferSub:'Jogue duas mãos guiadas contra o Julio e a Bia e aprenda as regras em 1 minuto.', tutYes:'Aprender jogando', tutSkip:'Pular, já sei jogar',
@@ -734,7 +740,7 @@ const TXT={
     mailSend:'Save', mailLater:'Not now', mailCodeT:'Check your email', mailCodeSub:e=>`We sent a 6-digit code to ${e}. If it doesn’t arrive, check your spam folder.`, mailCodePh:'000000', mailConfirm:'Confirm', mailBack:'Change email',
     mailDoneT:'Progress saved!', mailDoneSub:'Just sign in with this email on another device to pick up where you left off.', mailOk:'Rock on!',
     mailErrEmail:'That email doesn’t look right. Check it and try again.', mailErrCode:'Wrong code. Check the 6 digits.', mailErrExp:'The code expired. Ask for a new one.', mailErrWait:'Wait a minute before asking for another code.', mailErrNet:'Couldn’t reach the server. Try again.', mailErrMail:'We couldn’t send the email right now. Try again in a bit.',
-    mailLink:'Played before? Sign in with email', mailWelcome:n=>`Welcome back, ${n}!`, mailSwitch:'Switch account', mailLinked:e=>`✓ Progress saved to ${e}`,
+    chooseT:'Which character stays?', chooseSub:'This email already had a character. Pick the one to keep on your account. Both sets of points are combined.', chooseHere:'on this device', chooseAcc:'saved on the account', mailLink:'Played before? Sign in with email', mailWelcome:n=>`Welcome back, ${n}!`, mailSwitch:'Switch account', mailLinked:e=>`✓ Progress saved to ${e}`,
     rankT:'Leaderboard', rankWeek:'This week', rankAll:'All time', rankBtn:'Leaderboard', rankLoading:'Loading…', rankOff:'The leaderboard works in the game on the site: staraceband.com/game', rankEmpty:'No one has scored yet. Be the first!', rankHow:'Every game gives points for where you finish: 1st place gets the most, but 2nd and 3rd score too. Bigger tables and the crew are worth more.', rankCols:['#','Ace','Pts','Wins','Bids','★'], rankPts:p=>`+${p} leaderboard points`, rankClose:'Close', rankFoot:'★ = Zap kills. Bids = % of hands where you hit your bid.', rankYourPos:(p,n)=>`You’re #${p} of ${n}`,
     tutBtn:'Learn by playing', tutLabel:'Tutorial', tutNext:'Continue', tutPlay:'Play now',
     tutOfferT:'First time at the table?', tutOfferSub:'Play two guided hands against Julio and Bia and learn the rules in a minute.', tutYes:'Learn by playing', tutSkip:'Skip, I know how to play',
@@ -829,7 +835,7 @@ const TXT={
     mailSend:'Guardar', mailLater:'Ahora no', mailCodeT:'Revisa tu correo', mailCodeSub:e=>`Enviamos un código de 6 números a ${e}. Si no llega, revisa el spam.`, mailCodePh:'000000', mailConfirm:'Confirmar', mailBack:'Cambiar correo',
     mailDoneT:'¡Progreso guardado!', mailDoneSub:'Entra con este correo en otro dispositivo para seguir donde lo dejaste.', mailOk:'¡Vamos!',
     mailErrEmail:'Ese correo no parece correcto. Revísalo e inténtalo de nuevo.', mailErrCode:'Código incorrecto. Revisa los 6 números.', mailErrExp:'El código venció. Pide uno nuevo.', mailErrWait:'Espera un minuto antes de pedir otro código.', mailErrNet:'No pudimos conectar con el servidor. Inténtalo de nuevo.', mailErrMail:'No pudimos enviar el correo ahora. Inténtalo en un rato.',
-    mailLink:'¿Ya jugaste? Entra con tu correo', mailWelcome:n=>`¡Bienvenido de nuevo, ${n}!`, mailSwitch:'Cambiar cuenta', mailLinked:e=>`✓ Progreso guardado en ${e}`,
+    chooseT:'¿Qué personaje se queda?', chooseSub:'Este correo ya tenía un personaje. Elige cuál queda en tu cuenta. Los puntos de los dos se suman.', chooseHere:'de este dispositivo', chooseAcc:'guardado en la cuenta', mailLink:'¿Ya jugaste? Entra con tu correo', mailWelcome:n=>`¡Bienvenido de nuevo, ${n}!`, mailSwitch:'Cambiar cuenta', mailLinked:e=>`✓ Progreso guardado en ${e}`,
     rankT:'Ranking', rankWeek:'Semana', rankAll:'General', rankBtn:'Ranking', rankLoading:'Cargando…', rankOff:'El ranking funciona en el juego del sitio: staraceband.com/game', rankEmpty:'Nadie sumó puntos todavía. ¡Sé el primero!', rankHow:'Cada partida da puntos según tu posición: el 1º gana más, pero el 2º y el 3º también suman. Las mesas más grandes y con el equipo valen más.', rankCols:['#','Ace','Pts','Vict.','Apuestas','★'], rankPts:p=>`+${p} puntos en el ranking`, rankClose:'Cerrar', rankFoot:'★ = Matazaps. Apuestas = % de manos en que acertaste.', rankYourPos:(p,n)=>`Estás en el puesto ${p} de ${n}`,
     tutBtn:'Aprender jugando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jugar ahora',
     tutOfferT:'¿Primera vez en la mesa?', tutOfferSub:'Juega dos manos guiadas contra Julio y Bia y aprende las reglas en un minuto.', tutYes:'Aprender jugando', tutSkip:'Saltar, ya sé jugar',
@@ -1818,6 +1824,10 @@ function mailHTML(){
       <input id="codein" class="mailin code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="${t.mailCodePh}" value="${esc(M.code)}" aria-label="Código">
       ${M.err?`<p class="merr">${M.err}</p>`:''}
       <div class="row"><button class="ghost" id="mailback">${t.mailBack}</button><button class="cta" id="mailverify" ${M.busy?'disabled':''}>${t.mailConfirm}</button></div>`;
+  } else if(M.step==='choose'){
+    const card=(o,id,lab)=>{ const a=decodeAce(o.av); return `<button class="pickacc" id="${id}"><span class="frame">${a?avatarSVG(composeLook(a)):STAR_MINI}</span><b>${esc(o.name)}</b><small>${lab}</small></button>`; };
+    body=`<h2>${t.chooseT}</h2><p>${t.chooseSub}</p>
+      <div class="pickaccs">${card(M.local,'keeplocal',t.chooseHere)}${card(M.acc,'keepacc',t.chooseAcc)}</div>`;
   } else {
     body=`<h2>${M.welcome?t.mailWelcome(esc(M.welcome)):t.mailDoneT}</h2><p>${t.mailDoneSub}</p><div class="row"><button class="cta" id="mailclose">${t.mailOk}</button></div>`;
   }
@@ -1835,9 +1845,15 @@ async function mailSend(){
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(M.email)){ M.err=t.mailErrEmail; render(); return; }
   M.busy=true; render();
   try{
-    const d=await Rank.post({a:'link',email:M.email,optin:M.optin,src:SRC,name:(ACE||T().you).trim(),av:ME?encodeAce(ME):''});
-    if(d&&!d.new) adoptAccount(true);
-    M.welcome=d&&!d.new?(ACE||''):''; M.step='done'; Snd.nailed();
+    const local={name:(ACE||'').trim(),av:ME?encodeAce(ME):''};
+    const d=await Rank.post({a:'link',email:M.email,optin:M.optin,src:SRC,name:(ACE||T().you).trim(),av:local.av});
+    const acc=Rank.me||{};
+    if(d&&!d.new&&local.name&&((acc.name&&acc.name!==local.name)||(acc.av&&local.av&&acc.av!==local.av))){
+      M.local=local; M.acc={name:acc.name||local.name,av:acc.av||local.av}; M.step='choose';
+    } else {
+      if(d&&!d.new) adoptAccount(true);
+      M.welcome=d&&!d.new?(ACE||''):''; M.step='done'; Snd.nailed();
+    }
   }
   catch(e){ M.err=e==='email'?t.mailErrEmail:t.mailErrNet; }
   M.busy=false; render();
@@ -2339,6 +2355,8 @@ document.addEventListener('click',e=>{
   if(t.id==='lvclose'){ S.levelsOpen=false; render(); return; }
   if(t.id==='lvupok'){ S.levelUp=null; render(); return; }
   if(t.id==='mailopen'){ S.mail={step:'email',email:'',code:'',optin:false,err:'',busy:false,ctx:'gen'}; render(); const mi=document.getElementById('mailin'); if(mi) mi.focus(); return; }
+  if(t.id==='keeplocal'&&S.mail){ ACE=S.mail.local.name; ME=decodeAce(S.mail.local.av)||ME; try{ localStorage.setItem('fodinha-ace',ACE); if(ME) localStorage.setItem('fodinha-me',encodeAce(ME)); }catch(e){} pushProfile(); S.mail.welcome=ACE; S.mail.step='done'; Snd.nailed(); render(); return; }
+  if(t.id==='keepacc'&&S.mail){ adoptAccount(true); S.mail.welcome=ACE; S.mail.step='done'; Snd.nailed(); render(); return; }
   if(t.id==='mailclose'){ S.mail=null; render(); return; }
   if(t.id==='mailsend'){ mailSend(); return; }
   if(t.id==='mailverify'){ mailVerify(); return; }

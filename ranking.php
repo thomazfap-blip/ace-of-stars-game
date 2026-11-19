@@ -168,6 +168,11 @@ if ($a === 'profile') {
         $P['acc'][$key]['name'] = clean_name($in['name'] ?? '');
         $av = clean_av($in['av'] ?? ''); if ($av !== '') $P['acc'][$key]['av'] = $av;
         jsave($playFile, $P);
+        // atualiza o nome e o personagem também no ranking
+        $nm = $P['acc'][$key]['name'];
+        if (isset($R['all'][$key])) { $R['all'][$key]['name'] = $nm; if ($av !== '') $R['all'][$key]['av'] = $av; }
+        foreach ($R['weeks'] as $wk => $m) if (isset($m[$key])) { $R['weeks'][$wk][$key]['name'] = $nm; if ($av !== '') $R['weeks'][$wk][$key]['av'] = $av; }
+        jsave($rankFile, $R);
     }
     flock($lock, LOCK_UN);
     out(['profile' => profile($R, $P, $key)]);

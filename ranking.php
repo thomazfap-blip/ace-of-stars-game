@@ -89,7 +89,34 @@ function full($R, $P, $key) {
     $wk = week_key();
     return ['all' => board($R['all'], $key, $R['all']), 'week' => board($R['weeks'][$wk] ?? [], $key, $R['all']), 'weekKey' => $wk, 'profile' => profile($R, $P, $key)];
 }
+// Envio pelo Gmail do fans@ (SMTP). A senha de app fica em public_html/ace-mail.php, fora do GitHub:
+//   <?php define('ACE_SMTP_USER','fans@staraceband.com'); define('ACE_SMTP_PASS','xxxx xxxx xxxx xxxx');
+$cfg = dirname(__DIR__) . '/ace-mail.php';
+if (is_file($cfg)) include_once $cfg;
+
+function smtp_send($to, $subj, $body, $replyTo = null) {
+    $user = ACE_SMTP_USER; $pass = str_replace(' ', '', ACE_SMTP_PASS);
+    $fp = @stream_socket_client('ssl://smtp.gmail.com:465', $en, $es, 15);
+    if (!$fp) return false;
+    stream_set_timeout($fp, 15);
+    $read = function () use ($fp) { $d = ''; while (($l = fgets($fp, 1024)) !== false) { $d .= $l; if (strlen($l) < 4 || $l[3] === ' ') break; } return $d; };
+    $cmd = function ($c, $ok) use ($fp, $read) { if ($c !== null) fwrite($fp, $c . "\r\n"); $r = $read(); return strpos($r, (string)$ok) === 0; };
+    $ok = $cmd(null, 220) && $cmd('EHLO staraceband.com', 250) && $cmd('AUTH LOGIN', 334)
+        && $cmd(base64_encode($user), 334) && $cmd(base64_encode($pass), 235)
+        && $cmd("MAIL FROM:<$user>", 250) && $cmd("RCPT TO:<$to>", 250) && $cmd('DATA', 354);
+    if ($ok) {
+        $h = "From: StarAce <$user>\r\nTo: <$to>\r\nSubject: =?UTF-8?B?" . base64_encode($subj) . "?=\r\n"
+           . "Date: " . date('r') . "\r\nMessage-ID: <" . bin2hex(random_bytes(8)) . "@staraceband.com>\r\n"
+           . ($replyTo ? "Reply-To: <$replyTo>\r\n" : '')
+           . "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n";
+        fwrite($fp, $h . "\r\n" . chunk_split(base64_encode($body)) . "\r\n.\r\n");
+        $ok = strpos($read(), '250') === 0;
+    }
+    @fwrite($fp, "QUIT\r\n"); fclose($fp);
+    return $ok;
+}
 function send_mail($to, $subj, $body, $replyTo = null) {
+    if (defined('ACE_SMTP_USER') && defined('ACE_SMTP_PASS')) return smtp_send($to, $subj, $body, $replyTo);
     $h = "From: StarAce <" . FANS . ">\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit";
     if ($replyTo) $h .= "\r\nReply-To: " . $replyTo;
     return @mail($to, '=?UTF-8?B?' . base64_encode($subj) . '?=', $body, $h, '-f' . FANS);

@@ -227,6 +227,26 @@ if ($a === 'verify' || $a === 'link') {
     }
     $acctKey = 'u' . substr(sha1($email), 0, 16);
     $isNew = !isset($P['acc'][$acctKey]);
+    $mode = $in['mode'] ?? '';
+    $devName = clean_name($in['name'] ?? ''); $devAv = clean_av($in['av'] ?? '');
+    // e-mail já tem outro personagem: pergunta antes de mexer em qualquer coisa
+    if (!$isNew && $key !== $acctKey && $mode === '') {
+        $acc0 = $P['acc'][$acctKey];
+        if (($acc0['name'] ?? '') !== $devName || (!empty($acc0['av']) && $devAv !== '' && $acc0['av'] !== $devAv)) {
+            flock($lock, LOCK_UN);
+            out(['conflict' => true, 'acc' => ['name' => $acc0['name'] ?? '', 'av' => $acc0['av'] ?? '']]);
+        }
+    }
+    // ficar com o personagem deste aparelho: o antigo continua no ranking, só sem o e-mail
+    if (!$isNew && $mode === 'takeover' && $key !== $acctKey) {
+        $orphan = 'o' . substr(sha1($acctKey . microtime()), 0, 16);
+        merge_row($R['all'], $acctKey, $orphan);
+        foreach ($R['weeks'] as $wk => $m) { merge_row($m, $acctKey, $orphan); $R['weeks'][$wk] = $m; }
+        if (isset($P['inv'][$acctKey])) { $P['inv'][$orphan] = $P['inv'][$acctKey]; unset($P['inv'][$acctKey]); }
+        foreach ($P['links'] as $d => $k) if ($k === $acctKey) $P['links'][$d] = $orphan;
+        $P['acc'][$acctKey]['name'] = $devName;
+        if ($devAv !== '') $P['acc'][$acctKey]['av'] = $devAv; else unset($P['acc'][$acctKey]['av']);
+    }
     // junta o progresso deste aparelho na conta
     if ($key !== $acctKey) {
         merge_row($R['all'], $key, $acctKey);

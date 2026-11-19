@@ -250,7 +250,7 @@ small{color:var(--muted)}
 @keyframes pop{from{transform:translateX(-50%) scale(.4);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
 .played{
   position:absolute;z-index:5;
-  left:calc(50% + var(--cx) * 19%);top:calc(50% + var(--cy) * 18%);
+  left:calc(50% + var(--cx) * 22%);top:calc(50% + var(--cy) * 17.5%);
   transform:translate(-50%,-50%) rotate(var(--rot));
   transition:transform .25s ease;
 }
@@ -351,12 +351,28 @@ td{padding:6px;border-top:1px solid rgba(255,245,226,.14);vertical-align:middle}
 td .who{display:flex;align-items:center;gap:8px}
 td .mini{width:30px;height:30px;border-radius:7px;overflow:hidden;flex:none;background:#fff;padding:1px}
 td.n,th.n{text-align:center}
-td .lifebar{margin:0;width:70px}
+td .lifebar{margin:0;width:58px}
+@media (max-width:560px){ table{font-size:13px} th{padding:6px 3px;letter-spacing:.03em;font-size:9px} td{padding:6px 3px} td .mini{width:26px;height:26px} td .who{gap:6px} td .lifebar{width:50px} }
 .lostc{color:var(--danger);font-weight:800}
 .zero{color:var(--life);font-weight:800}
 .outtag{font-size:10px;background:var(--danger);color:#2b0700;border-radius:6px;padding:1px 6px;margin-left:4px;font-weight:800}
 .sheet .row{justify-content:center}
 .winner{width:120px;margin:0 auto}
+.coach{background:#fffaf0;color:#2a0a10;border:3px solid var(--gold);border-radius:16px;padding:10px 14px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.coach small{font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--rim);font-size:11px}
+.coach p{margin:0;font-size:15px;line-height:1.4}
+.coach .cta{align-self:flex-end;font-size:22px;padding:6px 24px}
+.tutq{justify-content:center}
+.pchip.tuthl{box-shadow:0 0 0 4px var(--gold),0 0 24px rgba(245,201,79,.9);animation:tutpulse 1s ease-in-out infinite}
+.cardbtn.tuthl{animation:tutpulse 1s ease-in-out infinite}
+.cardbtn.tuthl .card{box-shadow:0 0 0 3px var(--gold),0 0 24px rgba(245,201,79,.9)}
+@keyframes tutpulse{50%{transform:translateY(-8px)}}
+.duelsheet{align-items:center}
+.dueltitle{font-size:clamp(60px,18vw,110px)!important;-webkit-text-stroke:3px var(--rim);paint-order:stroke fill;color:var(--gold)}
+.duelvs{display:flex;align-items:center;justify-content:center;gap:14px}
+.duelvs > div{display:flex;flex-direction:column;align-items:center;gap:6px;width:96px}
+.duelvs .frame{width:96px}
+.duelvs .vs{font-family:var(--f-display);font-size:38px;color:#fff;-webkit-text-stroke:2px var(--rim);paint-order:stroke fill}
 .beersheet h3{font-family:var(--f-display);font-weight:400;font-size:30px;letter-spacing:.03em;color:var(--ink);text-align:center;margin:0;line-height:1}
 .beerwrap{width:96px;margin:0 auto}
 .beerwrap.big{width:min(200px,50vw)}
@@ -437,7 +453,7 @@ details.rulesbox .rules{margin-top:8px}
 }
 @media (prefers-reduced-motion:reduce){
   .played.anim,.played.collect,.bubble.anim,.dealin,.splash.anim .burst,.splash.anim .word,.ring.shake,.played.lead .card{animation:none}
-  .beer.drink,.beer.drink .liquid,.beer.drink .foamtop,.beer .bub,.cheers,.seat.turn .frame::after,.manibadge,.celebrate .big,.celebrate .winner{animation:none}
+  .tuthl,.beer.drink,.beer.drink .liquid,.beer.drink .foamtop,.beer .bub,.cheers,.seat.turn .frame::after,.manibadge,.celebrate .big,.celebrate .winner{animation:none}
   .cardbtn{transition:none}
 }
 </style>
@@ -458,7 +474,8 @@ const TXT={
       '<b>Ás de Estrelas</b>: a única carta que mata o Zap. Fora isso, vale como a mais fraca.',
       '<b>1 carta</b> na testa. <b>3 cartas</b>: testa, cega e na mão.',
       '<b>Sexta Maluca</b>: a vira só aparece depois dos pedidos.',
-      'Quem pede por último não pode fechar a conta. Alguém sempre se ferra.'],
+      'Quem pede por último não pode fechar a conta. Alguém sempre se ferra.',
+      'Na <b>final</b>, quando sobram dois, cada um fica com só 1 vida.'],
     pickOne:'Escolha pelo menos um adversário.', sit:'Sentar na mesa',
     hand:'Mão', cards:'Cartas', bids:'Pedidos',
     mode:{1:'Na testa',3:'Testa, cega e mão',6:'Sexta Maluca',n:'Normal'},
@@ -489,6 +506,24 @@ const TXT={
     roles:{producer:'Produtor',guitarVox:'Guitarra',drums:'Bateria',bassVox:'Baixo',voxKeys:'Teclado e violão',guitar:'Guitarra',sound:'Técnico de som',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipe', allTab:g=>g==='band'?'Chamar a banda toda':'Chamar a equipe toda', crewSub:'A equipe que roda com a StarAce. Nível mais alto que o da banda: aqui o jogo é sério.',
     party:['TEEEEEM QUE','COMEMORAR!'],
+    tutBtn:'Aprender jogando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jogar agora',
+    tutOfferT:'Primeira vez na mesa?', tutOfferSub:'Jogue duas mãos guiadas contra o Julio e a Bia e aprenda as regras em 1 minuto.', tutYes:'Aprender jogando', tutSkip:'Pular, já sei jogar',
+    tutDoneT:'Você já sabe jogar!', tutDoneSub:'Resumo: peça quantas rodadas vai fazer, acerte o pedido e não perca vidas. Quem sobrar com vida por último vence.',
+    tut:{
+      intro:n=>`Bem-vindo à mesa, ${n}! Vou te ensinar jogando duas mãos rápidas contra o Julio e a Bia.`,
+      h1a:'Mão 1: cada um recebe 1 carta, na testa. Você vê as cartas dos outros, mas não a sua.',
+      h1b:'A carta virada ao lado da plaquinha é a vira: um 7. A manilha é a carta logo acima na força: a Q (Dama). As manilhas ganham de todas as outras.',
+      h1bet:'Antes de jogar, cada um diz quantas rodadas vai fazer. O Julio pediu 1 e a Bia pediu 0. Você é o último a pedir (o pé), e o pé não pode deixar a soma igual ao número de cartas: o 0 está bloqueado. Peça 1.',
+      h1play:'O Julio jogou um K e a Bia um 4. Sua vez: toque na sua carta pra jogar, mesmo sem ver.',
+      h1after:'Sua carta era um 3, a mais forte depois das manilhas. Você fez a rodada e acertou o pedido, então não perde vida. O Julio pediu 1 e fez 0: perde uma vida.',
+      h2a:'Mão 2: agora são 2 cartas e você vê as suas. A vira é um 3, então a manilha é o 4. O 4 de paus é o Zap, a carta mais forte do jogo.',
+      h2b:'Olha o que você tem: o Ás de Estrelas! Sozinho ele é a carta mais fraca, mas se cair na mesma rodada que o Zap, ele mata o Zap. É o Matazap.',
+      h2bet:'A Bia pediu 1. Seu 2 de ouros é forte, e o Ás de Estrelas pode caçar o Zap. Arrisque: peça 2.',
+      h2play1:'A Bia saiu com um Ás. Jogue o 2 de ouros: o 2 é mais forte que o Ás.',
+      h2play2:'Você fez a primeira rodada, então começa a próxima. Jogue o Ás de Estrelas e torça pro Zap aparecer.',
+      h2after:'MATAZAP! O Julio guardou o Zap e você matou ele com o Ás de Estrelas. Você pediu 2 e fez 2: pedido certinho.',
+    },
+    duelT:'FINAL!', duelSub:'Um contra um. Não importa quantas vidas sobraram: agora cada um tem só 1. Errou o pedido, perdeu.', duelGo:'Bora!',
     aceT:'Seu nome de Ace', aceSub:'É assim que a banda vai te chamar na mesa.', acePh:'Digite seu nome',
     beerT:'Toma uma cerveja e volta?', beerSub:'Você volta pro jogo com 1 vida. Só vale uma vez: perdeu essa, tá fora de vez.', beerYes:'Tomar uma cerveja', beerDrink:'Saúde!', beerBack:'Você voltou com 1 vida!', beerGone:'A cerveja já foi. Dessa vez não tem volta.',
     fullBtn:'Regras completas', fullT:'Como jogar', closeRules:'Entendi',
@@ -498,7 +533,7 @@ const TXT={
       ['A vira e a manilha','<p>Depois de dar as cartas, uma carta é virada na mesa: a <b>vira</b>. A <b>manilha</b> é a carta logo acima dela na ordem de força, e passa a ganhar de todas as outras.</p><p class="ex">Virou 4, a manilha é 5. Virou 3, a manilha dá a volta e é o 4.</p><p>Entre as quatro manilhas, quem manda é o naipe:</p>__MANI__'],
       ['O Ás de Estrelas (Matazap)','<p>É a carta especial da StarAce. Se cai na mesma rodada que o Zap, <b>mata o Zap</b> e faz a rodada. Em qualquer outra rodada, vale como a carta mais fraca do baralho.</p><p>Dá pra guardar pra caçar o Zap, ou usar como carta baixa quando você quer perder a rodada.</p>'],
       ['Como funciona uma mão','<ol><li>Quem dá embaralha e distribui. Na primeira mão é 1 carta pra cada, na segunda 2, e assim por diante.</li><li>Começando por quem está depois de quem deu, cada um diz quantas rodadas vai fazer. Esse é o <b>pedido</b>.</li><li><b>Regra do pé:</b> quem pede por último não pode pedir um número que faça a soma dos pedidos bater com o número de cartas. Assim alguém sempre erra.</li><li>Joga-se uma rodada por carta. Na primeira, começa quem está depois de quem deu. Cada um joga uma carta e quem jogou a mais forte faz a rodada.</li><li>Quem fez a rodada começa a próxima.</li><li>No fim da mão, compara-se o pedido de cada um com o que fez.</li></ol>'],
-      ['Vidas','<p>Todo mundo começa com 5 vidas (dá pra escolher menos). Você perde uma vida por rodada de diferença:</p><ul><li>Pediu 3 e fez 1: perde 2.</li><li>Pediu 0 e fez 1: perde 1.</li><li>Pediu 2 e fez 2: não perde nada.</li></ul><p>Sem vidas, você sai da mesa.</p>'],
+      ['Vidas','<p>Todo mundo começa com 5 vidas (dá pra escolher menos). Você perde uma vida por rodada de diferença:</p><ul><li>Pediu 3 e fez 1: perde 2.</li><li>Pediu 0 e fez 1: perde 1.</li><li>Pediu 2 e fez 2: não perde nada.</li></ul><p>Sem vidas, você sai da mesa.</p><p><b>Final:</b> quando sobram só dois jogadores, os dois ficam com 1 vida, não importa quantas tinham. Quem errar primeiro, perde.</p>'],
       ['Mãos especiais','<ul><li><b>1 carta, na testa:</b> sua carta fica virada pra fora. Você vê a de todo mundo, menos a sua, e pede no chute.</li><li><b>3 cartas:</b> uma na testa (só os outros veem), uma às cegas (ninguém vê, nem você) e uma na mão (só você vê).</li><li><b>Sexta Maluca:</b> na mão de 6 cartas, a vira só aparece depois que todo mundo pediu. Você pede sem saber qual é a manilha.</li></ul>'],
       ['Quantas cartas por mão','<p>O número de cartas sobe uma por mão até o máximo que o baralho permite pra quantidade de jogadores (no máximo 8). Depois volta a cair até 1 e sobe de novo.</p><p>Com muita gente na mesa o máximo é menor. Com 7 ou mais jogadores, não chega na Sexta Maluca.</p>'],
       ['Dicas pra quem está começando','<ul><li>Manilhas, 3 e 2 costumam ganhar rodadas. Conte quantas você tem antes de pedir.</li><li>Com a mão fraca, pedir 0 é uma boa: aí você tenta perder todas.</li><li>Já fez o que pediu? Jogue a carta mais baixa pra não fazer rodada a mais.</li><li>Preste atenção nos pedidos dos outros: eles mostram quem vai brigar pelas rodadas.</li></ul>'],
@@ -518,7 +553,8 @@ const TXT={
       '<b>Ace of Stars</b>: the only card that kills the Zap. Otherwise, it counts as the lowest.',
       '<b>1 card</b> on your forehead. <b>3 cards</b>: forehead, blind and in hand.',
       '<b>Crazy Sixth</b>: the flip card only shows after the bids.',
-      'The last bidder can’t make the total match the cards. Someone always gets screwed.'],
+      'The last bidder can’t make the total match the cards. Someone always gets screwed.',
+      'In the <b>final</b>, when two players are left, each one has just 1 life.'],
     pickOne:'Pick at least one opponent.', sit:'Take a seat',
     hand:'Hand', cards:'Cards', bids:'Bids',
     mode:{1:'Forehead',3:'Forehead, blind & hand',6:'Crazy Sixth',n:'Normal'},
@@ -549,6 +585,24 @@ const TXT={
     roles:{producer:'Producer',guitarVox:'Guitar',drums:'Drums',bassVox:'Bass',voxKeys:'Keys & acoustic guitar',guitar:'Guitar',sound:'Sound engineer',roadie:'Roadie',video:'Video maker'},
     tabBand:'Band', tabCrew:'Crew', allTab:g=>g==='band'?'Call the whole band':'Call the whole crew', crewSub:'The crew that tours with StarAce. A higher level than the band: this is the serious table.',
     party:['WE GOTTA','CELEBRATE!'],
+    tutBtn:'Learn by playing', tutLabel:'Tutorial', tutNext:'Continue', tutPlay:'Play now',
+    tutOfferT:'First time at the table?', tutOfferSub:'Play two guided hands against Julio and Bia and learn the rules in a minute.', tutYes:'Learn by playing', tutSkip:'Skip, I know how to play',
+    tutDoneT:'You know how to play!', tutDoneSub:'In short: bid how many tricks you’ll take, hit your bid and keep your lives. The last player with lives left wins.',
+    tut:{
+      intro:n=>`Welcome to the table, ${n}! I’ll teach you with two quick hands against Julio and Bia.`,
+      h1a:'Hand 1: everyone gets 1 card, on their forehead. You see everyone else’s card, but not your own.',
+      h1b:'The face-up card next to the badge is the flip card: a 7. The trump is the next rank up: the Queen. Trumps beat every other card.',
+      h1bet:'Before playing, everyone bids how many tricks they’ll take. Julio bid 1 and Bia bid 0. You bid last, and the last bidder can’t make the total match the number of cards: 0 is blocked. Bid 1.',
+      h1play:'Julio played a King and Bia a 4. Your turn: tap your card to play it, even without seeing it.',
+      h1after:'Your card was a 3, the strongest card after the trumps. You took the trick and hit your bid, so you lose no life. Julio bid 1 and took 0: he loses a life.',
+      h2a:'Hand 2: now it’s 2 cards and you can see yours. The flip card is a 3, so the trump is 4. The 4 of clubs is the Zap, the strongest card in the game.',
+      h2b:'Look what you’ve got: the Ace of Stars! On its own it’s the weakest card, but if it lands in the same trick as the Zap, it kills the Zap. That’s the Zap Killer.',
+      h2bet:'Bia bid 1. Your 2 of diamonds is strong, and the Ace of Stars can hunt the Zap. Go for it: bid 2.',
+      h2play1:'Bia led with an Ace. Play the 2 of diamonds: the 2 beats the Ace.',
+      h2play2:'You took the first trick, so you lead the next one. Play the Ace of Stars and hope the Zap shows up.',
+      h2after:'ZAP KILLER! Julio was holding the Zap and you killed it with the Ace of Stars. You bid 2 and took 2: right on.',
+    },
+    duelT:'FINAL!', duelSub:'One on one. No matter how many lives were left: now each player has just 1. Miss your bid and you’re out.', duelGo:'Let’s go!',
     aceT:'Your Ace name', aceSub:'This is what the band will call you at the table.', acePh:'Type your name',
     beerT:'Grab a beer and get back in?', beerSub:'You come back with 1 life. Only once: lose it and you’re out for good.', beerYes:'Grab a beer', beerDrink:'Cheers!', beerBack:'You’re back with 1 life!', beerGone:'The beer’s gone. No coming back this time.',
     fullBtn:'Full rules', fullT:'How to play', closeRules:'Got it',
@@ -558,7 +612,7 @@ const TXT={
       ['The flip card and the trump','<p>After dealing, one card is turned face up on the table: the <b>flip card</b>. The <b>trump</b> is the rank right above it, and it beats every other card.</p><p class="ex">Flip a 4, the trump is 5. Flip a 3, it wraps around and the trump is 4.</p><p>Among the four trumps, suit decides:</p>__MANI__'],
       ['The Ace of Stars (Zap Killer)','<p>StarAce’s special card. If it lands in the same trick as the Zap, it <b>kills the Zap</b> and takes the trick. In any other trick, it counts as the lowest card in the deck.</p><p>Hold it to hunt the Zap, or use it as a low card when you want to lose a trick.</p>'],
       ['How a hand works','<ol><li>The dealer shuffles and deals. The first hand is 1 card each, the second 2, and so on.</li><li>Starting with the player after the dealer, everyone says how many tricks they’ll take. That’s the <b>bid</b>.</li><li><b>Last-bidder rule:</b> the last player can’t bid a number that makes the bids add up to the number of cards. Someone always misses.</li><li>One trick is played per card. The player after the dealer leads the first one. Everyone plays one card and the highest takes it.</li><li>Whoever takes a trick leads the next.</li><li>At the end of the hand, compare each bid with the tricks taken.</li></ol>'],
-      ['Lives','<p>Everyone starts with 5 lives (you can choose fewer). You lose one life per trick off:</p><ul><li>Bid 3, took 1: lose 2.</li><li>Bid 0, took 1: lose 1.</li><li>Bid 2, took 2: lose nothing.</li></ul><p>Out of lives, you leave the table.</p>'],
+      ['Lives','<p>Everyone starts with 5 lives (you can choose fewer). You lose one life per trick off:</p><ul><li>Bid 3, took 1: lose 2.</li><li>Bid 0, took 1: lose 1.</li><li>Bid 2, took 2: lose nothing.</li></ul><p>Out of lives, you leave the table.</p><p><b>Final:</b> when only two players are left, both drop to 1 life, no matter how many they had. The first to miss loses.</p>'],
       ['Special hands','<ul><li><b>1 card, on your forehead:</b> your card faces out. You see everyone’s card but yours, and you bid on a guess.</li><li><b>3 cards:</b> one on your forehead (only others see it), one blind (nobody sees it, not even you) and one in hand (only you see it).</li><li><b>Crazy Sixth:</b> in the 6-card hand, the flip card only shows after everyone has bid. You bid without knowing the trump.</li></ul>'],
       ['Cards per hand','<p>The number of cards goes up by one each hand, up to the most the deck allows for the number of players (8 at most). Then it goes back down to 1 and up again.</p><p>With a big table the maximum is lower. With 7 or more players, it never reaches the Crazy Sixth.</p>'],
       ['Tips for beginners','<ul><li>Trumps, 3s and 2s usually win tricks. Count them before you bid.</li><li>With a weak hand, bidding 0 is a good move: then you try to lose every trick.</li><li>Already made your bid? Play your lowest card so you don’t take an extra trick.</li><li>Watch the other bids: they show who’ll fight for the tricks.</li></ul>'],
@@ -578,7 +632,8 @@ const TXT={
       '<b>As de Estrellas</b>: la única carta que mata al Zap. Si no, vale como la más baja.',
       '<b>1 carta</b> en la frente. <b>3 cartas</b>: frente, a ciegas y en la mano.',
       '<b>Sexta Loca</b>: la muestra solo aparece después de las apuestas.',
-      'El último en apostar no puede cerrar la cuenta. Alguien siempre sale perdiendo.'],
+      'El último en apostar no puede cerrar la cuenta. Alguien siempre sale perdiendo.',
+      'En la <b>final</b>, cuando quedan dos, cada uno se queda con solo 1 vida.'],
     pickOne:'Elige al menos un rival.', sit:'Sentarse a la mesa',
     hand:'Mano', cards:'Cartas', bids:'Apuestas',
     mode:{1:'En la frente',3:'Frente, ciega y mano',6:'Sexta Loca',n:'Normal'},
@@ -609,6 +664,24 @@ const TXT={
     roles:{producer:'Productor',guitarVox:'Guitarra',drums:'Batería',bassVox:'Bajo',voxKeys:'Teclado y guitarra acústica',guitar:'Guitarra',sound:'Técnico de sonido',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipo', allTab:g=>g==='band'?'Llamar a toda la banda':'Llamar a todo el equipo', crewSub:'El equipo que sale de gira con StarAce. Nivel más alto que la banda: acá se juega en serio.',
     party:['¡HAAAAAY QUE','CELEBRAR!'],
+    tutBtn:'Aprender jugando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jugar ahora',
+    tutOfferT:'¿Primera vez en la mesa?', tutOfferSub:'Juega dos manos guiadas contra Julio y Bia y aprende las reglas en un minuto.', tutYes:'Aprender jugando', tutSkip:'Saltar, ya sé jugar',
+    tutDoneT:'¡Ya sabes jugar!', tutDoneSub:'En resumen: apuesta cuántas rondas vas a hacer, acierta tu apuesta y no pierdas vidas. El último que queda con vidas gana.',
+    tut:{
+      intro:n=>`¡Bienvenido a la mesa, ${n}! Te enseño jugando dos manos rápidas contra Julio y Bia.`,
+      h1a:'Mano 1: cada uno recibe 1 carta, en la frente. Ves las cartas de los demás, pero no la tuya.',
+      h1b:'La carta boca arriba al lado del cartel es la muestra: un 7. La manilla es la carta justo arriba en fuerza: la Reina. Las manillas le ganan a todas las demás.',
+      h1bet:'Antes de jugar, cada uno dice cuántas rondas va a hacer. Julio apostó 1 y Bia apostó 0. Eres el último en apostar, y el último no puede hacer que la suma sea igual al número de cartas: el 0 está bloqueado. Apuesta 1.',
+      h1play:'Julio jugó un Rey y Bia un 4. Te toca: toca tu carta para jugarla, aunque no la veas.',
+      h1after:'Tu carta era un 3, la más fuerte después de las manillas. Hiciste la ronda y acertaste tu apuesta, así que no pierdes vida. Julio apostó 1 e hizo 0: pierde una vida.',
+      h2a:'Mano 2: ahora son 2 cartas y ves las tuyas. La muestra es un 3, así que la manilla es el 4. El 4 de tréboles es el Zap, la carta más fuerte del juego.',
+      h2b:'Mira lo que tienes: ¡el As de Estrellas! Solo, es la carta más baja, pero si cae en la misma ronda que el Zap, mata al Zap. Es el Matazap.',
+      h2bet:'Bia apostó 1. Tu 2 de diamantes es fuerte, y el As de Estrellas puede cazar al Zap. Arriésgate: apuesta 2.',
+      h2play1:'Bia salió con un As. Juega el 2 de diamantes: el 2 le gana al As.',
+      h2play2:'Hiciste la primera ronda, así que empiezas la siguiente. Juega el As de Estrellas y cruza los dedos para que aparezca el Zap.',
+      h2after:'¡MATAZAP! Julio tenía el Zap y lo mataste con el As de Estrellas. Apostaste 2 e hiciste 2: justo.',
+    },
+    duelT:'¡FINAL!', duelSub:'Uno contra uno. No importa cuántas vidas quedaban: ahora cada uno tiene solo 1. Si fallas la apuesta, pierdes.', duelGo:'¡Vamos!',
     aceT:'Tu nombre de Ace', aceSub:'Así te va a llamar la banda en la mesa.', acePh:'Escribe tu nombre',
     beerT:'¿Te tomas una cerveza y vuelves?', beerSub:'Vuelves al juego con 1 vida. Solo una vez: si la pierdes, quedas afuera de verdad.', beerYes:'Tomar una cerveza', beerDrink:'¡Salud!', beerBack:'¡Volviste con 1 vida!', beerGone:'La cerveza ya se tomó. Esta vez no hay vuelta.',
     fullBtn:'Reglas completas', fullT:'Cómo jugar', closeRules:'Entendido',
@@ -618,7 +691,7 @@ const TXT={
       ['La muestra y la manilla','<p>Después de repartir, se da vuelta una carta en la mesa: la <b>muestra</b>. La <b>manilla</b> es la carta justo arriba de ella en el orden de fuerza, y le gana a todas las demás.</p><p class="ex">Si sale un 4, la manilla es el 5. Si sale un 3, da la vuelta y la manilla es el 4.</p><p>Entre las cuatro manillas, manda el palo:</p>__MANI__'],
       ['El As de Estrellas (Matazap)','<p>La carta especial de StarAce. Si cae en la misma ronda que el Zap, <b>mata al Zap</b> y hace la ronda. En cualquier otra ronda, vale como la carta más baja del mazo.</p><p>Puedes guardarla para cazar al Zap, o usarla como carta baja cuando quieres perder la ronda.</p>'],
       ['Cómo funciona una mano','<ol><li>El que reparte baraja y da las cartas. En la primera mano es 1 carta para cada uno, en la segunda 2, y así sigue.</li><li>Empezando por el que está después del que repartió, cada uno dice cuántas rondas va a hacer. Esa es la <b>apuesta</b>.</li><li><b>Regla del último:</b> el último en apostar no puede decir un número que haga que la suma de las apuestas sea igual al número de cartas. Así alguien siempre falla.</li><li>Se juega una ronda por carta. En la primera, empieza el que está después del que repartió. Cada uno juega una carta y quien jugó la más fuerte hace la ronda.</li><li>El que hace la ronda empieza la siguiente.</li><li>Al final de la mano, se compara la apuesta de cada uno con lo que hizo.</li></ol>'],
-      ['Vidas','<p>Todos empiezan con 5 vidas (se puede elegir menos). Pierdes una vida por cada ronda de diferencia:</p><ul><li>Apostaste 3 e hiciste 1: pierdes 2.</li><li>Apostaste 0 e hiciste 1: pierdes 1.</li><li>Apostaste 2 e hiciste 2: no pierdes nada.</li></ul><p>Sin vidas, quedas afuera de la mesa.</p>'],
+      ['Vidas','<p>Todos empiezan con 5 vidas (se puede elegir menos). Pierdes una vida por cada ronda de diferencia:</p><ul><li>Apostaste 3 e hiciste 1: pierdes 2.</li><li>Apostaste 0 e hiciste 1: pierdes 1.</li><li>Apostaste 2 e hiciste 2: no pierdes nada.</li></ul><p>Sin vidas, quedas afuera de la mesa.</p><p><b>Final:</b> cuando quedan solo dos jugadores, los dos se quedan con 1 vida, sin importar cuántas tenían. El primero que falla, pierde.</p>'],
       ['Manos especiales','<ul><li><b>1 carta, en la frente:</b> tu carta queda hacia afuera. Ves la de todos menos la tuya, y apuestas adivinando.</li><li><b>3 cartas:</b> una en la frente (solo la ven los demás), una a ciegas (nadie la ve, ni tú) y una en la mano (solo la ves tú).</li><li><b>Sexta Loca:</b> en la mano de 6 cartas, la muestra solo aparece después de que todos apostaron. Apuestas sin saber cuál es la manilla.</li></ul>'],
       ['Cuántas cartas por mano','<p>La cantidad de cartas sube de a una por mano, hasta el máximo que permite el mazo según la cantidad de jugadores (8 como máximo). Después baja hasta 1 y vuelve a subir.</p><p>Con mucha gente en la mesa el máximo es menor. Con 7 jugadores o más, no se llega a la Sexta Loca.</p>'],
       ['Consejos para empezar','<ul><li>Las manillas, los 3 y los 2 suelen ganar rondas. Cuéntalos antes de apostar.</li><li>Con una mano débil, apostar 0 es buena idea: así intentas perder todas.</li><li>¿Ya hiciste lo que apostaste? Juega tu carta más baja para no hacer una ronda de más.</li><li>Mira las apuestas de los demás: muestran quién va a pelear las rondas.</li></ul>'],
@@ -1205,7 +1278,7 @@ function startGame(){
   S.players=[human,...bots].map(p=>({...p,lives:S.startLives,alive:true,hand:[],bet:null,made:0}));
   const N=S.players.length;
   S.players.forEach((p,k)=>{ const a=(90+k*360/N)*Math.PI/180; p.cx=+Math.cos(a).toFixed(4); p.cy=+Math.sin(a).toFixed(4); });
-  Object.assign(S,{beerUsed:false,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null});
+  Object.assign(S,{duelDone:false,tut:false,coach:null,tutAllow:null,beerUsed:false,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null});
   S.dealer=Math.floor(Math.random()*N);
   S.phase='table';
   runGame(tok).catch(e=>{ if(!(e instanceof Abort)) console.error(e); });
@@ -1223,8 +1296,32 @@ function askBet(forbidden){ return new Promise(res=>{ S.betReq={forbidden,res}; 
 function askPlay(){ return new Promise(res=>{ S.playReq={res}; Snd.turn(); render(); }); }
 function askModal(m){ return new Promise(res=>{ S.modal={...m,res}; render(); }); }
 
+async function resolveTrick(tok){
+      const wi=trickWinnerIdx(S.trick.map(x=>x.card),S.mr), w=byId(S.trick[wi].pid);
+      w.made++; S.trickWinner=wi; S.turn=null;
+      const wc=S.trick[wi].card;
+      if(wc.star){ setMsg(()=>T().starKill); S.splash={type:'matazap',fresh:true}; Music.duck(2600); Snd.boom(); Snd.star(); Snd.speak('Matazap!'); say(w,()=>T().starBubble); }
+      else if(isZap(wc,S.mr)){ setMsg(()=>T().zapWins(nm(w))); S.splash={type:'zap',fresh:true}; Music.duck(1800); Snd.zap(); Snd.speak('Zap!'); }
+      else { setMsg(()=>w.isHuman?T().youTake:T().takes(w.short)); if(w.isHuman){ if(w.made===w.bet) Snd.nailed(); else if(w.made<w.bet) Snd.youWin(); else Snd.oops(); } else Snd.bell(1568,0,.1,.8); }
+      render();
+      await wait(S.splash?(S.splash.type==='matazap'?2300:1800):1500,tok);
+      S.splash=null;
+      S.collect=true; render(); Snd.collect();
+      await wait(450,tok);
+      S.collect=null;
+      S.trick.forEach(x=>S.playedAll.push(x.card)); S.trick=[]; S.trickWinner=null; 
+  return w;
+}
+
 async function runGame(tok){
   while(alive().length>1){
+    if(!S.duelDone && S.players.length>2 && alive().length===2){
+      // final: um contra um, cada um com 1 vida
+      S.duelDone=true; alive().forEach(p=>{ p.lives=1; });
+      S.turn=null; S.trick=[]; S.players.forEach(p=>{ p.hand=[]; p.bet=null; p.made=0; }); setMsg(null); render();
+      Music.duck(2600); Snd.zap();
+      await askModal({type:'duel'}); S.modal=null;
+    }
     S.handNo++;
     if(!S.players[S.dealer].alive) S.dealer=nextAliveIdx(S.dealer);
     S.players.forEach(p=>{ p.hand=[]; p.bet=null; p.made=0; });
@@ -1268,23 +1365,11 @@ async function runGame(tok){
         else { setMsg(()=>T().turnOf(p.short)); render(); await wait(800,tok); idx=botChoose(p); }
         if(tok!==S.token) throw new Abort();
         const h=p.hand.splice(idx,1)[0];
-        S.trick.push({pid:p.id,card:h.card,rot:(Math.random()*24-12).toFixed(1),fresh:true});
+        S.trick.push({pid:p.id,card:h.card,rot:(Math.random()*12-6).toFixed(1),fresh:true});
         Snd.card(); render();
         await wait(320,tok);
       }
-      const wi=trickWinnerIdx(S.trick.map(x=>x.card),S.mr), w=byId(S.trick[wi].pid);
-      w.made++; S.trickWinner=wi; S.turn=null;
-      const wc=S.trick[wi].card;
-      if(wc.star){ setMsg(()=>T().starKill); S.splash={type:'matazap',fresh:true}; Music.duck(2600); Snd.boom(); Snd.star(); Snd.speak('Matazap!'); say(w,()=>T().starBubble); }
-      else if(isZap(wc,S.mr)){ setMsg(()=>T().zapWins(nm(w))); S.splash={type:'zap',fresh:true}; Music.duck(1800); Snd.zap(); Snd.speak('Zap!'); }
-      else { setMsg(()=>w.isHuman?T().youTake:T().takes(w.short)); if(w.isHuman){ if(w.made===w.bet) Snd.nailed(); else if(w.made<w.bet) Snd.youWin(); else Snd.oops(); } else Snd.bell(1568,0,.1,.8); }
-      render();
-      await wait(S.splash?(S.splash.type==='matazap'?2300:1800):1500,tok);
-      S.splash=null;
-      S.collect=true; render(); Snd.collect();
-      await wait(450,tok);
-      S.collect=null;
-      S.trick.forEach(x=>S.playedAll.push(x.card)); S.trick=[]; S.trickWinner=null; leader=w;
+      leader=await resolveTrick(tok);
     }
 
     const results=alive().map(p=>({p,bet:p.bet,made:p.made,lost:Math.abs(p.bet-p.made)}));
@@ -1332,6 +1417,90 @@ async function runGame(tok){
   await askModal({type:'over',winners});
 }
 
+
+/* ================= Tutorial ================= */
+// Duas mãos com cartas combinadas: na testa + regra do pé, depois manilha, Zap e Matazap.
+const TUT_HANDS=[
+  {n:1, dealer:0, vira:[3,'c'], cards:{you:[[9,'s']], julio:[[6,'h']], bia:[[0,'d']]},
+   bets:{julio:1,bia:0}, youBet:1, intro:['h1a','h1b'], bet:'h1bet',
+   plays:[{julio:'Kh',bia:'4d',you:'3s'}], playTxt:['h1play'], after:['h1after']},
+  {n:2, dealer:1, vira:[9,'h'], cards:{you:[['S'],[8,'d']], julio:[[0,'c'],[1,'s']], bia:[[7,'h'],[2,'d']]},
+   bets:{bia:1,julio:1}, youBet:2, intro:['h2a','h2b'], bet:'h2bet',
+   plays:[{bia:'Ah',you:'2d',julio:'5s'},{you:'STAR',bia:'6d',julio:'4c'}], playTxt:['h2play1','h2play2'], after:[null,'h2after']},
+];
+const mkCard=a=>a[0]==='S'?{id:'STAR',r:-1,s:'S',star:true}:{id:RANKS[a[0]]+a[1],r:a[0],s:a[1]};
+function tutSeen(){ if(S.tutSeenMem) return true; try{ return localStorage.getItem('fodinha-tut')==='1'; }catch(e){ return false; } }
+function markTutSeen(){ S.tutSeenMem=true; try{ localStorage.setItem('fodinha-tut','1'); }catch(e){} }
+function coach(key,btn){ return new Promise(res=>{ S.coach={key,btn,res}; render(); if(!btn) res(); }); }
+function startTutorial(){
+  Snd.init(); Music.sync(); markTutSeen();
+  S.token++; const tok=S.token;
+  ACE=ACE.trim();
+  const human={id:'you',short:'Você',isHuman:true};
+  const bots=['julio','bia'].map(id=>({...BAND.find(b=>b.id===id)}));
+  S.players=[human,...bots].map(p=>({...p,lives:S.startLives,alive:true,hand:[],bet:null,made:0}));
+  const N=S.players.length;
+  S.players.forEach((p,k)=>{ const a=(90+k*360/N)*Math.PI/180; p.cx=+Math.cos(a).toFixed(4); p.cy=+Math.sin(a).toFixed(4); });
+  Object.assign(S,{tut:true,duelDone:true,beerUsed:true,coach:null,tutAllow:null,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null,tutOffer:false});
+  S.phase='table';
+  runTutorial(tok).catch(e=>{ if(!(e instanceof Abort)) console.error(e); });
+}
+async function runTutorial(tok){
+  render(); await wait(500,tok);
+  await coach('intro',true); S.coach=null;
+  for(let hi=0;hi<TUT_HANDS.length;hi++){
+    const H=TUT_HANDS[hi];
+    S.handNo++; S.n=H.n; S.dealer=H.dealer;
+    S.players.forEach(p=>{ p.hand=[]; p.bet=null; p.made=0; });
+    const d=S.players[S.dealer];
+    setMsg(()=>d.isHuman?T().youDeal:T().deals(d.short)); S.turn=null; S.trick=[]; render();
+    Snd.shuffle(); await wait(1400,tok);
+    S.players.forEach(p=>{ p.hand=H.cards[p.id].map((c,k)=>({card:mkCard(c),vis:visFor(H.n,k)})); });
+    S.vira=mkCard(H.vira); S.mr=(S.vira.r+1)%10; S.viraShown=true;
+    S.playedAll=[]; S.betSum=0; S.trickWinner=null;
+    alive().forEach(sortHand);
+    S.dealAnim=true; Snd.deal(H.n*3); setMsg(null); render();
+    await wait(800,tok);
+    for(const k of H.intro){ await coach(k,true); S.coach=null; }
+    const order=orderFrom(nextAliveIdx(S.dealer));
+    for(let k=0;k<order.length;k++){
+      const p=order[k], last=k===order.length-1, forbidden=last?S.n-S.betSum:null;
+      S.turn=p.id; let b;
+      if(p.isHuman){ S.tutAllow={bet:H.youBet}; setMsg(null); coach(H.bet,false); b=await askBet(forbidden); S.betReq=null; S.tutAllow=null; S.coach=null; }
+      else { setMsg(()=>T().thinking(p.short)); render(); await wait(900,tok); b=H.bets[p.id]; }
+      if(tok!==S.token) throw new Abort();
+      p.bet=b; S.betSum+=b;
+      setMsg(()=>p.isHuman?T().youBid(b):T().bid(p.short,b));
+      say(p,()=>T().bubble(b)); Snd.plim(b);
+      await wait(700+b*160,tok);
+    }
+    let leader=order[0];
+    for(let t=0;t<S.n;t++){
+      S.trick=[]; S.trickWinner=null;
+      for(const p of orderFrom(S.players.indexOf(leader))){
+        const cid=H.plays[t][p.id]; S.turn=p.id; let idx;
+        if(p.isHuman){ S.tutAllow={card:cid}; setMsg(null); coach(H.playTxt[t],false); idx=await askPlay(); S.playReq=null; S.tutAllow=null; S.coach=null; }
+        else { setMsg(()=>T().turnOf(p.short)); render(); await wait(950,tok); idx=p.hand.findIndex(h=>h.card.id===cid); }
+        if(tok!==S.token) throw new Abort();
+        const h=p.hand.splice(idx,1)[0];
+        S.trick.push({pid:p.id,card:h.card,rot:(Math.random()*12-6).toFixed(1),fresh:true});
+        Snd.card(); render();
+        await wait(320,tok);
+      }
+      leader=await resolveTrick(tok);
+      if(H.after[t]){ await coach(H.after[t],true); S.coach=null; }
+    }
+    const results=alive().map(p=>({p,bet:p.bet,made:p.made,lost:Math.abs(p.bet-p.made)}));
+    results.forEach(r=>{ r.p.lives-=r.lost; });
+    S.turn=null; setMsg(null); Snd.ok2(); render();
+    const nx=TUT_HANDS[hi+1];
+    await askModal({type:'summary',results,nextN:nx?nx.n:null}); S.modal=null;
+  }
+  Snd.nailed();
+  const v=await askModal({type:'tutdone'}); S.modal=null; S.tut=false; S.coach=null;
+  if(v==='play') startGame(); else { S.token++; S.phase='setup'; render(); }
+}
+
 /* ================= Interface ================= */
 const ICON_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
 const ICON_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
@@ -1371,6 +1540,7 @@ function setupHTML(){
     <div>
       <h1><img src="${LOGO_C}" alt="StarAce">Ace of Stars <em>Game</em></h1>
       <p>${T().intro}</p>
+      <div class="quick tutq"><button class="chipbtn" id="tutbtn">★ ${T().tutBtn}</button></div>
     </div>
   </section>
   <section class="box">
@@ -1420,7 +1590,21 @@ function seatHTML(p){
 // tamanho das cartas jogadas: o maior possível sem uma encostar na outra
 // mesa cheia: retratos menores, mesa oval mais alta e menos informação em volta de cada um
 function swFrac(){ const N=S.players.length; return N>7?Math.min(.17, 2*.4*Math.sin(Math.PI/N)*.7):.175; }
-function pwFrac(){ const N=S.players.length, sw=swFrac(); return Math.min(sw*.85, 2*.185*Math.sin(Math.PI/Math.max(N,2))*.78); }
+// maior carta possível sem que duas cartas jogadas se encostem (confere todos os pares de lugares)
+function pwFrac(){
+  const ps=S.players, many=ps.length>7, Rx=many?.15:.22, Ry=many?.17:.175;
+  let w=swFrac()*.85;
+  for(let i=0;i<ps.length;i++) for(let j=i+1;j<ps.length;j++){
+    const dx=Math.abs(ps[i].cx-ps[j].cx)*Rx, dy=Math.abs(ps[i].cy-ps[j].cy)*Ry;
+    w=Math.min(w, Math.max(dx, dy/1.42)*.92);
+  }
+  return w;
+}
+function coachHTML(){
+  if(!S.coach) return '';
+  const t=T(), c=t.tut[S.coach.key], txt=typeof c==='function'?c(nm(byId('you'))):c;
+  return `<div class="coach" role="status" aria-live="polite"><small>★ ${t.tutLabel}</small><p>${txt}</p>${S.coach.btn?`<button class="cta" id="coachok">${t.tutNext}</button>`:''}</div>`;
+}
 function tableHTML(){
   const you=byId('you'), t=T();
   const mode=t.mode[S.n]||t.mode.n;
@@ -1441,16 +1625,17 @@ function tableHTML(){
   const n=you.hand.length;
   const hand=you.hand.map((h,i)=>{
     const c=h.vis==='own'?cardHTML(h.card,{anim:S.dealAnim}):cardHTML(null,{back:true,anim:S.dealAnim,label:h.vis==='testa'?t.onForehead:t.blind});
-    return `<button class="cardbtn" data-play="${i}" ${canPlay?'':'disabled'} aria-label="${t.pickCard} ${i+1}">${c}</button>`;
+    const lock=S.tutAllow&&S.tutAllow.card&&h.card.id!==S.tutAllow.card, hl=canPlay&&S.tutAllow&&S.tutAllow.card===h.card.id;
+    return `<button class="cardbtn${hl?' tuthl':''}" data-play="${i}" ${canPlay&&!lock?'':'disabled'} aria-label="${t.pickCard} ${i+1}">${c}</button>`;
   }).join('');
 
   let actions='';
   if(S.betReq){
     const f=S.betReq.forbidden,btns=[];
-    for(let b=0;b<=S.n;b++) btns.push(`<button class="pchip" data-bet="${b}" ${b===f?'disabled':''}>${b}</button>`);
+    for(let b=0;b<=S.n;b++) { const ta=S.tutAllow&&S.tutAllow.bet!=null; btns.push(`<button class="pchip${ta&&b===S.tutAllow.bet?' tuthl':''}" data-bet="${b}" ${b===f||(ta&&b!==S.tutAllow.bet)?'disabled':''}>${b}</button>`); }
     actions=`<div class="prompt">${t.howMany}</div><div class="bets">${btns.join('')}</div>
       ${f!=null&&f>=0&&f<=S.n?`<div class="warn">${t.mustNot(f)}</div>`:''}
-      ${S.n===1?`<p class="hint">${t.foreheadHint}</p>`:''}
+      ${S.n===1&&!S.tut?`<p class="hint">${t.foreheadHint}</p>`:''}
       ${S.n===6&&!S.viraShown?`<p class="hint">${t.crazyHint}</p>`:''}`;
   } else if(canPlay){
     actions=`<div class="prompt">${t.pickCard}</div>${S.n===3&&you.hand.some(h=>h.vis!=='own')?`<p class="hint">${t.blindHint}</p>`:''}`;
@@ -1479,6 +1664,7 @@ function tableHTML(){
     </div>
   </section>
   <div class="infobar"><div class="virabox">${viraHTML}</div><p class="ticker" aria-live="polite">${S.msg&&!S.betReq&&!S.playReq?S.msg():'&nbsp;'}</p></div>
+  ${coachHTML()}
   <section class="dock ${S.turn==='you'?'turn':''}">
     ${actions}
     <div class="hand ${n>6?'vtight':n>4?'tight':''}">${hand}</div>
@@ -1539,6 +1725,7 @@ function modalHTML(){
         <button class="ghost" id="fullrules">${t.fullBtn}</button>
       </div>
       <div class="row"><button class="ghost" id="gohome">${t.home}</button><button class="ghost" id="restart">${t.again}</button></div>
+      <div class="row"><button class="ghost" id="tutbtn">★ ${t.tutBtn}</button></div>
       <div class="row"><button class="cta" id="closemenu">${t.close}</button></div>
     </div></div>`;
   const m=S.modal; if(!m) return '';
@@ -1551,9 +1738,22 @@ function modalHTML(){
     return `<div class="overlay"><div class="sheet" role="dialog" aria-label="${t.handEnd(S.handNo)}">
       <h2>${t.handEnd(S.handNo)}</h2>
       <div class="tbl"><table><thead><tr>${t.th.map((h,i)=>`<th class="${i&&i<4?'n':''}">${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>
-      <div class="row"><button class="cta" data-modal="ok">${t.next(m.nextN)}</button></div>
+      <div class="row"><button class="cta" data-modal="ok">${m.nextN?t.next(m.nextN):t.tutNext}</button></div>
     </div></div>`;
   }
+  if(m.type==='duel'){
+    const a=alive();
+    return `<div class="overlay party"><div class="sheet duelsheet" role="dialog" aria-label="${t.duelT}">
+      <h2 class="dueltitle">${t.duelT}</h2>
+      <div class="duelvs">${a.map(p=>`<div><span class="frame">${avatarHTML(p)}</span><b>${nm(p)}</b></div>`).join('<span class="vs">VS</span>')}</div>
+      <p>${t.duelSub}</p>
+      <div class="row"><button class="cta" data-modal="ok">${t.duelGo}</button></div>
+    </div></div>`;
+  }
+  if(m.type==='tutdone') return `<div class="overlay"><div class="sheet" role="dialog" aria-label="${t.tutDoneT}">
+      <h2>${t.tutDoneT}</h2><p>${t.tutDoneSub}</p>
+      <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="cta" data-modal="play">${t.tutPlay}</button></div>
+    </div></div>`;
   if(m.type==='out' && m.beer) return `<div class="overlay"><div class="sheet beersheet" role="dialog" aria-label="${t.beerT}">
       <h2>${t.noLives}</h2>
       <div class="beerwrap">${beerSVG(false)}</div>
@@ -1596,7 +1796,7 @@ function render(){
   const app=document.getElementById('app'), game=S.phase!=='setup';
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = game ? tableHTML()+modalHTML() : setupHTML()+(S.rulesOpen?fullRulesHTML():'');
+  app.innerHTML = game ? tableHTML()+modalHTML() : setupHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:'');
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);
@@ -1623,7 +1823,11 @@ document.addEventListener('click',e=>{
   if(t.dataset.tab){ S.tab=t.dataset.tab; render(); return; }
   if(t.dataset.all){ BAND.filter(b=>b.group===S.tab).forEach(b=>t.dataset.all==='1'?S.picked.add(b.id):S.picked.delete(b.id)); render(); return; }
   if(t.dataset.lives){ S.startLives=+t.dataset.lives; Snd.plim(1); render(); return; }
-  if(t.id==='start'){ startGame(); return; }
+  if(t.id==='start'){ if(!tutSeen()){ S.tutOffer=true; render(); return; } startGame(); return; }
+  if(t.id==='tutyes'){ S.tutOffer=false; startTutorial(); return; }
+  if(t.id==='tutskip'){ S.tutOffer=false; markTutSeen(); startGame(); return; }
+  if(t.id==='tutbtn'){ S.menu=false; S.rulesOpen=false; startTutorial(); return; }
+  if(t.id==='coachok' && S.coach){ const r=S.coach.res; S.coach=null; render(); r(); return; }
   if(t.id==='snd'||t.id==='snd2'){ Snd.on=!Snd.on; saveSnd(); Music.sync(); if(Snd.on){ Snd.init(); Snd.bell(1318.5,0,.12,.6);} render(); return; }
   if(t.id==='fullrules'){ S.rulesOpen=true; render(); const sc=document.querySelector('.rulesheet .scroll'); if(sc) sc.scrollTop=0; return; }
   if(t.id==='closerules'||t.id==='closerules2'){ S.rulesOpen=false; render(); return; }

@@ -913,30 +913,31 @@ const LOOKS={
 };
 function avatarSVG(L){
   const id='av'+(svgSeq++), s=L.skin, hc=L.hair, P=[];
-  P.push(`<rect width="100" height="100" fill="${L.bg}"/><circle cx="50" cy="38" r="46" fill="#fff" opacity=".12"/>`);
+  P.push(`<rect width="100" height="100" fill="${L.bg}"/>${L.ghost||L.noHead?'':'<circle cx="50" cy="38" r="46" fill="#fff" opacity=".12"/>'}`);
   if(L.back==='long') P.push(`<path d="M20 48 Q16 14 50 14 Q84 14 80 48 Q86 74 78 96 L22 96 Q14 74 20 48Z" fill="${hc}"/>`);
   if(L.back==='shoulder') P.push(`<path d="M22 46 Q18 16 50 16 Q82 16 78 46 Q84 66 76 82 L24 82 Q16 66 22 46Z" fill="${hc}"/>`);
   if(L.back==='wild') P.push(`<path d="M16 50 Q8 14 50 10 Q92 14 84 50 Q94 70 82 92 L18 92 Q6 70 16 50Z" fill="${hc}"/>`);
-  P.push(L.outfit(s));
-  P.push(`<rect x="42" y="60" width="16" height="18" rx="4" fill="${s}"/><rect x="42" y="66" width="16" height="6" fill="rgba(0,0,0,.12)"/>`);
-  P.push(`<ellipse cx="28" cy="49" rx="4.5" ry="6" fill="${s}"/><ellipse cx="72" cy="49" rx="4.5" ry="6" fill="${s}"/>`);
-  P.push(`<ellipse cx="50" cy="46" rx="21" ry="24" fill="${s}"/>`);
+  if(L.outfit) P.push(L.outfit(s));
+  if(!L.noHead&&!L.ghost) P.push(`<rect x="42" y="60" width="16" height="18" rx="4" fill="${s}"/><rect x="42" y="66" width="16" height="6" fill="rgba(0,0,0,.12)"/>`);
+  if(!L.noHead&&!L.ghost) P.push(`<ellipse cx="28" cy="49" rx="4.5" ry="6" fill="${s}"/><ellipse cx="72" cy="49" rx="4.5" ry="6" fill="${s}"/>`);
+  if(L.ghost) P.push(`<ellipse cx="50" cy="46" rx="21" ry="24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="3 3"/>`);
+  else if(!L.noHead) P.push(`<ellipse cx="50" cy="46" rx="21" ry="24" fill="${s}"/>`);
   if(L.sides) P.push(L.sides);
-  P.push(`<circle cx="38" cy="55" r="4" fill="#e0675a" opacity=".22"/><circle cx="62" cy="55" r="4" fill="#e0675a" opacity=".22"/>`);
+  if(!L.ghost&&!L.noHead) P.push(`<circle cx="38" cy="55" r="4" fill="#e0675a" opacity=".22"/><circle cx="62" cy="55" r="4" fill="#e0675a" opacity=".22"/>`);
   if(L.beard==='full') P.push(`<path d="M29 48 Q29 74 50 76 Q71 74 71 48 Q70 58 64 60 Q58 66 50 66 Q42 66 36 60 Q30 58 29 48Z" fill="${L.beardColor||hc}"/>`);
   if(L.beard==='short') P.push(`<path d="M30 50 Q31 70 50 72 Q69 70 70 50 Q68 58 62 61 Q56 65 50 65 Q44 65 38 61 Q32 58 30 50Z" fill="${L.beardColor||hc}" opacity=".85"/>`);
   if(L.beard==='goatee') P.push(`<path d="M44 64 Q50 74 56 64 Q53 67 50 67 Q47 67 44 64Z" fill="${L.beardColor||hc}"/>`);
-  P.push(`<path d="M41 59 Q50 68 59 59 Q50 62 41 59Z" fill="#fff" stroke="#6d2a20" stroke-width="1.5" stroke-linejoin="round"/>`);
+  if(!L.ghost&&!L.noHead) P.push(`<path d="M41 59 Q50 68 59 59 Q50 62 41 59Z" fill="#fff" stroke="#6d2a20" stroke-width="1.5" stroke-linejoin="round"/>`);
   if(L.lips) P.push(`<path d="M42 60 Q50 67 58 60 Q50 62 42 60Z" fill="${L.lips}"/>`);
   if(L.stache) P.push(`<path d="M38 59 Q44 52 50 56 Q56 52 62 59 Q58 57 50 58.5 Q42 57 38 59Z" fill="${L.beardColor||hc}"/>`);
-  P.push(`<ellipse cx="42" cy="46" rx="2.6" ry="3" fill="#231815"/><ellipse cx="58" cy="46" rx="2.6" ry="3" fill="#231815"/>`);
-  P.push(`<circle cx="42.8" cy="45" r=".9" fill="#fff"/><circle cx="58.8" cy="45" r=".9" fill="#fff"/>`);
+  if(!L.ghost&&!L.noHead) P.push(`<ellipse cx="42" cy="46" rx="2.6" ry="3" fill="#231815"/><ellipse cx="58" cy="46" rx="2.6" ry="3" fill="#231815"/>`);
+  if(!L.ghost&&!L.noHead) P.push(`<circle cx="42.8" cy="45" r=".9" fill="#fff"/><circle cx="58.8" cy="45" r=".9" fill="#fff"/>`);
   if(L.lashes) P.push(`<path d="M38.5 43.5 L37 42 M45.5 43.5 L47 42 M54.5 43.5 L53 42 M61.5 43.5 L63 42" stroke="#231815" stroke-width="1.2"/>`);
-  P.push(`<path d="M37 40 Q42 ${L.brow||37} 46 40 M54 40 Q58 ${L.brow||37} 63 40" stroke="${L.browColor||hc}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`);
-  P.push(`<path d="M50 47 Q47 54 50 55 Q52 55 53 54" stroke="rgba(0,0,0,.25)" stroke-width="1.6" fill="none" stroke-linecap="round"/>`);
+  if(!L.ghost&&!L.noHead) P.push(`<path d="M37 40 Q42 ${L.brow||37} 46 40 M54 40 Q58 ${L.brow||37} 63 40" stroke="${L.browColor||hc}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`);
+  if(!L.ghost&&!L.noHead) P.push(`<path d="M50 47 Q47 54 50 55 Q52 55 53 54" stroke="rgba(0,0,0,.25)" stroke-width="1.6" fill="none" stroke-linecap="round"/>`);
   if(L.top) P.push(L.top);
   if(L.extra) P.push(L.extra);
-  return `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><clipPath id="${id}"><rect width="100" height="100" rx="9"/></clipPath></defs><g clip-path="url(#${id})">${P.join('')}</g></svg>`;
+  return `<svg viewBox="${L.view||'0 0 100 100'}" aria-hidden="true"><defs><clipPath id="${id}"><rect width="100" height="100" rx="9"/></clipPath></defs><g clip-path="url(#${id})">${P.join('')}</g></svg>`;
 }
 function youSVG(){
   return `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="9" fill="#f5c94f"/>
@@ -1036,10 +1037,20 @@ const STAR_MINI=`<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100"
 function editorHTML(){
   if(!S.editor) return '';
   const t=T(), d=S.draft;
+  const item=k=>i=>{
+    const L=composeLook({...d,acc:k==='acc'?(i===0?0:1<<(i-1)):0,hair:k==='hair'?i:0,beard:k==='beard'?i:0,out:k==='out'?i:d.out});
+    L.bg='#77778a'; L.lashes=false; L.lips=null;
+    if(k!=='hair'){ L.back=null; L.top=null; L.sides=null; }
+    if(k==='hair'&&i===0) L.top=null;
+    if(k!=='beard'){ L.beard=null; L.stache=false; }
+    if(k==='out'){ L.noHead=true; L.view='4 56 92 46'; } else { L.ghost=true; L.outfit=null; }
+    if(k==='beard') L.view='22 34 56 46';
+    return `<span class="edmini">${avatarSVG(L)}</span>`;
+  };
   const prev=k=>i=>`<span class="edmini">${avatarSVG(composeLook(k==='acc'?{...d,acc:i===0?0:toggleAcc(d.acc&~(1<<(i-1)),i)}:{...d,...(k==='hair'?{acc:d.acc&~ACC_HEAD}:{}),[k]:i}))}</span>`;
   const sw=arr=>i=>`<span class="sw" style="background:${arr[i]}"></span>`;
-  const rows=[['g',t.edSex,i=>`<span class="edtxt">${t.edSexes[i]}</span>`],['skin',t.edSkin,sw(SKINS)],['hair',t.edHair,prev('hair')],['hc',t.edHairColor,sw(HAIRC)],
-    ['beard',t.edBeard,prev('beard')],['acc',t.edAcc,prev('acc')],['out',t.edOut,prev('out')],['bg',t.edBg,sw(BGS)]];
+  const rows=[['g',t.edSex,i=>`<span class="edtxt">${t.edSexes[i]}</span>`],['skin',t.edSkin,sw(SKINS)],['hair',t.edHair,item('hair')],['hc',t.edHairColor,sw(HAIRC)],
+    ['beard',t.edBeard,item('beard')],['acc',t.edAcc,item('acc')],['out',t.edOut,item('out')],['bg',t.edBg,sw(BGS)]];
   return `<div class="overlay edov"><div class="sheet editor" role="dialog" aria-label="${t.edT}">
     <h2>${t.edT}</h2>
     <div class="edtop"><div class="frame edbig">${avatarSVG(composeLook(d))}</div><button class="ghost" id="edrand">${t.edRand}</button></div>

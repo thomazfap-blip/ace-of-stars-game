@@ -83,7 +83,8 @@ function profile($R, $P, $key) {
     $acc = $P['acc'][$key] ?? null;
     return ['pts' => $pts, 'level' => $lv, 'next' => LV_PTS[$lv + 1] ?? null,
             'beer' => max(0, earned($lv, LV_BEER) - ($used['b'] ?? 0)), 'jack' => max(0, earned($lv, LV_JACK) - ($used['j'] ?? 0)),
-            'linked' => (bool)$acc, 'email' => $acc ? mask_email($acc['email']) : null];
+            'linked' => (bool)$acc, 'email' => $acc ? mask_email($acc['email']) : null,
+            'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
 }
 function full($R, $P, $key) {
     $wk = week_key();
@@ -153,12 +154,23 @@ if ($a === 'game') {
     $wk = week_key();
     if (!isset($R['weeks'][$wk])) $R['weeks'][$wk] = [];
     add_game($R['all'], $key, $g);
+    if (isset($P['acc'][$key])) { $P['acc'][$key]['name'] = $g['name']; if ($g['av'] !== '') $P['acc'][$key]['av'] = $g['av']; jsave($playFile, $P); }
     add_game($R['weeks'][$wk], $key, $g);
     ksort($R['weeks']);
     $R['weeks'] = array_slice($R['weeks'], -8, null, true);
     jsave($rankFile, $R);
     flock($lock, LOCK_UN);
     out(full($R, $P, $key) + ['prevLevel' => $prevLevel]);
+}
+
+if ($a === 'profile') {
+    if (isset($P['acc'][$key])) {
+        $P['acc'][$key]['name'] = clean_name($in['name'] ?? '');
+        $av = clean_av($in['av'] ?? ''); if ($av !== '') $P['acc'][$key]['av'] = $av;
+        jsave($playFile, $P);
+    }
+    flock($lock, LOCK_UN);
+    out(['profile' => profile($R, $P, $key)]);
 }
 
 if ($a === 'use') {
@@ -227,7 +239,9 @@ if ($a === 'verify' || $a === 'link') {
     $optin = !empty($in['optin']);
     $acc = $P['acc'][$acctKey] ?? ['email' => $email, 'created' => time(), 'src' => $src, 'lang' => $lang];
     $acc['optin'] = $optin || !empty($acc['optin']);
-    $acc['name'] = $name;
+    if ($isNew || empty($acc['name'])) $acc['name'] = $name;
+    $av = clean_av($in['av'] ?? '');
+    if ($isNew || empty($acc['av'])) { if ($av !== '') $acc['av'] = $av; }
     $P['acc'][$acctKey] = $acc;
     jsave($rankFile, $R); jsave($playFile, $P);
     flock($lock, LOCK_UN);

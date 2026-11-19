@@ -359,6 +359,33 @@ td .lifebar{margin:0;width:58px}
 .outtag{font-size:10px;background:var(--danger);color:#2b0700;border-radius:6px;padding:1px 6px;margin-left:4px;font-weight:800}
 .sheet .row{justify-content:center}
 .winner{width:120px;margin:0 auto}
+.coach.anim{animation:coachin .35s ease-out}
+.coach.sheetmode.anim{animation:coachin2 .4s cubic-bezier(.2,1.3,.4,1)}
+@keyframes coachin{from{transform:translateY(16px);opacity:0}}
+@keyframes coachin2{from{transform:translate(-50%,30px);opacity:0}}
+.coach.anim .pop{animation:popin .4s cubic-bezier(.2,1.6,.4,1) both;animation-delay:calc(var(--i) * .1s + .25s)}
+@keyframes popin{from{transform:scale(.2) rotate(-10deg);opacity:0}}
+.coach b{color:var(--rim);font-weight:800}
+.coach.sheetmode.top{top:max(70px, calc(env(safe-area-inset-top, 0px) + 70px));bottom:auto}
+.infobar.tutfocus .virabox{position:relative;z-index:16;border-radius:14px;padding:4px;background:rgba(10,2,4,.6);box-shadow:0 0 0 3px var(--gold),0 0 30px rgba(245,201,79,.9);animation:focuspulse 1s ease-in-out infinite}
+@keyframes focuspulse{50%{box-shadow:0 0 0 6px var(--gold),0 0 44px rgba(245,201,79,1)}}
+.ring.hlminis .minis .card{animation:tutpulse 1s ease-in-out infinite;box-shadow:0 0 0 2px var(--gold),0 0 16px rgba(245,201,79,.95)}
+.viraman{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin-bottom:6px}
+.viraman > div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.viraman small{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#2a0a10}
+.viraman .arrow{font-style:normal;font-size:30px;color:var(--rim);font-weight:800;align-self:center}
+.mbig{font-family:var(--f-display);font-size:42px;line-height:1;color:var(--gold);background:#1a0a10;border:3px solid var(--gold);border-radius:10px;padding:4px 14px 0;display:block}
+.card.tm{--cw:40px}
+.card.tm .ix{font-size:17px}
+.card.tm .pip{font-size:18px}
+.mzgrid{display:flex;flex-direction:column;gap:8px}
+.mzrow{display:grid;grid-template-columns:auto auto auto 1fr;align-items:center;gap:8px}
+.mzrow > div{display:flex;flex-direction:column;align-items:center;gap:2px}
+.mzrow small{font-size:10px;font-weight:800;text-transform:uppercase;color:#2a0a10}
+.mzrow em{font-style:normal;font-family:var(--f-display);font-size:20px;text-align:center}
+.mzrow em.kill{color:var(--rim)}
+.mzrow em.lose{color:#6b6b6b}
+.mzrow .cap{font-size:12px;font-weight:700;color:#5a3a2a;line-height:1.2}
 .coach.sheetmode{position:fixed;left:50%;bottom:max(12px, env(safe-area-inset-bottom, 0px));transform:translateX(-50%);width:min(540px, calc(100% - 24px));z-index:15;max-height:70vh;overflow:auto}
 .card.tc{--cw:27px}
 .card.tc .ix{font-size:13px;top:2px;left:3px}
@@ -500,7 +527,7 @@ details.rulesbox .rules{margin-top:8px}
 }
 @media (prefers-reduced-motion:reduce){
   .played.anim,.played.collect,.bubble.anim,.dealin,.splash.anim .burst,.splash.anim .word,.ring.shake,.played.lead .card{animation:none}
-  .tuthl,.seat.turn .frame::after,.manibadge{animation:none}
+  .tuthl,.seat.turn .frame::after,.manibadge,.infobar.tutfocus .virabox,.ring.hlminis .minis .card{animation:none}
   .cardbtn{transition:none}
 }
 </style>
@@ -552,27 +579,27 @@ const TXT={
     styles:{bold:'Ousado',sly:'Sagaz',careful:'Cauteloso',calc:'Calculista',wild:'Imprevisível',hooked:'Preciso',hooked2:'Agressivo',hooked3:'Frio',master:'Estrategista'},
     roles:{producer:'Produtor',guitarVox:'Guitarra',drums:'Bateria',bassVox:'Baixo',voxKeys:'Teclado e violão',guitar:'Guitarra',sound:'Técnico de som',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipe', allTab:g=>g==='band'?'Chamar a banda toda':'Chamar a equipe toda', crewSub:'A equipe que roda com a StarAce. Nível mais alto que o da banda: aqui o jogo é sério.',
-    edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereço', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Criar meu Ace', edEdit:'Editar',
-    tWeak:'mais fraca', tStrong:'mais forte', tKills:'mata', tElse:'Fora isso, o Ás de Estrelas vale menos que o 4.',
+    edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereços (escolha vários)', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Criar meu Ace', edEdit:'Editar',
+    tWeak:'mais fraca', tStrong:'mais forte', tKills:'mata', tLoses:'perde pra', tWith:'com o Zap na rodada', tWithout:'sem o Zap: qualquer carta', tVira:'vira', tMani:'manilha',
     party:['TEEEEEM QUE','COMEMORAR!'],
     rankT:'Ranking', rankWeek:'Semana', rankAll:'Geral', rankBtn:'Ranking', rankLoading:'Carregando…', rankOff:'O ranking funciona no jogo do site: staraceband.com/game', rankEmpty:'Ninguém pontuou ainda. Seja o primeiro!', rankHow:'Toda partida dá pontos pela sua colocação: o 1º lugar ganha mais, mas 2º e 3º também pontuam. Mesa maior e com a equipe vale mais.', rankCols:['#','Ace','Pts','Vit.','Pedidos','★'], rankPts:p=>`+${p} pontos no ranking`, rankClose:'Fechar', rankFoot:'★ = Matazaps feitos. Pedidos = % de mãos em que acertou o pedido.', rankYourPos:(p,n)=>`Você está em ${p}º de ${n}`,
     tutBtn:'Aprender jogando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jogar agora',
     tutOfferT:'Primeira vez na mesa?', tutOfferSub:'Jogue duas mãos guiadas contra o Julio e a Bia e aprenda as regras em 1 minuto.', tutYes:'Aprender jogando', tutSkip:'Pular, já sei jogar',
     tutDoneT:'Você já sabe jogar!', tutDoneSub:'Resumo: peça quantas rodadas vai fazer, acerte o pedido e não perca vidas. Quem sobrar com vida por último vence.',
     tut:{
-      intro:n=>`Bem-vindo à mesa, ${n}! Vou te ensinar jogando duas mãos rápidas contra o Julio e a Bia.`,
-      h1a:'Mão 1: cada um recebe 1 carta, na testa. Você vê as cartas dos outros, mas não a sua.',
-      ladder:'Primeiro, a força das cartas. Da mais fraca pra mais forte: 4, 5, 6, 7, Q, J, K, A, 2, 3. Em cada rodada, quem jogar a carta mais forte faz a rodada.',
-      h1b:'Agora a manilha. A carta virada ao lado da plaquinha é a vira: um 7. A manilha é a carta logo acima dela na força: a Q. As quatro Q passam a ganhar de todas as outras, e entre elas manda o naipe. A Q de paus é o Zap, a mais forte de todas.',
-      h1bet:'Antes de jogar, cada um diz quantas rodadas vai fazer. O Julio pediu 1 e a Bia pediu 0. Você é o último a pedir (o pé), e o pé não pode deixar a soma igual ao número de cartas: o 0 está bloqueado. Peça 1.',
-      h1play:'O Julio jogou um K e a Bia um 4. Sua vez: toque na sua carta pra jogar, mesmo sem ver.',
-      h1after:'Sua carta era um 3, a mais forte depois das manilhas. Você fez a rodada e acertou o pedido, então não perde vida. O Julio pediu 1 e fez 0: perde uma vida.',
-      h2a:'Mão 2: agora são 2 cartas e você vê as suas. A vira é um 3, então a manilha é o 4. O 4 de paus é o Zap, a carta mais forte do jogo.',
-      h2b:'Olha o que você tem: o Ás de Estrelas! Sozinho ele é a carta mais fraca, mas se cair na mesma rodada que o Zap, ele mata o Zap. É o Matazap.',
-      h2bet:'A Bia pediu 1. Seu 2 de ouros é forte, e o Ás de Estrelas pode caçar o Zap. Arrisque: peça 2.',
-      h2play1:'A Bia saiu com um Ás. Jogue o 2 de ouros: o 2 é mais forte que o Ás.',
-      h2play2:'Você fez a primeira rodada, então começa a próxima. Jogue o Ás de Estrelas e torça pro Zap aparecer.',
-      h2after:'MATAZAP! O Julio guardou o Zap e você matou ele com o Ás de Estrelas. Você pediu 2 e fez 2: pedido certinho.',
+      intro:n=>`Bem-vindo à mesa, ${n}! Bora aprender jogando duas mãos rápidas contra o Julio e a Bia.`,
+      h1a:'Mão 1: cada um recebe <b>1 carta</b>, na testa. Você vê as cartas dos outros (o <b>K</b> do Julio e o <b>4</b> da Bia), mas não a sua.',
+      ladder:'A força das cartas, da mais fraca pra mais forte: <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b>, <b>Q</b>, <b>J</b>, <b>K</b>, <b>A</b>, <b>2</b>, <b>3</b>. Em cada rodada, quem jogar a mais forte faz a rodada.',
+      h1b:'Agora a parte mais importante. A carta virada aqui embaixo é a <b>vira</b>: um <b>7</b>. A <b>manilha</b> é sempre a carta seguinte na força: depois do <b>7</b> vem a <b>Q</b>. Então as quatro <b>Q</b> viram as cartas mais fortes do jogo, e entre elas manda o naipe:',
+      h1bet:'Hora de pedir: quantas rodadas você vai fazer? O Julio pediu <b>1</b> e a Bia pediu <b>0</b>. Você é o último (o pé), e o pé não pode deixar a soma igual ao número de cartas: o <b>0</b> está bloqueado. Peça <b>1</b>.',
+      h1play:'O Julio jogou um <b>K</b> e a Bia um <b>4</b>. Sua vez: toque na sua carta pra jogar, mesmo sem ver.',
+      h1after:'Sua carta era um <b>3</b>, a mais forte depois das manilhas! Você fez a rodada e acertou o pedido: nenhuma vida perdida. O Julio pediu <b>1</b> e fez <b>0</b>: perde uma vida.',
+      h2a:'Mão 2: agora são <b>2 cartas</b> e você vê as suas. A vira é um <b>3</b>, e depois do <b>3</b> a contagem volta pro começo: a manilha é o <b>4</b>. O <b>4 de paus</b> é o <b>Zap</b>, a carta mais forte desta mão.',
+      h2b:'E olha o que você tem: o <b>Ás de Estrelas</b>! Ele é o <b>Matazap</b>: se cair na mesma rodada que o Zap, mata o Zap e faz a rodada. Sem o Zap na mesa, perde pra qualquer carta.',
+      h2bet:'A Bia pediu <b>1</b>. Seu <b>2 de ouros</b> é forte, e o Ás de Estrelas pode caçar o Zap. Arrisque: peça <b>2</b>.',
+      h2play1:'A Bia saiu com um <b>A</b>. Jogue o <b>2 de ouros</b>: o <b>2</b> é mais forte que o <b>A</b>.',
+      h2play2:'Você fez a primeira rodada, então começa a próxima. Jogue o <b>Ás de Estrelas</b> e torça pro Zap aparecer.',
+      h2after:'<b>MATAZAP!</b> O Julio guardou o Zap e você matou com o Ás de Estrelas. Pediu <b>2</b> e fez <b>2</b>: pedido certinho.',
     },
     duelT:'FINAL!', duelSub:'Um contra um. Não importa quantas vidas sobraram: agora cada um tem só 1. Errou o pedido, perdeu.', duelGo:'Bora!',
     aceT:'Seu nome de Ace', aceSub:'É assim que a banda vai te chamar na mesa e no ranking.', acePh:'Digite seu nome',
@@ -635,27 +662,27 @@ const TXT={
     styles:{bold:'Bold',sly:'Sharp',careful:'Careful',calc:'Calculating',wild:'Wild card',hooked:'Precise',hooked2:'Aggressive',hooked3:'Ice-cold',master:'Strategist'},
     roles:{producer:'Producer',guitarVox:'Guitar',drums:'Drums',bassVox:'Bass',voxKeys:'Keys & acoustic guitar',guitar:'Guitar',sound:'Sound engineer',roadie:'Roadie',video:'Video maker'},
     tabBand:'Band', tabCrew:'Crew', allTab:g=>g==='band'?'Call the whole band':'Call the whole crew', crewSub:'The crew that tours with StarAce. A higher level than the band: this is the serious table.',
-    edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessory', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create my Ace', edEdit:'Edit',
-    tWeak:'weakest', tStrong:'strongest', tKills:'kills', tElse:'Otherwise, the Ace of Stars is worth less than a 4.',
+    edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessories (pick several)', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create my Ace', edEdit:'Edit',
+    tWeak:'weakest', tStrong:'strongest', tKills:'kills', tLoses:'loses to', tWith:'with the Zap in the trick', tWithout:'no Zap: any card', tVira:'flip', tMani:'trump',
     party:['WE GOTTA','CELEBRATE!'],
     rankT:'Leaderboard', rankWeek:'This week', rankAll:'All time', rankBtn:'Leaderboard', rankLoading:'Loading…', rankOff:'The leaderboard works in the game on the site: staraceband.com/game', rankEmpty:'No one has scored yet. Be the first!', rankHow:'Every game gives points for where you finish: 1st place gets the most, but 2nd and 3rd score too. Bigger tables and the crew are worth more.', rankCols:['#','Ace','Pts','Wins','Bids','★'], rankPts:p=>`+${p} leaderboard points`, rankClose:'Close', rankFoot:'★ = Zap kills. Bids = % of hands where you hit your bid.', rankYourPos:(p,n)=>`You’re #${p} of ${n}`,
     tutBtn:'Learn by playing', tutLabel:'Tutorial', tutNext:'Continue', tutPlay:'Play now',
     tutOfferT:'First time at the table?', tutOfferSub:'Play two guided hands against Julio and Bia and learn the rules in a minute.', tutYes:'Learn by playing', tutSkip:'Skip, I know how to play',
     tutDoneT:'You know how to play!', tutDoneSub:'In short: bid how many tricks you’ll take, hit your bid and keep your lives. The last player with lives left wins.',
     tut:{
-      intro:n=>`Welcome to the table, ${n}! I’ll teach you with two quick hands against Julio and Bia.`,
-      h1a:'Hand 1: everyone gets 1 card, on their forehead. You see everyone else’s card, but not your own.',
-      ladder:'First, card strength. From weakest to strongest: 4, 5, 6, 7, Q, J, K, A, 2, 3. In each trick, whoever plays the strongest card takes it.',
-      h1b:'Now the trump. The face-up card next to the badge is the flip card: a 7. The trump is the next rank up: the Queen. All four Queens now beat every other card, and among them the suit decides. The Queen of clubs is the Zap, the strongest of all.',
-      h1bet:'Before playing, everyone bids how many tricks they’ll take. Julio bid 1 and Bia bid 0. You bid last, and the last bidder can’t make the total match the number of cards: 0 is blocked. Bid 1.',
-      h1play:'Julio played a King and Bia a 4. Your turn: tap your card to play it, even without seeing it.',
-      h1after:'Your card was a 3, the strongest card after the trumps. You took the trick and hit your bid, so you lose no life. Julio bid 1 and took 0: he loses a life.',
-      h2a:'Hand 2: now it’s 2 cards and you can see yours. The flip card is a 3, so the trump is 4. The 4 of clubs is the Zap, the strongest card in the game.',
-      h2b:'Look what you’ve got: the Ace of Stars! On its own it’s the weakest card, but if it lands in the same trick as the Zap, it kills the Zap. That’s the Zap Killer.',
-      h2bet:'Bia bid 1. Your 2 of diamonds is strong, and the Ace of Stars can hunt the Zap. Go for it: bid 2.',
-      h2play1:'Bia led with an Ace. Play the 2 of diamonds: the 2 beats the Ace.',
-      h2play2:'You took the first trick, so you lead the next one. Play the Ace of Stars and hope the Zap shows up.',
-      h2after:'ZAP KILLER! Julio was holding the Zap and you killed it with the Ace of Stars. You bid 2 and took 2: right on.',
+      intro:n=>`Welcome to the table, ${n}! Let’s learn by playing two quick hands against Julio and Bia.`,
+      h1a:'Hand 1: everyone gets <b>1 card</b>, on their forehead. You see everyone else’s card (Julio’s <b>K</b> and Bia’s <b>4</b>), but not your own.',
+      ladder:'Card strength, from weakest to strongest: <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b>, <b>Q</b>, <b>J</b>, <b>K</b>, <b>A</b>, <b>2</b>, <b>3</b>. In each trick, whoever plays the strongest card takes it.',
+      h1b:'Now the most important part. The face-up card down here is the <b>flip card</b>: a <b>7</b>. The <b>trump</b> is always the next rank up: after the <b>7</b> comes the <b>Q</b>. So all four <b>Q</b>s become the strongest cards in the game, and among them the suit decides:',
+      h1bet:'Time to bid: how many tricks will you take? Julio bid <b>1</b> and Bia bid <b>0</b>. You bid last, and the last bidder can’t make the total match the number of cards: <b>0</b> is blocked. Bid <b>1</b>.',
+      h1play:'Julio played a <b>K</b> and Bia a <b>4</b>. Your turn: tap your card to play it, even without seeing it.',
+      h1after:'Your card was a <b>3</b>, the strongest after the trumps! You took the trick and hit your bid: no lives lost. Julio bid <b>1</b> and took <b>0</b>: he loses a life.',
+      h2a:'Hand 2: now it’s <b>2 cards</b> and you can see yours. The flip card is a <b>3</b>, and after the <b>3</b> the count wraps around: the trump is <b>4</b>. The <b>4 of clubs</b> is the <b>Zap</b>, the strongest card this hand.',
+      h2b:'And look what you’ve got: the <b>Ace of Stars</b>! It’s the <b>Zap Killer</b>: if it lands in the same trick as the Zap, it kills the Zap and takes the trick. With no Zap on the table, it loses to any card.',
+      h2bet:'Bia bid <b>1</b>. Your <b>2 of diamonds</b> is strong, and the Ace of Stars can hunt the Zap. Go for it: bid <b>2</b>.',
+      h2play1:'Bia led with an <b>A</b>. Play the <b>2 of diamonds</b>: the <b>2</b> beats the <b>A</b>.',
+      h2play2:'You took the first trick, so you lead the next one. Play the <b>Ace of Stars</b> and hope the Zap shows up.',
+      h2after:'<b>ZAP KILLER!</b> Julio was holding the Zap and you killed it with the Ace of Stars. Bid <b>2</b>, took <b>2</b>: right on.',
     },
     duelT:'FINAL!', duelSub:'One on one. No matter how many lives were left: now each player has just 1. Miss your bid and you’re out.', duelGo:'Let’s go!',
     aceT:'Your Ace name', aceSub:'This is what the band will call you at the table and on the leaderboard.', acePh:'Type your name',
@@ -718,27 +745,27 @@ const TXT={
     styles:{bold:'Atrevido',sly:'Sagaz',careful:'Cauteloso',calc:'Calculadora',wild:'Impredecible',hooked:'Preciso',hooked2:'Agresivo',hooked3:'Frío',master:'Estratega'},
     roles:{producer:'Productor',guitarVox:'Guitarra',drums:'Batería',bassVox:'Bajo',voxKeys:'Teclado y guitarra acústica',guitar:'Guitarra',sound:'Técnico de sonido',roadie:'Roadie',video:'Videomaker'},
     tabBand:'Banda', tabCrew:'Equipo', allTab:g=>g==='band'?'Llamar a toda la banda':'Llamar a todo el equipo', crewSub:'El equipo que sale de gira con StarAce. Nivel más alto que la banda: acá se juega en serio.',
-    edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorio', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Crear mi Ace', edEdit:'Editar',
-    tWeak:'más baja', tStrong:'más alta', tKills:'mata', tElse:'Si no, el As de Estrellas vale menos que el 4.',
+    edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorios (elige varios)', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Crear mi Ace', edEdit:'Editar',
+    tWeak:'más baja', tStrong:'más alta', tKills:'mata', tLoses:'pierde con', tWith:'con el Zap en la ronda', tWithout:'sin el Zap: cualquier carta', tVira:'muestra', tMani:'manilla',
     party:['¡HAAAAAY QUE','CELEBRAR!'],
     rankT:'Ranking', rankWeek:'Semana', rankAll:'General', rankBtn:'Ranking', rankLoading:'Cargando…', rankOff:'El ranking funciona en el juego del sitio: staraceband.com/game', rankEmpty:'Nadie sumó puntos todavía. ¡Sé el primero!', rankHow:'Cada partida da puntos según tu posición: el 1º gana más, pero el 2º y el 3º también suman. Las mesas más grandes y con el equipo valen más.', rankCols:['#','Ace','Pts','Vict.','Apuestas','★'], rankPts:p=>`+${p} puntos en el ranking`, rankClose:'Cerrar', rankFoot:'★ = Matazaps. Apuestas = % de manos en que acertaste.', rankYourPos:(p,n)=>`Estás en el puesto ${p} de ${n}`,
     tutBtn:'Aprender jugando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jugar ahora',
     tutOfferT:'¿Primera vez en la mesa?', tutOfferSub:'Juega dos manos guiadas contra Julio y Bia y aprende las reglas en un minuto.', tutYes:'Aprender jugando', tutSkip:'Saltar, ya sé jugar',
     tutDoneT:'¡Ya sabes jugar!', tutDoneSub:'En resumen: apuesta cuántas rondas vas a hacer, acierta tu apuesta y no pierdas vidas. El último que queda con vidas gana.',
     tut:{
-      intro:n=>`¡Bienvenido a la mesa, ${n}! Te enseño jugando dos manos rápidas contra Julio y Bia.`,
-      h1a:'Mano 1: cada uno recibe 1 carta, en la frente. Ves las cartas de los demás, pero no la tuya.',
-      ladder:'Primero, la fuerza de las cartas. De la más baja a la más alta: 4, 5, 6, 7, Q, J, K, A, 2, 3. En cada ronda, quien juega la carta más fuerte hace la ronda.',
-      h1b:'Ahora la manilla. La carta boca arriba al lado del cartel es la muestra: un 7. La manilla es la carta justo arriba en fuerza: la Reina. Las cuatro Reinas le ganan a todas las demás, y entre ellas manda el palo. La Reina de tréboles es el Zap, la más fuerte de todas.',
-      h1bet:'Antes de jugar, cada uno dice cuántas rondas va a hacer. Julio apostó 1 y Bia apostó 0. Eres el último en apostar, y el último no puede hacer que la suma sea igual al número de cartas: el 0 está bloqueado. Apuesta 1.',
-      h1play:'Julio jugó un Rey y Bia un 4. Te toca: toca tu carta para jugarla, aunque no la veas.',
-      h1after:'Tu carta era un 3, la más fuerte después de las manillas. Hiciste la ronda y acertaste tu apuesta, así que no pierdes vida. Julio apostó 1 e hizo 0: pierde una vida.',
-      h2a:'Mano 2: ahora son 2 cartas y ves las tuyas. La muestra es un 3, así que la manilla es el 4. El 4 de tréboles es el Zap, la carta más fuerte del juego.',
-      h2b:'Mira lo que tienes: ¡el As de Estrellas! Solo, es la carta más baja, pero si cae en la misma ronda que el Zap, mata al Zap. Es el Matazap.',
-      h2bet:'Bia apostó 1. Tu 2 de diamantes es fuerte, y el As de Estrellas puede cazar al Zap. Arriésgate: apuesta 2.',
-      h2play1:'Bia salió con un As. Juega el 2 de diamantes: el 2 le gana al As.',
-      h2play2:'Hiciste la primera ronda, así que empiezas la siguiente. Juega el As de Estrellas y cruza los dedos para que aparezca el Zap.',
-      h2after:'¡MATAZAP! Julio tenía el Zap y lo mataste con el As de Estrellas. Apostaste 2 e hiciste 2: justo.',
+      intro:n=>`¡Bienvenido a la mesa, ${n}! Aprendamos jugando dos manos rápidas contra Julio y Bia.`,
+      h1a:'Mano 1: cada uno recibe <b>1 carta</b>, en la frente. Ves las cartas de los demás (el <b>K</b> de Julio y el <b>4</b> de Bia), pero no la tuya.',
+      ladder:'La fuerza de las cartas, de la más baja a la más alta: <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b>, <b>Q</b>, <b>J</b>, <b>K</b>, <b>A</b>, <b>2</b>, <b>3</b>. En cada ronda, quien juega la más fuerte hace la ronda.',
+      h1b:'Ahora lo más importante. La carta boca arriba acá abajo es la <b>muestra</b>: un <b>7</b>. La <b>manilla</b> es siempre la carta siguiente en fuerza: después del <b>7</b> viene la <b>Q</b>. Así que las cuatro <b>Q</b> pasan a ser las cartas más fuertes del juego, y entre ellas manda el palo:',
+      h1bet:'Hora de apostar: ¿cuántas rondas vas a hacer? Julio apostó <b>1</b> y Bia <b>0</b>. Eres el último, y el último no puede hacer que la suma sea igual al número de cartas: el <b>0</b> está bloqueado. Apuesta <b>1</b>.',
+      h1play:'Julio jugó un <b>K</b> y Bia un <b>4</b>. Te toca: toca tu carta para jugarla, aunque no la veas.',
+      h1after:'¡Tu carta era un <b>3</b>, la más fuerte después de las manillas! Hiciste la ronda y acertaste: ninguna vida perdida. Julio apostó <b>1</b> e hizo <b>0</b>: pierde una vida.',
+      h2a:'Mano 2: ahora son <b>2 cartas</b> y ves las tuyas. La muestra es un <b>3</b>, y después del <b>3</b> la cuenta vuelve al principio: la manilla es el <b>4</b>. El <b>4 de tréboles</b> es el <b>Zap</b>, la carta más fuerte de esta mano.',
+      h2b:'¡Y mira lo que tienes: el <b>As de Estrellas</b>! Es el <b>Matazap</b>: si cae en la misma ronda que el Zap, mata al Zap y hace la ronda. Sin el Zap en la mesa, pierde con cualquier carta.',
+      h2bet:'Bia apostó <b>1</b>. Tu <b>2 de diamantes</b> es fuerte, y el As de Estrellas puede cazar al Zap. Arriésgate: apuesta <b>2</b>.',
+      h2play1:'Bia salió con un <b>A</b>. Juega el <b>2 de diamantes</b>: el <b>2</b> le gana al <b>A</b>.',
+      h2play2:'Hiciste la primera ronda, así que empiezas la siguiente. Juega el <b>As de Estrellas</b> y cruza los dedos para que aparezca el Zap.',
+      h2after:'¡<b>MATAZAP!</b> Julio tenía el Zap y lo mataste con el As de Estrellas. Apostaste <b>2</b> e hiciste <b>2</b>: justo.',
     },
     duelT:'¡FINAL!', duelSub:'Uno contra uno. No importa cuántas vidas quedaban: ahora cada uno tiene solo 1. Si fallas la apuesta, pierdes.', duelGo:'¡Vamos!',
     aceT:'Tu nombre de Ace', aceSub:'Así te va a llamar la banda en la mesa y en el ranking.', acePh:'Escribe tu nombre',
@@ -937,14 +964,29 @@ const SKINS=['#f6d3b8','#ecbd9c','#d99a72','#b97a52','#8d5a3b','#5e3a26'];
 const HAIRC=['#141014','#4a2c1c','#a2522a','#d8b25a','#c42326','#7b3fb3','#b9b9c0'];
 const BGS=['#c42326','#009cad','#f5c94f','#2f8f5b','#7a1f8f','#1d2a5c','#ee9467'];
 const ED_KEYS=['g','skin','hair','hc','beard','acc','out','bg'];
-const ED_OPTS={g:2,skin:SKINS.length,hair:6,hc:HAIRC.length,beard:5,acc:7,out:4,bg:BGS.length};
-function encodeAce(c){ return ED_KEYS.map(k=>c[k]).join('-'); }
+// adereços são vários ao mesmo tempo (bits); só um item de cabeça por vez
+const ACC_N=8, ACC_HEAD=0b11110000;
+const ED_OPTS={g:2,skin:SKINS.length,hair:6,hc:HAIRC.length,beard:5,acc:ACC_N+1,out:7,bg:BGS.length};
+function encodeAce(c){ return '2-'+ED_KEYS.map(k=>c[k]).join('-'); }
 function decodeAce(str){
-  if(!str) return null; const a=String(str).split('-').map(Number);
-  if(a.length!==ED_KEYS.length||a.some(v=>isNaN(v))) return null;
-  const c={}; ED_KEYS.forEach((k,i)=>c[k]=Math.max(0,Math.min(ED_OPTS[k]-1,a[i]|0))); return c;
+  if(!str) return null; let a=String(str).split('-').map(Number);
+  if(a.some(v=>isNaN(v))) return null;
+  if(a.length===ED_KEYS.length){ // formato antigo: um adereço só e 4 roupas
+    a=a.slice(); a[5]=[0,1,16,0,64,128,2][a[5]]||0; }
+  else if(a.length===ED_KEYS.length+1&&a[0]===2) a=a.slice(1);
+  else return null;
+  const c={}; ED_KEYS.forEach((k,i)=>c[k]=Math.max(0,Math.min(k==='acc'?255:ED_OPTS[k]-1,a[i]|0)));
+  if((c.acc&ACC_HEAD)&((c.acc&ACC_HEAD)-1)) c.acc&=~ACC_HEAD; // mais de um item de cabeça: limpa
+  return c;
 }
-function randomAce(){ const c={}; ED_KEYS.forEach(k=>c[k]=Math.floor(Math.random()*ED_OPTS[k])); if(c.g===1&&Math.random()<.85) c.beard=0; return c; }
+function randomAce(){
+  const c={}; ED_KEYS.forEach(k=>c[k]=Math.floor(Math.random()*ED_OPTS[k]));
+  if(c.g===1&&Math.random()<.85) c.beard=0;
+  c.acc=0; for(let b=0;b<4;b++) if(Math.random()<.3) c.acc|=1<<b;
+  if(Math.random()<.5) c.acc|=1<<(4+Math.floor(Math.random()*4));
+  return c;
+}
+function toggleAcc(mask,i){ if(i===0) return 0; const bit=1<<(i-1); if(mask&bit) return mask&~bit; if(bit&ACC_HEAD) mask&=~ACC_HEAD; return mask|bit; }
 let ME=null; try{ ME=decodeAce(localStorage.getItem('fodinha-me')||''); }catch(e){}
 function shade(hex,a){ const n=parseInt(hex.slice(1),16), f=v=>Math.round(a>0?v+(255-v)*a:v*(1+a)); return '#'+[n>>16,n>>8&255,n&255].map(v=>f(v).toString(16).padStart(2,'0')).join(''); }
 const TEE=c=>`<path d="M8 100 Q10 76 50 74 Q90 76 92 100Z" fill="${c}"/><path d="M40 74 Q50 80 60 74" stroke="${shade(c,-.25)}" stroke-width="3" fill="none"/>`;
@@ -967,33 +1009,38 @@ function composeLook(c){
   if(c.beard===4){ L.beard='full'; }
   L.outfit=[
     ()=>TEE('#17171b'),
-    ()=>TEE('#c42326')+`<text x="50" y="96" font-size="13" text-anchor="middle" fill="#fff">★</text>`,
-    s=>TEE('#e9e3d0')+`<path d="M8 100 Q10 80 34 76 L42 100Z M92 100 Q90 80 66 76 L58 100Z" fill="#1b1b1f"/><path d="M34 76 L42 100 M66 76 L58 100" stroke="#3a3a42" stroke-width="1.5"/>`,
+    ()=>TEE('#17171b')+`<text x="50" y="92" font-size="9" font-style="italic" font-weight="800" fill="#df292a" text-anchor="middle" font-family="Montserrat, sans-serif">StarAce</text><text x="50" y="99" font-size="6" fill="#f5c94f" text-anchor="middle">★ ★ ★</text>`,
+    ()=>TEE('#e9e3d0')+`<path d="M8 100 Q10 78 36 75 L44 100Z M92 100 Q90 78 64 75 L56 100Z" fill="#141414"/><path d="M36 75 L42 86 L37 89 M64 75 L58 86 L63 89" stroke="#3a3a42" stroke-width="1.6" fill="none"/><circle cx="20" cy="92" r="1.3" fill="#999"/><circle cx="80" cy="92" r="1.3" fill="#999"/>`,
     s=>LOOKS.stars.outfit(s),
+    s=>LOOKS.overalls.outfit(s),
+    s=>LOOKS.cowboy.outfit(s),
+    s=>LOOKS.bia.outfit(s),
   ][c.out];
-  L.extra=[
-    '',
+  const A=[
     `<rect x="33" y="41" width="15" height="9" rx="3" fill="#111"/><rect x="52" y="41" width="15" height="9" rx="3" fill="#111"/><path d="M48 44 L52 44" stroke="#111" stroke-width="2"/><path d="M36 43 L41 43 M55 43 L60 43" stroke="#666" stroke-width="1.3"/>`,
+    `<circle cx="27" cy="58" r="3.2" fill="none" stroke="#f5c94f" stroke-width="1.6"/><circle cx="73" cy="58" r="3.2" fill="none" stroke="#f5c94f" stroke-width="1.6"/>`,
+    `<path d="M38 76 Q50 95 62 76" stroke="#d9d9d9" stroke-width="1.5" fill="none"/><path d="M41 76 Q50 89 59 76" stroke="#c9ccd4" stroke-width="1" fill="none"/><text x="50" y="96" font-size="9" fill="#f5c94f" text-anchor="middle">★</text>`,
+    `<circle cx="53.5" cy="53.5" r="1.5" fill="none" stroke="#d9d9d9" stroke-width="1.1"/>`,
     LOOKS.cowboy.top,
-    `<path d="M28 35 Q29 13 50 12 Q71 13 72 35Z" fill="#c42326"/><path d="M26 34 Q52 29 84 36 L84 41 Q52 34 26 39Z" fill="#8c1526"/><text x="50" y="30" font-size="11" text-anchor="middle" fill="#fff">★</text>`,
+    `<path d="M22 32 Q50 25 78 32 Q82 34 78 36 Q50 30 22 36 Q18 34 22 32Z" fill="#3a3a40"/><path d="M32 32 Q31 12 50 12 Q69 12 68 32Z" fill="#4a4a52"/><path d="M42 13 Q50 19 58 13" stroke="#2c2c33" stroke-width="2" fill="none"/><rect x="32" y="25" width="36" height="4" fill="#c42326"/>`,
     `<path d="M28 33 Q50 25 72 33 L72 39 Q50 31 28 39Z" fill="#c42326"/><path d="M72 35 L82 30 L80 40Z" fill="#8c1526"/>${[34,42,50,58,66].map(x=>`<circle cx="${x}" cy="34" r="1" fill="#fff"/>`).join('')}`,
     `<path d="M23 52 Q22 12 50 12 Q78 12 77 52" stroke="#222" stroke-width="5" fill="none"/><rect x="17" y="42" width="11" height="17" rx="4" fill="#222"/><rect x="72" y="42" width="11" height="17" rx="4" fill="#222"/><rect x="19" y="45" width="4" height="11" rx="2" fill="#c42326"/><rect x="77" y="45" width="4" height="11" rx="2" fill="#c42326"/>`,
-    `<circle cx="27" cy="58" r="2.6" fill="#f5c94f"/><circle cx="73" cy="58" r="2.6" fill="#f5c94f"/><circle cx="27" cy="62" r="1.6" fill="#f5c94f"/><circle cx="73" cy="62" r="1.6" fill="#f5c94f"/>`,
-  ][c.acc];
+  ];
+  L.extra=A.filter((_,b)=>c.acc&(1<<b)).join('');
   return L;
 }
 const STAR_MINI=`<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="9" fill="#f5c94f"/><text x="50" y="70" font-size="60" text-anchor="middle" fill="#c42326">★</text></svg>`;
 function editorHTML(){
   if(!S.editor) return '';
   const t=T(), d=S.draft;
-  const prev=k=>i=>`<span class="edmini">${avatarSVG(composeLook({...d,...(k==='hair'&&(d.acc===2||d.acc===3)?{acc:0}:{}),[k]:i}))}</span>`;
+  const prev=k=>i=>`<span class="edmini">${avatarSVG(composeLook(k==='acc'?{...d,acc:i===0?0:toggleAcc(d.acc&~(1<<(i-1)),i)}:{...d,...(k==='hair'?{acc:d.acc&~ACC_HEAD}:{}),[k]:i}))}</span>`;
   const sw=arr=>i=>`<span class="sw" style="background:${arr[i]}"></span>`;
   const rows=[['g',t.edSex,i=>`<span class="edtxt">${t.edSexes[i]}</span>`],['skin',t.edSkin,sw(SKINS)],['hair',t.edHair,prev('hair')],['hc',t.edHairColor,sw(HAIRC)],
     ['beard',t.edBeard,prev('beard')],['acc',t.edAcc,prev('acc')],['out',t.edOut,prev('out')],['bg',t.edBg,sw(BGS)]];
   return `<div class="overlay edov"><div class="sheet editor" role="dialog" aria-label="${t.edT}">
     <h2>${t.edT}</h2>
     <div class="edtop"><div class="frame edbig">${avatarSVG(composeLook(d))}</div><button class="ghost" id="edrand">${t.edRand}</button></div>
-    ${rows.map(([k,lab,fn])=>`<div class="edrow"><small>${lab}</small><div class="edopts">${Array.from({length:ED_OPTS[k]},(_,i)=>`<button class="edopt" data-ed="${k}:${i}" aria-pressed="${d[k]===i}" aria-label="${lab} ${i+1}">${fn(i)}</button>`).join('')}</div></div>`).join('')}
+    ${rows.map(([k,lab,fn])=>`<div class="edrow"><small>${lab}</small><div class="edopts">${Array.from({length:ED_OPTS[k]},(_,i)=>`<button class="edopt" data-ed="${k}:${i}" aria-pressed="${k==='acc'?(i===0?d.acc===0:!!(d.acc&(1<<(i-1)))):d[k]===i}" aria-label="${lab} ${i+1}">${fn(i)}</button>`).join('')}</div></div>`).join('')}
     <div class="row"><button class="ghost" id="edcancel">${t.edCancel}</button><button class="cta" id="edsave">${t.edSave}</button></div>
   </div></div>`;
 }
@@ -1626,7 +1673,7 @@ const TUT_HANDS=[
 const mkCard=a=>a[0]==='S'?{id:'STAR',r:-1,s:'S',star:true}:{id:RANKS[a[0]]+a[1],r:a[0],s:a[1]};
 function tutSeen(){ if(S.tutSeenMem) return true; try{ return localStorage.getItem('fodinha-tut')==='1'; }catch(e){ return false; } }
 function markTutSeen(){ S.tutSeenMem=true; try{ localStorage.setItem('fodinha-tut','1'); }catch(e){} }
-function coach(key,btn){ return new Promise(res=>{ S.coach={key,btn,res}; render(); if(!btn) res(); }); }
+function coach(key,btn){ return new Promise(res=>{ S.coach={key,btn,res,fresh:true}; Snd.bell(1568,0,.07,.5); Snd.bell(2093,.07,.05,.6); render(); if(!btn) res(); }); }
 function startTutorial(){
   Snd.init(); Music.sync(); markTutSeen();
   S.token++; const tok=S.token;
@@ -1797,16 +1844,26 @@ function pwFrac(){
   return w;
 }
 function coachVis(key){
-  const t=T(), c=(r,su)=>cardHTML({id:RANKS[r]+su,r,s:su},{size:'tc',nomani:true});
-  if(key==='ladder'){ const su=['d','s','h','c','d','s','h','c','d','s']; return `<div class="ladder">${RANKS.map((_,r)=>c(r,su[r])).join('')}</div><div class="ladlab"><span>${t.tWeak}</span><i></i><span>${t.tStrong}</span></div>`; }
-  if(key==='h1b'||key==='h2a'){ const mr=key==='h1b'?4:0; return `<div class="maniv">${['c','h','s','d'].map((su,i)=>`<div>${c(mr,su)}<small>${t.maniNames[i]}</small></div>`).join('<em>›</em>')}</div>`; }
-  if(key==='h2b') return `<div class="maniv"><div>${cardHTML(mkCard(['S']),{size:'tc'})}<small>Matazap</small></div><em class="kill">${t.tKills}</em><div>${c(0,'c')}<small>Zap</small></div></div><p class="tsub">${t.tElse}</p>`;
+  const t=T(), c=(r,su,sz)=>cardHTML({id:RANKS[r]+su,r,s:su},{size:sz||'tc',nomani:true});
+  const pop=(i,h,cls='')=>`<div class="pop ${cls}" style="--i:${i}">${h}</div>`;
+  const star=cardHTML(mkCard(['S']),{size:'tc'});
+  if(key==='ladder'){ const su=['d','s','h','c','d','s','h','c','d','s']; return `<div class="ladder">${RANKS.map((_,r)=>pop(r,c(r,su[r]))).join('')}</div><div class="ladlab"><span>${t.tWeak}</span><i></i><span>${t.tStrong}</span></div>`; }
+  if(key==='h1b'||key==='h2a'){
+    const mr=S.mr;
+    return `<div class="viraman">${pop(0,`${cardHTML(S.vira,{size:'tm',nomani:true})}<small>${t.tVira}</small>`)}<em class="pop arrow" style="--i:1">→</em>${pop(2,`<span class="mbig">${RANKS[mr]}</span><small>${t.tMani}</small>`)}</div>
+      <div class="maniv">${['c','h','s','d'].map((su,i)=>pop(i+3,`${c(mr,su)}<small>${t.maniNames[i]}</small>`)).join('<em>›</em>')}</div>`;
+  }
+  if(key==='h2b') return `<div class="mzgrid">
+      <div class="mzrow">${pop(0,`${star}<small>Matazap</small>`)}<em class="kill pop" style="--i:1">${t.tKills}</em>${pop(2,`${c(0,'c')}<small>Zap</small>`)}<span class="cap">${t.tWith}</span></div>
+      <div class="mzrow">${pop(3,`${star}<small>Matazap</small>`)}<em class="lose pop" style="--i:4">${t.tLoses}</em>${pop(5,`${c(1,'d')}<small>5</small>`)}<span class="cap">${t.tWithout}</span></div>
+    </div>`;
   return '';
 }
 function coachHTML(){
   if(!S.coach) return '';
   const t=T(), c=t.tut[S.coach.key], txt=typeof c==='function'?c(nm(byId('you'))):c;
-  return `<div class="coach${S.coach.btn?' sheetmode':''}" role="status" aria-live="polite"><small>★ ${t.tutLabel}</small><p>${txt}</p>${coachVis(S.coach.key)}${S.coach.btn?`<button class="cta" id="coachok">${t.tutNext}</button>`:''}</div>`;
+  const top=S.coach.btn&&['h1b','h2a'].includes(S.coach.key);
+  return `<div class="coach${S.coach.btn?' sheetmode':''}${top?' top':''}${S.coach.fresh?' anim':''}" role="status" aria-live="polite"><small>★ ${t.tutLabel}</small><p>${txt}</p>${coachVis(S.coach.key)}${S.coach.btn?`<button class="cta" id="coachok">${t.tutNext}</button>`:''}</div>`;
 }
 function tableHTML(){
   const you=byId('you'), t=T();
@@ -1859,14 +1916,14 @@ function tableHTML(){
     <button class="iconbtn" id="menu" aria-label="${t.menu}">${ICON_MENU}</button>
   </header>
   <section class="stage">
-    <div class="ring${S.players.length>7?' many':''}${sp&&sp.fresh&&sp.type==='matazap'?' shake':''}" style="--sw:calc(min(100cqw,100cqh) * ${swFrac().toFixed(3)});--pw:calc(min(100cqw,100cqh) * ${pwFrac().toFixed(3)})">
+    <div class="ring${S.players.length>7?' many':''}${S.coach&&S.coach.key==='h1a'?' hlminis':''}${sp&&sp.fresh&&sp.type==='matazap'?' shake':''}" style="--sw:calc(min(100cqw,100cqh) * ${swFrac().toFixed(3)});--pw:calc(min(100cqw,100cqh) * ${pwFrac().toFixed(3)})">
       <div class="table"><img class="logo" src="${LOGO_W}" alt=""></div>
       ${S.players.map(seatHTML).join('')}
       ${played}
       ${splash}
     </div>
   </section>
-  <div class="infobar"><div class="virabox">${viraHTML}</div><p class="ticker" aria-live="polite">${S.msg&&!S.betReq&&!S.playReq?S.msg():'&nbsp;'}</p></div>
+  <div class="infobar${S.coach&&['h1b','h2a'].includes(S.coach.key)?' tutfocus':''}"><div class="virabox">${viraHTML}</div><p class="ticker" aria-live="polite">${S.msg&&!S.betReq&&!S.playReq?S.msg():'&nbsp;'}</p></div>
   ${coachHTML()}
   <section class="dock ${S.turn==='you'?'turn':''}">
     ${actions}
@@ -2008,6 +2065,7 @@ function render(){
   Object.values(S.bubbles).forEach(b=>b.fresh=false);
   S.dealAnim=false;
   if(S.splash) S.splash.fresh=false;
+  if(S.coach) S.coach.fresh=false;
   // encaixa o texto da comemoração na largura da tela
   document.querySelectorAll('.celebrate .big span').forEach(el=>{
     el.style.fontSize=''; const max=el.parentElement.clientWidth;
@@ -2033,7 +2091,7 @@ document.addEventListener('click',e=>{
   if(t.id==='tutyes'){ S.tutOffer=false; startTutorial(); return; }
   if(t.id==='tutskip'){ S.tutOffer=false; markTutSeen(); startGame(); return; }
   if(t.id==='editace'){ S.draft=ME?{...ME}:randomAce(); S.editor=true; render(); return; }
-  if(t.dataset.ed){ const [k,i]=t.dataset.ed.split(':'); S.draft[k]=+i; keepScroll(render); return; }
+  if(t.dataset.ed){ const [k,i]=t.dataset.ed.split(':'); if(k==='acc') S.draft.acc=toggleAcc(S.draft.acc,+i); else S.draft[k]=+i; keepScroll(render); return; }
   if(t.id==='edrand'){ S.draft=randomAce(); keepScroll(render); return; }
   if(t.id==='edcancel'){ S.editor=false; render(); return; }
   if(t.id==='edsave'){ ME={...S.draft}; try{ localStorage.setItem('fodinha-me',encodeAce(ME)); }catch(e){} S.editor=false; render(); return; }

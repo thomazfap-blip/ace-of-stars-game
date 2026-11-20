@@ -644,7 +644,7 @@ const TXT={
     edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereços (escolha vários)', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Monte seu personagem', edEdit:'Editar seu personagem',
     tWeak:'mais fraca', tStrong:'mais forte', tKills:'mata', tLoses:'perde pra', tWith:'com o Zap na rodada', tWithout:'sem o Zap: qualquer carta', tVira:'vira', tMani:'manilha',
     party:['TEEEEEM QUE','COMEMORAR!'],
-    cheatT:'Força das cartas', cheatRanks:'Ordem de força', cheatMani:r=>`Manilhas desta mão: ${r}`, cheatManiSub:'As manilhas ganham de todas as outras cartas. Entre elas, manda o naipe.', cheatNoVira:'A vira ainda não apareceu. Depois que aparecer, a manilha é a carta seguinte na força.', cheatMz:'O Ás de Estrelas só mata o Zap. Sem o Zap na rodada, perde pra qualquer carta.',
+    cheatT:'Força das cartas', cheatRanks:'Ordem de força', cheatMani:r=>`Manilhas desta mão: ${r}`, cheatRankSub:'Aqui só conta o número. Se duas cartas têm o mesmo número, o naipe desempata: ouros ♦, espadas ♠, copas ♥ e paus ♣, do mais fraco pro mais forte.', cheatManiSub:'As manilhas ganham de todas as outras cartas. Entre elas, manda o naipe, e o Zap é a mais forte.', cheatNoVira:'A vira ainda não apareceu. Depois que aparecer, a manilha é a carta seguinte na força.', cheatMz:'O Ás de Estrelas só mata o Zap. Sem o Zap na rodada, perde pra qualquer carta.',
     lvNames:['Fã','Roadie','Backstage','Palco','Lenda'], lvT:'Níveis', lvLevel:n=>`Nível ${n}`, lvNext:(p,n)=>`faltam ${p} pts pro ${n}`, lvMax:'Nível máximo!', lvUpT:'Novo nível!', lvUpGo:'Show!', lvSeeAll:'Ver níveis e prêmios',
     lvRewards:['A banda inteira e os itens básicos do personagem','A Equipe (Tutuba, Rato e Fox), boné e camisetas StarAce, 🍺 +1','Jaqueta jeans, colar de estrela e fone, 🍺 +1','David Frangioni, fundos especiais e 🥃 Jack and Coke +1','Moldura dourada no ranking, chapéu da turnê, 🍺 +2 e 🥃 +1'],
     lvHow:'Seus pontos no ranking geral sobem seu nível. Cada nível libera adversários, itens e drinques que ficam guardados no seu estoque.',
@@ -740,7 +740,7 @@ const TXT={
     edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessories (pick several)', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create your character', edEdit:'Edit your character',
     tWeak:'weakest', tStrong:'strongest', tKills:'kills', tLoses:'loses to', tWith:'with the Zap in the trick', tWithout:'no Zap: any card', tVira:'flip', tMani:'trump',
     party:['WE GOTTA','CELEBRATE!'],
-    cheatT:'Card strength', cheatRanks:'Strength order', cheatMani:r=>`Trumps this hand: ${r}`, cheatManiSub:'Trumps beat every other card. Among them, the suit decides.', cheatNoVira:'The flip card hasn’t shown yet. Once it does, the trump is the next rank up.', cheatMz:'The Ace of Stars only kills the Zap. Without the Zap in the trick, it loses to any card.',
+    cheatT:'Card strength', cheatRanks:'Strength order', cheatMani:r=>`Trumps this hand: ${r}`, cheatRankSub:'Only the number counts here. If two cards have the same number, the suit breaks the tie: diamonds ♦, spades ♠, hearts ♥ and clubs ♣, from weakest to strongest.', cheatManiSub:'Trumps beat every other card. Among them, the suit decides, and the Zap is the strongest.', cheatNoVira:'The flip card hasn’t shown yet. Once it does, the trump is the next rank up.', cheatMz:'The Ace of Stars only kills the Zap. Without the Zap in the trick, it loses to any card.',
     lvNames:['Fan','Roadie','Backstage','Stage','Legend'], lvT:'Levels', lvLevel:n=>`Level: ${n}`, lvNext:(p,n)=>`${p} pts to ${n}`, lvMax:'Top level!', lvUpT:'New level!', lvUpGo:'Rock on!', lvSeeAll:'See levels and rewards',
     lvRewards:['The whole band and basic character items','The Crew (Tutuba, Rato and Fox), StarAce cap and tees, 🍺 +1','Denim jacket, star necklace and headphones, 🍺 +1','David Frangioni, special backgrounds and 🥃 Jack and Coke +1','Gold frame on the leaderboard, tour hat, 🍺 +2 and 🥃 +1'],
     lvHow:'Your all-time leaderboard points raise your level. Each level unlocks opponents, items and drinks that stay in your stock.',
@@ -836,7 +836,7 @@ const TXT={
     edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorios (elige varios)', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Arma tu personaje', edEdit:'Edita tu personaje',
     tWeak:'más baja', tStrong:'más alta', tKills:'mata', tLoses:'pierde con', tWith:'con el Zap en la ronda', tWithout:'sin el Zap: cualquier carta', tVira:'muestra', tMani:'manilla',
     party:['¡HAAAAAY QUE','CELEBRAR!'],
-    cheatT:'Fuerza de las cartas', cheatRanks:'Orden de fuerza', cheatMani:r=>`Manillas de esta mano: ${r}`, cheatManiSub:'Las manillas le ganan a todas las demás. Entre ellas, manda el palo.', cheatNoVira:'La muestra todavía no apareció. Cuando aparezca, la manilla es la carta siguiente en fuerza.', cheatMz:'El As de Estrellas solo mata al Zap. Sin el Zap en la ronda, pierde con cualquier carta.',
+    cheatT:'Fuerza de las cartas', cheatRanks:'Orden de fuerza', cheatMani:r=>`Manillas de esta mano: ${r}`, cheatRankSub:'Aquí solo cuenta el número. Si dos cartas tienen el mismo número, el palo desempata: diamantes ♦, picas ♠, corazones ♥ y tréboles ♣, de la más baja a la más alta.', cheatManiSub:'Las manillas le ganan a todas las demás. Entre ellas, manda el palo, y el Zap es la más alta.', cheatNoVira:'La muestra todavía no apareció. Cuando aparezca, la manilla es la carta siguiente en fuerza.', cheatMz:'El As de Estrellas solo mata al Zap. Sin el Zap en la ronda, pierde con cualquier carta.',
     lvNames:['Fan','Roadie','Backstage','Escenario','Leyenda'], lvT:'Niveles', lvLevel:n=>`Nivel ${n}`, lvNext:(p,n)=>`faltan ${p} pts para ${n}`, lvMax:'¡Nivel máximo!', lvUpT:'¡Nuevo nivel!', lvUpGo:'¡Vamos!', lvSeeAll:'Ver niveles y premios',
     lvRewards:['Toda la banda y los ítems básicos del personaje','El Equipo (Tutuba, Rato y Fox), gorra y camisetas StarAce, 🍺 +1','Chaqueta de jean, collar de estrella y auriculares, 🍺 +1','David Frangioni, fondos especiales y 🥃 Jack and Coke +1','Marco dorado en el ranking, sombrero de gira, 🍺 +2 y 🥃 +1'],
     lvHow:'Tus puntos en el ranking general suben tu nivel. Cada nivel desbloquea rivales, ítems y tragos que quedan en tu inventario.',
@@ -1803,15 +1803,16 @@ function levelStripHTML(){
 }
 function cheatHTML(){
   if(!S.cheat) return '';
-  const t=T(), su=['d','s','h','c','d','s','h','c','d','s'];
+  const t=T(), su=Array(10).fill('s');
   const c=(r,s)=>cardHTML({id:RANKS[r]+s,r,s},{size:'tc',nomani:true});
   const mr=S.phase!=='setup'&&S.viraShown&&S.mr!=null?S.mr:null;
-  const maniRow=mr!=null?`<div class="maniv">${['c','h','s','d'].map((x,i)=>`<div>${c(mr,x)}<small>${t.maniNames[i]}</small></div>`).join('<em>›</em>')}</div>`:`<p class="tsub">${t.cheatNoVira}</p>`;
+  const maniRow=mr!=null?`<div class="maniv">${['d','s','h','c'].map((x,i)=>`<div>${c(mr,x)}<small>${t.maniNames[3-i]}</small></div>`).join('')}</div><div class="ladlab"><span>${t.tWeak}</span><i></i><span>${t.tStrong}</span></div>`:`<p class="tsub">${t.cheatNoVira}</p>`;
   return `<div class="overlay rankov"><div class="sheet cheat" role="dialog" aria-label="${t.cheatT}">
     <h2>${t.cheatT}</h2>
     <h3>${t.cheatRanks}</h3>
     <div class="ladder">${RANKS.map((_,r)=>c(r,su[r])).join('')}</div>
     <div class="ladlab"><span>${t.tWeak}</span><i></i><span>${t.tStrong}</span></div>
+    <p class="tsub">${t.cheatRankSub}</p>
     <h3>${mr!=null?t.cheatMani(RANKS[mr]):t.tMani}</h3>
     ${maniRow}
     <p class="tsub">${t.cheatManiSub}</p>
@@ -2111,7 +2112,7 @@ function coachVis(key){
   const t=T(), c=(r,su,sz)=>cardHTML({id:RANKS[r]+su,r,s:su},{size:sz||'tc',nomani:true});
   const pop=(i,h,cls='')=>`<div class="pop ${cls}" style="--i:${i}">${h}</div>`;
   const star=cardHTML(mkCard(['S']),{size:'tc'});
-  if(key==='ladder'){ const su=['d','s','h','c','d','s','h','c','d','s']; return `<div class="ladder">${RANKS.map((_,r)=>pop(r,c(r,su[r]))).join('')}</div><div class="ladlab"><span>${t.tWeak}</span><i></i><span>${t.tStrong}</span></div>`; }
+  if(key==='ladder'){ const su=Array(10).fill('s'); return `<div class="ladder">${RANKS.map((_,r)=>pop(r,c(r,su[r]))).join('')}</div><div class="ladlab"><span>${t.tWeak}</span><i></i><span>${t.tStrong}</span></div>`; }
   if(key==='h1b'||key==='h2a'){
     const mr=S.mr;
     return `<div class="viraman">${pop(0,`${cardHTML(S.vira,{size:'tm',nomani:true})}<small>${t.tVira}</small>`)}<em class="pop arrow" style="--i:1">→</em>${pop(2,`<span class="mbig">${RANKS[mr]}</span><small>${t.tMani}</small>`)}</div>

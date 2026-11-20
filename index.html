@@ -85,7 +85,8 @@ small{color:var(--muted)}
 .card.mani{box-shadow:0 0 0 2px var(--gold), 0 0 14px rgba(245,201,79,.6), 0 5px 12px rgba(0,0,0,.35)}
 .card.star svg{position:absolute;inset:0;width:100%;height:100%}
 .card.sm.star svg .corner{display:none}
-.card.sm.star{border-color:#1a1a1a}
+.card.star{background:#2a0508;border-color:#f5c94f;overflow:hidden}
+.card.sm.star{border-color:#f5c94f}
 .card.back{
   background:
     repeating-linear-gradient(45deg, rgba(255,255,255,.13) 0 2px, transparent 2px 7px),
@@ -1483,12 +1484,19 @@ const SUIT_VAL={c:4,h:3,s:2,d:1};
 const SUIT_SYM={c:'♣',h:'♥',s:'♠',d:'♦'};
 const STAR_SVG=(()=>{
   const star=(x,y,r,k=.4)=>{const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*k:r;p.push((x+rr*Math.cos(a)).toFixed(2)+','+(y+rr*Math.sin(a)).toFixed(2));}return p.join(' ');};
-  const corner=`<text x="12" y="27" font-family="Bebas Neue, Impact, sans-serif" font-size="27" text-anchor="middle" fill="#111">A</text><polygon points="${star(12,36.5,6.2)}" fill="#e01b1b"/>`;
+  // carta própria: fundo escuro, moldura dourada, "ACE OF STARS" escrito. Sem o "A" de canto, pra nunca parecer um Ás comum.
+  const label=`<text x="50" y="21" font-family="Bebas Neue, Impact, sans-serif" font-size="14" textLength="68" lengthAdjust="spacingAndGlyphs" text-anchor="middle" fill="#f5c94f">ACE OF STARS</text>`;
+  const dots=[[14,40],[86,40],[14,106],[86,106]].map(([x,y])=>`<polygon points="${star(x,y,4)}" fill="#f5c94f" opacity=".8"/>`).join('');
   return `<svg viewBox="0 0 100 140" aria-hidden="true">
-    <g class="corner">${corner}</g><g class="corner" transform="rotate(180 50 70)">${corner}</g>
+    <defs><radialGradient id="aosbg" cx="50%" cy="50%" r="70%"><stop offset="0" stop-color="#6b0d14"/><stop offset=".65" stop-color="#2a0508"/><stop offset="1" stop-color="#0d0203"/></radialGradient></defs>
+    <rect x="0" y="0" width="100" height="140" fill="url(#aosbg)"/>
+    <rect x="5" y="5" width="90" height="130" rx="8" fill="none" stroke="#f5c94f" stroke-width="1.6"/>
+    <rect x="8.5" y="8.5" width="83" height="123" rx="6" fill="none" stroke="#f5c94f" stroke-width=".6" opacity=".6"/>
+    <g class="corner">${label}</g><g class="corner" transform="rotate(180 50 70)">${label}</g>
+    <g class="corner">${dots}</g>
     <g class="big">
-      <polygon points="${star(50,73,34,.42)}" fill="#111" stroke="#e01b1b" stroke-width="2.2" stroke-linejoin="round"/>
-      <polygon points="${star(50,73,27,.42)}" fill="none" stroke="#f5c94f" stroke-width="1" stroke-linejoin="round" opacity=".9"/>
+      <polygon points="${star(50,73,34,.42)}" fill="#111" stroke="#f5c94f" stroke-width="2.4" stroke-linejoin="round"/>
+      <polygon points="${star(50,73,27,.42)}" fill="none" stroke="#e01b1b" stroke-width="1.2" stroke-linejoin="round"/>
       <polygon points="${star(50,73.5,10,.42)}" fill="#e01b1b"/>
     </g></svg>`;
 })();

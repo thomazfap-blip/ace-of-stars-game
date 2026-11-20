@@ -457,6 +457,10 @@ td .lifebar{margin:0;width:58px}
 .maniv small{font-size:10px;font-weight:800;color:#2a0a10;text-transform:uppercase;letter-spacing:.04em}
 .maniv em{font-style:normal;color:var(--rim);font-weight:800}
 .maniv em.kill{font-family:var(--f-display);font-size:22px}
+.maniv.mzv{gap:10px}
+.maniv.mzv > div{width:96px}
+.maniv.mzv small{white-space:nowrap}
+.maniv.mzv em.kill{width:60px;text-align:center}
 .tsub{font-size:13px!important;color:#5a3a2a}
 .acerow{display:flex;align-items:center;gap:12px}
 .acebtn{background:none;border:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:4px;flex:none}
@@ -1816,8 +1820,8 @@ function cheatHTML(){
     <h3>${mr!=null?t.cheatMani(RANKS[mr]):t.tMani}</h3>
     ${maniRow}
     <p class="tsub">${t.cheatManiSub}</p>
-    <h3>Matazap</h3>
-    <div class="maniv"><div>${cardHTML(mkCard(['S']),{size:'tc'})}<small>Matazap</small></div><em class="kill">${t.tKills}</em><div>${mr!=null?c(mr,'c'):''}<small>Zap</small></div></div>
+    <h3>Ace of Stars</h3>
+    <div class="maniv mzv"><div>${cardHTML(mkCard(['S']),{size:'tc'})}<small>Ace of Stars</small></div><em class="kill">${t.tKills}</em><div>${mr!=null?c(mr,'c'):''}<small>Zap</small></div></div>
     <p class="tsub">${t.cheatMz}</p>
     <div class="row"><button class="cta" id="cheatclose">${t.rankClose}</button></div>
   </div></div>`;

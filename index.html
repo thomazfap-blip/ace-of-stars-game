@@ -380,18 +380,20 @@ td .lifebar{margin:0;width:58px}
 .cheat .maniv small{color:var(--ink)}
 .cheat .tsub{color:var(--muted)!important;font-size:12px!important;margin:0}
 .tabsub.special{color:var(--gold)}
-.tabs{flex-wrap:wrap}
-.tabs button{padding:8px 10px;font-size:21px}
+.tabs{flex-wrap:nowrap}
+.tabs button{padding:8px 6px;font-size:19px;gap:5px;white-space:nowrap}
+.tabs button span{padding:1px 6px}
+@media (max-width:440px){ .tabs{gap:0} .tabs button{font-size:16px;padding:8px 4px;gap:3px} .tabs button span{font-size:10px;padding:1px 5px} }
 .tabs button[data-tab="special"]{color:#f5c94f}
 .linkbtn.inl{display:inline;font-size:12px}
 .linkbtn{align-self:flex-start;background:none;border:none;padding:2px 0;color:var(--teal-light);font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .pick.locked{cursor:not-allowed}
 
-.lockov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;z-index:3;filter:none}
-.lockov i{font-style:normal;font-size:44px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,.8))}
-.lockov span{background:var(--rim);color:#fff;font-weight:800;font-size:11px;border-radius:999px;padding:2px 8px;box-shadow:0 2px 6px rgba(0,0,0,.5);white-space:nowrap}
+.lockov{position:absolute;inset:0;z-index:3;pointer-events:none}
+.lockov i{position:absolute;right:-8px;top:-8px;font-style:normal;font-size:28px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.8))}
+.lockov span{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);background:var(--rim);color:#fff;font-weight:800;font-size:11px;border-radius:999px;padding:2px 8px;box-shadow:0 2px 6px rgba(0,0,0,.5);white-space:nowrap}
 .pick.locked .frame{filter:none}
-.pick.locked .frame .avatar{filter:grayscale(1) brightness(.45)}
+.pick.locked .frame .avatar{filter:grayscale(1) brightness(.85)}
 .edopt{position:relative}
 .edopt.locked{opacity:.45;cursor:not-allowed}
 .edopt .lk{position:absolute;right:2px;bottom:2px;font-size:9px;font-weight:800;background:rgba(0,0,0,.75);color:#fff;border-radius:6px;padding:1px 4px}
@@ -648,7 +650,7 @@ const TXT={
     trump:'Manilha', flip:'Vira', you:'Você', madeOf:(m,b)=>`fez ${m}/${b}`,
     styles:{bold:'Ousado',sly:'Sagaz',careful:'Cauteloso',calc:'Calculista',wild:'Imprevisível',hooked:'Preciso',hooked2:'Agressivo',hooked3:'Frio',master:'Estrategista',pro:'Lendário'},
     roles:{surfer:'Surfista',yogi:'Mestre da ioga',tennis:'Tenista',fisher:'Pescador',f1:'Piloto de F1',producer:'Produtor',guitarVox:'Guitarra',drums:'Bateria',bassVox:'Baixo',voxKeys:'Teclado e violão',guitar:'Guitarra',sound:'Técnico de som',roadie:'Roadie',video:'Videomaker'},
-    tabSpecial:'Especial ★', specialSub:'A Banda Especial: versões lendárias da StarAce. Jogam quase sem errar e são muito difíceis de vencer, mas cada um na mesa vale muito mais pontos. Liberam a partir de 1000 pts.',
+    tabSpecial:'★ Especial', specialSub:'A Banda Especial: versões lendárias da StarAce. Jogam quase sem errar e são muito difíceis de vencer, mas cada um na mesa vale muito mais pontos. Liberam a partir de 1000 pts.',
     tabBand:'Banda', tabCrew:'Equipe', allTab:g=>g==='band'?'Chamar a banda toda':g==='crew'?'Chamar a equipe toda':'Chamar a Banda Especial', crewSub:'A equipe que roda com a StarAce. Nível mais alto que o da banda: aqui o jogo é sério.',
     edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereços (escolha vários)', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Monte seu personagem', edEdit:'Editar seu personagem',
     tWeak:'mais fraca', tStrong:'mais forte', tKills:'mata', tLoses:'perde pra', tWith:'com o Zap na rodada', tWithout:'sem o Zap: qualquer carta', tVira:'vira', tMani:'manilha',
@@ -745,7 +747,7 @@ const TXT={
     trump:'Trump', flip:'Flip', you:'You', madeOf:(m,b)=>`took ${m}/${b}`,
     styles:{bold:'Bold',sly:'Sharp',careful:'Careful',calc:'Calculating',wild:'Wild card',hooked:'Precise',hooked2:'Aggressive',hooked3:'Ice-cold',master:'Strategist',pro:'Legendary'},
     roles:{surfer:'Surfer',yogi:'Yoga master',tennis:'Tennis player',fisher:'Fisherman',f1:'F1 driver',producer:'Producer',guitarVox:'Guitar',drums:'Drums',bassVox:'Bass',voxKeys:'Keys & acoustic guitar',guitar:'Guitar',sound:'Sound engineer',roadie:'Roadie',video:'Video maker'},
-    tabSpecial:'Special ★', specialSub:'The Special Band: legendary versions of StarAce. They almost never miss and are very hard to beat, but each one at the table is worth a lot more points. Unlocks from 1000 pts.',
+    tabSpecial:'★ Special', specialSub:'The Special Band: legendary versions of StarAce. They almost never miss and are very hard to beat, but each one at the table is worth a lot more points. Unlocks from 1000 pts.',
     tabBand:'Band', tabCrew:'Crew', allTab:g=>g==='band'?'Call the whole band':g==='crew'?'Call the whole crew':'Call the Special Band', crewSub:'The crew that tours with StarAce. A higher level than the band: this is the serious table.',
     edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessories (pick several)', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create your character', edEdit:'Edit your character',
     tWeak:'weakest', tStrong:'strongest', tKills:'kills', tLoses:'loses to', tWith:'with the Zap in the trick', tWithout:'no Zap: any card', tVira:'flip', tMani:'trump',
@@ -842,7 +844,7 @@ const TXT={
     trump:'Manilla', flip:'Muestra', you:'Tú', madeOf:(m,b)=>`hizo ${m}/${b}`,
     styles:{bold:'Atrevido',sly:'Sagaz',careful:'Cauteloso',calc:'Calculadora',wild:'Impredecible',hooked:'Preciso',hooked2:'Agresivo',hooked3:'Frío',master:'Estratega',pro:'Legendario'},
     roles:{surfer:'Surfista',yogi:'Maestra de yoga',tennis:'Tenista',fisher:'Pescador',f1:'Piloto de F1',producer:'Productor',guitarVox:'Guitarra',drums:'Batería',bassVox:'Bajo',voxKeys:'Teclado y guitarra acústica',guitar:'Guitarra',sound:'Técnico de sonido',roadie:'Roadie',video:'Videomaker'},
-    tabSpecial:'Especial ★', specialSub:'La Banda Especial: versiones legendarias de StarAce. Casi no fallan y son muy difíciles de vencer, pero cada uno en la mesa vale muchos más puntos. Se desbloquean desde 1000 pts.',
+    tabSpecial:'★ Especial', specialSub:'La Banda Especial: versiones legendarias de StarAce. Casi no fallan y son muy difíciles de vencer, pero cada uno en la mesa vale muchos más puntos. Se desbloquean desde 1000 pts.',
     tabBand:'Banda', tabCrew:'Equipo', allTab:g=>g==='band'?'Llamar a toda la banda':g==='crew'?'Llamar a todo el equipo':'Llamar a la Banda Especial', crewSub:'El equipo que sale de gira con StarAce. Nivel más alto que la banda: acá se juega en serio.',
     edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorios (elige varios)', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Arma tu personaje', edEdit:'Edita tu personaje',
     tWeak:'más baja', tStrong:'más alta', tKills:'mata', tLoses:'pierde con', tWith:'con el Zap en la ronda', tWithout:'sin el Zap: cualquier carta', tVira:'muestra', tMani:'manilla',

@@ -1638,6 +1638,8 @@ function startGame(){
   runGame(tok).catch(e=>{ if(!(e instanceof Abort)) console.error(e); });
 }
 function dealHand(){
+  // quem voltou com um drinque entra na conta: nunca dá mais cartas do que o baralho tem
+  if(S.n>maxCards()){ S.n=maxCards(); S.dir=-1; }
   const n=S.n,deck=shuffle(FULL_DECK.map(c=>({...c})));
   S.players.forEach(p=>{ p.hand=[]; p.bet=null; p.made=0; });
   for(let k=0;k<n;k++) alive().forEach(p=>p.hand.push({card:deck.pop(),vis:visFor(n,k)}));

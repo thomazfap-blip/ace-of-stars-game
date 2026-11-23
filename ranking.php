@@ -146,7 +146,7 @@ $key = key_for($P, $id);
 
 if ($a === 'game') {
     $nailed = clamp($in['nailed'] ?? 0, 0, 80);
-    $g = ['name' => clean_name($in['name'] ?? ''), 'av' => clean_av($in['av'] ?? ''), 'pts' => clamp($in['pts'] ?? 0, 0, 40),
+    $g = ['name' => clean_name($in['name'] ?? ''), 'av' => clean_av($in['av'] ?? ''), 'pts' => clamp($in['pts'] ?? 0, 0, 150),
           'win' => empty($in['win']) ? 0 : 1, 'nailed' => $nailed, 'hands' => clamp($in['hands'] ?? 0, $nailed, 80), 'mz' => clamp($in['mz'] ?? 0, 0, 10)];
     $prev = $R['all'][$key] ?? null;
     if ($prev && time() - ($prev['t'] ?? 0) < 15) { flock($lock, LOCK_UN); out(['error' => 'too fast'], 429); }

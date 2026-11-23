@@ -12,6 +12,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
 const FANS = 'fans@staraceband.com';
+const TESTERS = ['thomazfap@gmail.com'];
 const LV_PTS  = [0, 50, 150, 300, 600];
 const LV_BEER = [0, 1, 1, 0, 2];
 const LV_JACK = [0, 0, 0, 1, 1];
@@ -81,6 +82,11 @@ function profile($R, $P, $key) {
     $pts = $R['all'][$key]['pts'] ?? 0; $lv = level_of($pts);
     $used = $P['inv'][$key] ?? ['b' => 0, 'j' => 0];
     $acc = $P['acc'][$key] ?? null;
+    // contas de teste: tudo liberado e estoque cheio (o ranking continua com os pontos reais)
+    if ($acc && in_array($acc['email'], TESTERS, true)) {
+        return ['pts' => max($pts, 2000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'tester' => true,
+                'linked' => true, 'email' => mask_email($acc['email']), 'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
+    }
     return ['pts' => $pts, 'level' => $lv, 'next' => LV_PTS[$lv + 1] ?? null,
             'beer' => max(0, earned($lv, LV_BEER) - ($used['b'] ?? 0)), 'jack' => max(0, earned($lv, LV_JACK) - ($used['j'] ?? 0)),
             'linked' => (bool)$acc, 'email' => $acc ? mask_email($acc['email']) : null,
@@ -182,6 +188,7 @@ if ($a === 'use') {
     $item = ($in['item'] ?? '') === 'jack' ? 'j' : 'b';
     $pr = profile($R, $P, $key);
     if (($item === 'j' ? $pr['jack'] : $pr['beer']) < 1) { flock($lock, LOCK_UN); out(['error' => 'empty', 'profile' => $pr], 409); }
+    if (!empty($pr['tester'])) { flock($lock, LOCK_UN); out(['profile' => $pr]); }
     $u = $P['inv'][$key] ?? ['b' => 0, 'j' => 0];
     $u[$item] = ($u[$item] ?? 0) + 1;
     $P['inv'][$key] = $u;

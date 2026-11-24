@@ -1751,16 +1751,25 @@ const DARK_END=4.1;
 DARK_MEL.splice(9); // só a primeira frase; depois fica o drone
 let DK=null;
 function distCurve(k){ const n=1024, c=new Float32Array(n); for(let i=0;i<n;i++){ const x=i*2/n-1; c[i]=(1+k)*x/(1+k*Math.abs(x)); } return c; }
-// riff: dois serrotes desafinados com vibrato num filtro ressonante (o som da primeira versão)
+// riff: theremin deslizando na frente + quadrada abafada bem atrás marcando as notas
 function darkRiff(t0){
   if(!DK) return; const c=Snd.ctx, hz=n=>440*Math.pow(2,(n-69)/12), out=DK.out;
+  const last=DARK_MEL[DARK_MEL.length-1], end=t0+last[0]+last[1]+.6;
+  // theremin
+  const tg=c.createGain(); tg.gain.setValueAtTime(0,t0); tg.gain.linearRampToValueAtTime(.2,t0+.12); tg.gain.setValueAtTime(.2,end-.6); tg.gain.linearRampToValueAtTime(0,end); tg.connect(out);
+  const o=c.createOscillator(), o2=c.createOscillator(), o2g=c.createGain(); o.type='sine'; o2.type='triangle'; o2g.gain.value=.12;
+  o.frequency.value=o2.frequency.value=hz(DARK_MEL[0][2]); o.connect(tg); o2.connect(o2g).connect(tg);
+  DARK_MEL.forEach(([s,,n])=>{ o.frequency.setTargetAtTime(hz(n),t0+s,.06); o2.frequency.setTargetAtTime(hz(n),t0+s,.06); });
+  const v=c.createOscillator(), vg=c.createGain(); v.frequency.value=4.2; vg.gain.value=22; v.connect(vg); vg.connect(o.detune); vg.connect(o2.detune);
+  [o,o2,v].forEach(x=>{ x.start(t0); x.stop(end+.1); DK.nodes.push(x); });
+  // quadrada abafada
+  const sq=c.createGain(); sq.gain.value=.35; sq.connect(out);
   DARK_MEL.forEach(([s,d,n])=>{
-    const t=t0+s, f=hz(n), rel=d+.35, flt=c.createBiquadFilter(), g=c.createGain();
-    flt.type='lowpass'; flt.Q.value=9; flt.frequency.setValueAtTime(500,t); flt.frequency.linearRampToValueAtTime(2600,t+.06); flt.frequency.exponentialRampToValueAtTime(700,t+rel);
-    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.16,t+.02); g.gain.setValueAtTime(.13,t+d); g.gain.exponentialRampToValueAtTime(.001,t+rel);
-    flt.connect(g).connect(out);
-    [-9,9].forEach(dt=>{ const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=f; o.detune.value=dt; const v=c.createOscillator(), vg=c.createGain(); v.frequency.value=5.5; vg.gain.value=6; v.connect(vg).connect(o.detune); v.start(t); v.stop(t+rel); o.connect(flt); o.start(t); o.stop(t+rel+.05); DK.nodes.push(o,v); });
-    const sub=c.createOscillator(), sg=c.createGain(); sub.type='square'; sub.frequency.value=f/2; sg.gain.value=.25; sub.connect(sg).connect(flt); sub.start(t); sub.stop(t+rel); DK.nodes.push(sub);
+    const t=t0+s, f=hz(n), fl=c.createBiquadFilter(), g=c.createGain();
+    fl.type='lowpass'; fl.Q.value=2; fl.frequency.value=780;
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.2,t+.025); g.gain.setValueAtTime(.2,t+.025+d*.9); g.gain.exponentialRampToValueAtTime(.0008,t+.025+d*.9+.35);
+    fl.connect(g).connect(sq);
+    [-4,4].forEach(dt=>{ const q=c.createOscillator(); q.type='square'; q.frequency.value=f; q.detune.value=dt; q.connect(fl); q.start(t); q.stop(t+d+.5); DK.nodes.push(q); });
   });
 }
 function darkBeat(t,strong){

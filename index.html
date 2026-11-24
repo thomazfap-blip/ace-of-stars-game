@@ -362,7 +362,23 @@ td .lifebar{margin:0;width:58px}
 .lvstrip{margin-top:14px;display:flex;flex-direction:column;gap:6px}
 .lvhead{display:flex;align-items:center;gap:10px;background:none;border:none;padding:0;text-align:left;color:var(--ink);font-size:14px}
 .lvhead b{color:var(--gold);font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.03em}
-.lvhead .inv{margin-left:auto;font-weight:700}
+.lvtop{display:flex;align-items:center;gap:8px}
+.lvtop .lvhead{flex:1;min-width:0}
+.powbtn{flex:none;display:flex;align-items:center;gap:6px;border:1px solid var(--gold);border-radius:999px;padding:5px 10px;background:rgba(0,0,0,.3);color:var(--ink);font:700 13px Montserrat,sans-serif;cursor:pointer}
+.powbtn i{font-style:normal;color:var(--gold)}
+.powlist{display:grid;gap:10px;text-align:left}
+.powrow{display:grid;grid-template-columns:54px 1fr;gap:12px;align-items:start;background:rgba(0,0,0,.28);border-radius:14px;padding:12px}
+.powrow.locked{opacity:.6}
+.powico{width:54px;height:54px;display:grid;place-items:center;position:relative}
+.powico svg{max-width:100%;max-height:100%}
+.powico .beer{width:auto;height:50px;filter:none}
+.powrow,.powrow h3,.powrow p{text-align:left}
+.powrow h3{margin:0;display:flex;align-items:baseline;gap:8px;font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.03em;color:var(--gold)}
+.powrow h3 span{margin-left:auto;font:800 15px Montserrat,sans-serif;color:var(--ink)}
+.powrow p{margin:4px 0 0;font-size:13px;line-height:1.4}
+.powrow p.how{color:var(--muted);font-size:12px}
+.powrow.pw-cat h3{color:#c9a6ff}
+.pownote{font-size:12px;color:var(--muted);margin:10px 0 0}
 .lvbar{height:8px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden}
 .lvbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-deep),var(--gold));border-radius:999px}
 .lvstrip small{font-size:12px}
@@ -1952,7 +1968,7 @@ function levelStripHTML(){
   const t=T(), m=Rank.me, lv=m.level|0, next=LV_PTS[lv+1];
   const pct=next!=null?Math.round(100*(m.pts-LV_PTS[lv])/(next-LV_PTS[lv])):100;
   return `<div class="lvstrip">
-    <button class="lvhead" id="lvopen"><b>${t.lvLevel(t.lvNames[lv])}</b><span>${m.tester?'🧪 teste':m.pts+' pts'}</span><span class="inv">🍺×${m.beer} 🥃×${m.jack}${lv>=3?` 🔮×${m.cat|0}`:''}</span></button>
+    <div class="lvtop"><button class="lvhead" id="lvopen"><b>${t.lvLevel(t.lvNames[lv])}</b><span>${m.tester?'🧪 teste':m.pts+' pts'}</span></button><button class="powbtn" id="powopen" aria-label="${PT().title}">🍺${m.beer} 🥃${m.jack}${lv>=3?` 🔮${m.cat|0}`:''}<i>›</i></button></div>
     <div class="lvbar"><i style="width:${Math.max(3,Math.min(100,pct))}%"></i></div>
     <small>${next!=null?t.lvNext(next-m.pts,t.lvNames[lv+1]):t.lvMax}</small>
     ${lv>=3&&!m.tester?`<small>${(m.cat|0)>=3?CT().full:CT().next}</small>`:''}
@@ -1980,13 +1996,47 @@ function cheatHTML(){
     <div class="row"><button class="cta" id="cheatclose">${t.rankClose}</button></div>
   </div></div>`;
 }
+const POW_T={
+  pt:{title:'Seu estoque e poderes',open:'🎒 Estoque e poderes',sub:'Tudo o que você ganha subindo de nível fica guardado aqui e vale pra próximas partidas.',
+    beer:'Cerveja',beerD:'Perdeu todas as vidas? Toma uma do estoque e volta pra mesa com 1 vida, sem perder pontos.',beerH:'Como ganhar: +1 no Roadie, +1 no Backstage e +2 na Lenda.',
+    jack:'Jack and Coke',jackD:'Perdeu todas as vidas? Volta pra mesa com 2 vidas, sem perder pontos.',jackH:'Como ganhar: +1 no Palco e +1 na Lenda.',
+    cat:'Mystical Cat',catD:'Na mesa, toque na bola de cristal 🔮 e escolha um adversário: o Mystical Cat mostra a mão dele. Funciona a partir da rodada de 2 cartas, e cada bola é um uso.',catH:'Como ganhar: 1 de presente ao chegar no Palco e +1 a cada vitória (guarda até 3).',
+    lock:n=>`🔒 Libera no ${n}`,note:'Sem nada no estoque, ainda dá pra tomar 1 cerveja por partida, mas aí você perde metade dos pontos dela.'},
+  en:{title:'Your stock and powers',open:'🎒 Stock and powers',sub:'Everything you earn by leveling up is kept here for your next games.',
+    beer:'Beer',beerD:'Lost all your lives? Grab one from your stock and get back with 1 life, no points lost.',beerH:'How to get it: +1 at Roadie, +1 at Backstage and +2 at Legend.',
+    jack:'Jack and Coke',jackD:'Lost all your lives? Get back to the table with 2 lives, no points lost.',jackH:'How to get it: +1 at Stage and +1 at Legend.',
+    cat:'Mystical Cat',catD:'At the table, tap the crystal ball 🔮 and pick an opponent: the Mystical Cat shows you their hand. Works from the 2-card round on, and each ball is one use.',catH:'How to get it: 1 as a gift when you reach Stage and +1 for every win (holds up to 3).',
+    lock:n=>`🔒 Unlocks at ${n}`,note:'With an empty stock you can still grab 1 beer per game, but you lose half of that game’s points.'},
+  es:{title:'Tu inventario y poderes',open:'🎒 Inventario y poderes',sub:'Todo lo que ganas al subir de nivel queda guardado aquí para tus próximas partidas.',
+    beer:'Cerveza',beerD:'¿Perdiste todas las vidas? Tómate una del inventario y vuelve a la mesa con 1 vida, sin perder puntos.',beerH:'Cómo ganarla: +1 en Roadie, +1 en Backstage y +2 en Leyenda.',
+    jack:'Jack and Coke',jackD:'¿Perdiste todas las vidas? Vuelve a la mesa con 2 vidas, sin perder puntos.',jackH:'Cómo ganarlo: +1 en Escenario y +1 en Leyenda.',
+    cat:'Mystical Cat',catD:'En la mesa, toca la bola de cristal 🔮 y elige un rival: el Mystical Cat te muestra su mano. Funciona desde la ronda de 2 cartas, y cada bola es un uso.',catH:'Cómo ganarla: 1 de regalo al llegar a Escenario y +1 por cada victoria (guarda hasta 3).',
+    lock:n=>`🔒 Se desbloquea en ${n}`,note:'Sin nada en el inventario igual puedes tomar 1 cerveza por partida, pero pierdes la mitad de sus puntos.'}
+};
+function PT(){ return POW_T[LANG]||POW_T.pt; }
+function powersHTML(){
+  if(!S.powOpen) return '';
+  const p=PT(), t=T(), m=Rank.me||{}, lv=myLevel();
+  const row=(cls,ico,name,n,d,h,need)=>{ const lk=lv<need;
+    return `<div class="powrow ${cls}${lk?' locked':''}"><div class="powico">${ico}</div><div><h3>${name}<span>${lk?p.lock(t.lvNames[need]):'×'+(n|0)}</span></h3><p>${d}</p><p class="how">${h}</p></div></div>`; };
+  return `<div class="overlay rankov"><div class="sheet" role="dialog" aria-label="${p.title}">
+    <h2>${p.title}</h2><p>${p.sub}</p>
+    <div class="powlist">
+      ${row('pw-beer',beerSVG(false),p.beer,m.beer,p.beerD,p.beerH,1)}
+      ${row('pw-jack',jackSVG(false),p.jack,m.jack,p.jackD,p.jackH,3)}
+      ${row('pw-cat',crystalSVG(),p.cat,m.cat,p.catD,p.catH,3)}
+    </div>
+    <p class="pownote">${p.note}</p>
+    <div class="row"><button class="cta" id="powclose">${t.rankClose}</button></div>
+  </div></div>`;
+}
 function levelsHTML(){
   if(!S.levelsOpen) return '';
   const t=T(), lv=myLevel();
   return `<div class="overlay rankov"><div class="sheet" role="dialog" aria-label="${t.lvT}">
     <h2>${t.lvT}</h2><p>${t.lvHow}</p>
     <div class="lvlist">${t.lvNames.map((n,i)=>`<div class="lvrow${i<=lv?' got':''}${i===lv?' cur':''}"><span class="lvpts">${LV_PTS[i]}</span><div><b>${i<=lv?'✓ ':'🔒 '}${n}</b><small>${t.lvRewards[i]}</small></div></div>`).join('')}</div>
-    <div class="row"><button class="cta" id="lvclose">${t.rankClose}</button></div>
+    <div class="row"><button class="ghost" id="powopen2">${PT().open}</button><button class="cta" id="lvclose">${t.rankClose}</button></div>
   </div></div>`;
 }
 function catGotHTML(){
@@ -2519,7 +2569,7 @@ function render(){
   const app=document.getElementById('app'), game=S.phase!=='setup';
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+catVeilHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML())+levelsHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+catVeilHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML())+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);
@@ -2562,6 +2612,8 @@ document.addEventListener('click',e=>{
   if(t.id==='cheatclose'){ S.cheat=false; render(); return; }
   if(t.id==='lvopen'){ S.levelsOpen=true; render(); return; }
   if(t.id==='lvclose'){ S.levelsOpen=false; render(); return; }
+  if(t.id==='powopen'||t.id==='powopen2'){ S.levelsOpen=false; S.powOpen=true; render(); return; }
+  if(t.id==='powclose'){ S.powOpen=false; render(); return; }
   if(t.id==='lvupok'){ S.levelUp=null; render(); return; }
   if(t.id==='catgotok'){ S.catGot=false; render(); return; }
   if(t.id==='mailopen'){ S.mail={step:'email',email:'',code:'',optin:false,err:'',busy:false,ctx:'gen'}; render(); const mi=document.getElementById('mailin'); if(mi) mi.focus(); return; }

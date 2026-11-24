@@ -772,7 +772,7 @@ const TXT={
     next:n=>`Próxima: ${n} ${n===1?'carta':'cartas'}`,
     noLives:'Acabaram suas vidas', bandGoes:'A banda segue jogando. Quer ver quem ganha?',
     newGame:'Nova partida', watch:'Assistir o fim',
-    youWon:'Você ganhou da banda!', won:n=>`${n} venceu!`, tie:'Empate na mesa',
+    youWon:'Você ganhou da banda!', youBeatBoss:n=>`Você ganhou do ${n}!`, youBeatBossSub:'O Arquiteto da Realidade caiu. Isso é Real Rock N\' Roll!', won:n=>`${n} venceu!`, tie:'Empate na mesa',
     youWonSub:'Pode cobrar a rodada no próximo ensaio.', hands:n=>`Foram ${n} mãos.`,
     changeOpp:'Trocar adversários', again:'Jogar de novo', home:'Menu inicial', leave:'Sair da partida?', leaveSub:'A partida atual vai ser perdida.', keep:'Continuar jogando',
     sound:'Som', sfx:'Efeitos sonoros', music:'Música', nowPlaying:'Tocando', nextTrack:'Próxima música', voice:'Voz', lang:'Idioma', num:['nenhuma','uma','duas','três','quatro','cinco','seis','sete','oito'], menu:'Menu', close:'Voltar pro jogo',
@@ -869,7 +869,7 @@ const TXT={
     next:n=>`Next: ${n} ${n===1?'card':'cards'}`,
     noLives:'You’re out of lives', bandGoes:'The band keeps playing. Want to see who wins?',
     newGame:'New game', watch:'Watch the end',
-    youWon:'You beat the band!', won:n=>`${n} wins!`, tie:'It’s a tie',
+    youWon:'You beat the band!', youBeatBoss:n=>`You beat ${n}!`, youBeatBossSub:'The Architect of Reality is down. That’s Real Rock N\' Roll!', won:n=>`${n} wins!`, tie:'It’s a tie',
     youWonSub:'Next round at rehearsal is on them.', hands:n=>`${n} hands played.`,
     changeOpp:'Change opponents', again:'Play again', home:'Main menu', leave:'Leave this game?', leaveSub:'The current game will be lost.', keep:'Keep playing',
     sound:'Sound', sfx:'Sound effects', music:'Music', nowPlaying:'Now playing', nextTrack:'Next song', voice:'Voice', lang:'Language', num:['none','one','two','three','four','five','six','seven','eight'], menu:'Menu', close:'Back to the game',
@@ -966,7 +966,7 @@ const TXT={
     next:n=>`Siguiente: ${n} ${n===1?'carta':'cartas'}`,
     noLives:'Te quedaste sin vidas', bandGoes:'La banda sigue jugando. ¿Quieres ver quién gana?',
     newGame:'Nueva partida', watch:'Ver el final',
-    youWon:'¡Le ganaste a la banda!', won:n=>`¡${n} ganó!`, tie:'Empate en la mesa',
+    youWon:'¡Le ganaste a la banda!', youBeatBoss:n=>`¡Le ganaste a ${n}!`, youBeatBossSub:'El Arquitecto de la Realidad cayó. ¡Eso es Real Rock N\' Roll!', won:n=>`¡${n} ganó!`, tie:'Empate en la mesa',
     youWonSub:'La próxima ronda en el ensayo la pagan ellos.', hands:n=>`Se jugaron ${n} manos.`,
     changeOpp:'Cambiar rivales', again:'Jugar de nuevo', home:'Menú principal', leave:'¿Salir de la partida?', leaveSub:'Se perderá la partida actual.', keep:'Seguir jugando',
     sound:'Sonido', sfx:'Efectos de sonido', music:'Música', nowPlaying:'Sonando', nextTrack:'Siguiente canción', voice:'Voz', lang:'Idioma', num:['ninguna','una','dos','tres','cuatro','cinco','seis','siete','ocho'], menu:'Menú', close:'Volver al juego',
@@ -2812,19 +2812,20 @@ function modalHTML(){
     </div></div>`;
   if(m.type==='over'){
     const w=m.winners, youWon=w.length===1&&w[0].isHuman;
-    const title=youWon?t.youWon:w.length===1?t.won(w[0].short):t.tie;
+    const bossP=S.players.find(p=>p.boss);
+    const title=youWon?(bossP?t.youBeatBoss(bossP.short):t.youWon):w.length===1?t.won(w[0].short):t.tie;
     if(youWon) return `<div class="overlay party"><canvas id="fx" aria-hidden="true"></canvas><div class="celebrate" role="dialog" aria-label="${title}">
       <div class="winner frame">${avatarHTML(w[0])}</div>
       <div class="big"><span class="l1">${t.party[0]}</span><span>${t.party[1]}</span></div>
       <div class="sub">${title}</div>
-      <p>${t.youWonSub}</p>
+      <p>${bossP?t.youBeatBossSub:t.youWonSub}</p>
       ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}${S.beerTaken?`<small>${t.beerTag}</small>`:''}</p>`:''}${S.catWon?`<p class="rankpts catwon">${crystalSVG()} ${CT().won}</p>`:''}${S.darkWon?`<p class="rankpts catwon darkwon">${YY_SVG} ${DT().won}</p>`:''}
       <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="ghost" id="rankbtn">🏆 ${t.rankBtn}</button><button class="cta" data-modal="again">${t.again}</button></div>
     </div></div>`;
     return `<div class="overlay"><div class="sheet" role="dialog" aria-label="${title}">
       ${w.length===1?`<div class="winner frame">${avatarHTML(w[0])}</div>`:''}
       <h2>${title}</h2>
-      <p>${youWon?t.youWonSub:t.hands(S.handNo)}</p>
+      <p>${youWon?(bossP?t.youBeatBossSub:t.youWonSub):t.hands(S.handNo)}</p>
       ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}${S.beerTaken?`<small>${t.beerTag}</small>`:''}</p>`:''}${S.catWon?`<p class="rankpts catwon">${crystalSVG()} ${CT().won}</p>`:''}${S.darkWon?`<p class="rankpts catwon darkwon">${YY_SVG} ${DT().won}</p>`:''}
       <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="ghost" id="rankbtn">🏆 ${t.rankBtn}</button><button class="cta" data-modal="again">${t.again}</button></div>
     </div></div>`;

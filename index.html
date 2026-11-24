@@ -637,24 +637,24 @@ details.rulesbox .rules{margin-top:8px}
 .catback{display:block;margin:10px auto 0;font-family:var(--f-display);font-size:24px;letter-spacing:.05em;padding:10px 28px;border-radius:99px;border:0;background:linear-gradient(#d2b2ff,#8f52ef);color:#1d0838;box-shadow:0 4px 0 #5b2aa3,0 0 24px rgba(170,110,255,.7);cursor:pointer}
 @keyframes catfade{from{opacity:0}}
 .catbox{position:relative;width:min(92vw,440px);text-align:center}
-.catwrap{position:relative;width:min(80vw,360px,52vh);margin:0 auto;animation:catrise .6s cubic-bezier(.2,1.4,.4,1)}
-.catbox .catart{width:100%;display:block;filter:drop-shadow(0 0 30px rgba(160,100,255,.55))}
+.catwrap{position:relative;width:min(80vw,360px,52vh);margin:0 auto;will-change:transform;animation:catrise .6s cubic-bezier(.2,1.4,.4,1)}
+.catbox .catart{width:100%;display:block}
 @keyframes catrise{from{transform:scale(.3) translateY(60px);opacity:0}}
 .catbox h3{margin:0 0 4px;font-family:var(--f-display);font-weight:400;font-size:30px;letter-spacing:.05em;color:#efe4ff;text-shadow:0 0 14px rgba(170,110,255,.9)}
-.catcards{position:absolute;left:50%;top:71.7%;transform:translate(-50%,-50%);display:flex;gap:3px;justify-content:center;flex-wrap:wrap;width:40%;filter:drop-shadow(0 0 10px rgba(200,160,255,.9))}
-.catcards .card{--cw:clamp(30px,8.5vw,44px);animation:catcard .7s ease-out both}
+.catcards{position:absolute;left:50%;top:71.7%;transform:translate(-50%,-50%);display:flex;gap:3px;justify-content:center;flex-wrap:wrap;width:40%}
+.catcards .card{--cw:clamp(30px,8.5vw,44px);box-shadow:0 0 12px rgba(200,160,255,.9);animation:catcard .6s ease-out both}
 .catcards .card:nth-child(2){animation-delay:.1s}.catcards .card:nth-child(3){animation-delay:.2s}.catcards .card:nth-child(4){animation-delay:.3s}.catcards .card:nth-child(5){animation-delay:.4s}.catcards .card:nth-child(n+6){animation-delay:.5s}
-@keyframes catcard{from{opacity:0;filter:blur(8px);transform:scale(.6)}}
+@keyframes catcard{from{opacity:0;transform:scale(.6)}}
 .catcards.many .card{--cw:clamp(22px,6.2vw,32px)}
 .cattime{height:5px;border-radius:3px;background:rgba(255,255,255,.15);overflow:hidden;width:60%;margin:10px auto 6px}
 .cattime i{display:block;height:100%;background:#b98cff;animation:cattime 5s linear forwards}
 @keyframes cattime{to{width:0}}
-.catbox h4{margin:0 0 2px;font-family:var(--f-display);font-weight:400;font-size:clamp(30px,9vw,44px);line-height:1;letter-spacing:.04em;background:linear-gradient(#ffffff,#d2b2ff 55%,#9b5cff);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 12px rgba(160,100,255,.9));animation:catrise .7s cubic-bezier(.2,1.4,.4,1)}
+.catbox h4{margin:0 0 2px;font-family:var(--f-display);font-weight:400;font-size:clamp(30px,9vw,44px);line-height:1;letter-spacing:.04em;background:linear-gradient(#ffffff,#d2b2ff 55%,#9b5cff);-webkit-background-clip:text;background-clip:text;color:transparent;animation:catrise .7s cubic-bezier(.2,1.4,.4,1)}
 .catbox h3{font-size:22px!important}
 .catbox h4 .nw{white-space:nowrap}
 .catbox small{color:#d4c0f5}
 .catbox.gone{animation:catgone .5s ease-in forwards}
-@keyframes catgone{to{opacity:0;filter:blur(10px);transform:scale(.9)}}
+@keyframes catgone{to{opacity:0;transform:scale(.9)}}
 .smoke{animation:smoke 3s ease-in-out infinite alternate}
 @keyframes smoke{to{transform:translate(3px,-4px) scale(1.05);opacity:.6}}
 .ctail{transform-origin:72px 168px;animation:ctail 2.4s ease-in-out infinite}
@@ -1511,7 +1511,7 @@ const Music={
     this.order=shuffle([...TRACKS.keys()]); this.i=0; this.el.src=TRACKS[this.order[0]].file;
   },
   sync(){
-    if(this.on){ this.ensure(); if(this.el.paused) this.el.play().catch(()=>{}); }
+    if(this.on&&!this.hold){ this.ensure(); if(this.el.paused) this.el.play().catch(()=>{}); }
     else if(this.el) this.el.pause();
   },
   next(){
@@ -1664,7 +1664,7 @@ function catMelody(out,t0){
   return nodes;
 }
 function catMystic(){
-  if(!Snd.ok()) return; Music.duck(8200);
+  Music.hold=true; Music.sync(); if(!Snd.ok()) return;
   if(!S.catShow) return; const c=Snd.ctx, g=c.createGain(); g.gain.value=1; g.connect(Snd.out); g.connect(Snd.verb); const t0=c.currentTime+.05;
   const nodes=catMelody(g,t0); const m=catMeow(t0+CAT_MEL_END+.15); catSrc={s:{stop(t){ nodes.forEach(n=>{ try{n.stop(t)}catch(e){} }); }},g,m};
 }
@@ -1678,7 +1678,7 @@ function catMeow(t0){
   return {g,t0};
 }
 function catClose(){
-  if(!S.catShow||S.catShow.gone) return; catStopSnd();
+  if(!S.catShow||S.catShow.gone) return; catStopSnd(); Music.hold=typeof DK!=='undefined'&&!!DK; Music.sync();
   S.catShow.gone=true; render(); setTimeout(()=>{ S.catShow=null; render(); },480);
 }
 function wait(ms,tok){ return new Promise((res,rej)=>{ const go=()=> tok!==S.token ? rej(new Abort()) : (S.catShow||S.catPick) ? setTimeout(go,150) : res(); setTimeout(go, S.fast? ms*.3 : ms); }); }

@@ -94,7 +94,7 @@ if ($a === 'join') {
         foreach ($R['players'] as $i => $p) {
             if ($id !== '' && $p['id'] === $id) { // voltou pra mesma sala (reconexão)
                 $R['players'][$i]['seen'] = time(); unset($R['players'][$i]['left']);
-                return ['__save' => $R, 'code' => $code, 'token' => $p['token'], 'pid' => $p['pid'], 'status' => $R['status']];
+                return ['__save' => $R, 'code' => $code, 'token' => $p['token'], 'pid' => $p['pid'], 'status' => $R['status'], 'hostPid' => $R['hostPid']];
             }
         }
         if ($R['status'] !== 'lobby') return ['error' => 'started'];
@@ -103,7 +103,7 @@ if ($a === 'join') {
         $R['n']++; $pid = 'p' . $R['n']; $tok = new_token();
         $R['players'][] = ['pid' => $pid, 'id' => $id, 'name' => clean_name($in['name'] ?? ''), 'av' => clean_av($in['av'] ?? ''),
                            'lang' => clean_lang($in['lang'] ?? ''), 'token' => $tok, 'seen' => time()];
-        return ['__save' => $R, 'code' => $code, 'token' => $tok, 'pid' => $pid, 'status' => 'lobby'];
+        return ['__save' => $R, 'code' => $code, 'token' => $tok, 'pid' => $pid, 'status' => 'lobby', 'hostPid' => $R['hostPid']];
     }));
 }
 

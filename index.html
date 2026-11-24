@@ -2290,7 +2290,9 @@ async function roomJoin(code){
   if(Online.needName()){ S.namePrompt={then:()=>roomJoin(code)}; S.room={joinCode:code}; render(); return; }
   S.room={busy:true,joinCode:code}; Chat.reset(); render();
   try{ const d=await Online.post({a:'join',code,...Online.me()});
-    S.room={code:d.code,token:d.token,pid:d.pid,host:false,players:[],status:d.status||'lobby'}; saveRoom();
+    const isHost=!!d.hostPid&&d.hostPid===d.pid;
+    S.room={code:d.code,token:d.token,pid:d.pid,host:isHost,hostPid:d.hostPid,players:[],status:d.status||'lobby'}; saveRoom();
+    if(isHost&&d.status==='playing'){ S.phase='lobby'; Online.post({a:'reopen',code:d.code,token:d.token}).catch(()=>{}); lobbyLoop(); render(); return; }
     if(d.status==='playing') clientStart(); else { S.phase='lobby'; lobbyLoop(); }
   }catch(e){ S.room={err:Online.errText(e),joinCode:code}; }
   render();
@@ -2303,7 +2305,7 @@ async function roomLeave(){
 async function lobbyLoop(){
   const R=S.room; if(!R) return;
   while(S.room===R&&S.phase==='lobby'){
-    try{ const d=await Online.post({a:'lobby',code:R.code,token:R.token,cs:Chat.last}); Chat.take(d.chat); R.players=d.players.filter(p=>!p.left); R.status=d.status; R.err=null;
+    try{ const d=await Online.post({a:'lobby',code:R.code,token:R.token,cs:Chat.last}); Chat.take(d.chat); R.players=d.players.filter(p=>!p.left); R.status=d.status; R.err=null; R.hostPid=d.hostPid; if(d.hostPid&&R.host!==(d.hostPid===R.pid)){ R.host=d.hostPid===R.pid; saveRoom(); }
       if(d.status==='closed'){ S.room={err:OT().closed}; saveRoom(); S.phase='setup'; render(); return; }
       if(!R.host&&d.status==='playing'){ clientStart(); return; }
     }catch(e){ if(e==='noroom'||e==='auth'){ S.room={err:Online.errText(e)}; saveRoom(); S.phase='setup'; render(); return; } R.err=OT().errNet; }
@@ -2314,7 +2316,7 @@ async function lobbyLoop(){
 function roomBots(){ return BAND.filter(b=>S.picked.has(b.id)&&!charLocked(b)&&!b.boss); }
 function lobbyHTML(){
   const R=S.room||{}, o=OT(), link=Online.link(R.code||'');
-  const ps=(R.players||[]).map(p=>`<li><span class="mini">${avatarHTML({av:p.av,short:p.name})}</span><b>${esc(p.name)}</b>${p.pid===R.pid?`<small>${o.you}</small>`:''}${p.pid==='p1'?`<em>${o.hostTag}</em>`:''}</li>`).join('');
+  const ps=(R.players||[]).map(p=>`<li><span class="mini">${avatarHTML({av:p.av,short:p.name})}</span><b>${esc(p.name)}</b>${p.pid===R.pid?`<small>${o.you}</small>`:''}${p.pid===(R.hostPid||'p1')?`<em>${o.hostTag}</em>`:''}</li>`).join('');
   const bots=roomBots().slice(0,Math.max(0,10-(R.players||[]).length));
   return `<div class="topline">${langSeg()}</div>
   <section class="box lobby">
@@ -2322,7 +2324,6 @@ function lobbyHTML(){
     <p>${o.share}</p>
     <div class="row"><button class="ghost" id="copylink">${R.copied?o.copied:o.copy}</button><a class="ghost wa" href="https://wa.me/?text=${encodeURIComponent(o.waText(R.code,link))}" target="_blank" rel="noopener">${o.wa}</a></div>
     <div class="row"><button class="ghost lobbychat" id="chatopen">💬 ${o.chatT}${Chat.unread?` (${Chat.unread})`:''}</button></div>
-    ${Chat.toastHTML()}
     <h3>${o.players((R.players||[]).length)}</h3>
     <ul class="lobbyps">${ps}</ul>
     ${R.host?`<div class="item lbots"><span><b>${o.bots}</b><small>${o.botsSub(bots.map(b=>b.short).join(', '))}</small></span><button class="toggle" id="roombots" aria-pressed="${!!R.bots}" ${bots.length?'':'disabled'}></button></div>
@@ -3272,7 +3273,7 @@ function modalHTML(){
 
 function render(){
   svgSeq=0;
-  { const fx=S.phase==='table'?introHTML()+catVeilHTML()+darkVeilHTML():''; let L=document.getElementById('fxlayer'); if(!L){ L=document.createElement('div'); L.id='fxlayer'; document.body.appendChild(L); } if(L._h!==fx){ L._h=fx; L.innerHTML=fx; } svgSeq=0; }
+  { const fx=(S.phase==='table'?introHTML()+catVeilHTML()+darkVeilHTML():'')+(S.room&&S.room.token?Chat.toastHTML():''); let L=document.getElementById('fxlayer'); if(!L){ L=document.createElement('div'); L.id='fxlayer'; document.body.appendChild(L); } if(L._h!==fx){ L._h=fx; L.innerHTML=fx; } svgSeq=0; }
   document.documentElement.lang={pt:'pt-BR',en:'en',es:'es'}[LANG];
   const app=document.getElementById('app'), game=S.phase==='table';
   if(!game) Music.clearSolo();
@@ -3280,7 +3281,7 @@ function render(){
   const SCR='.sheet,.scroll,.tbl'; const keepSc=[...app.querySelectorAll(SCR)].map(e=>[e.getAttribute('aria-label')||e.className,e.scrollTop]);
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+(S.online?Chat.toastHTML():'')+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   { const els=[...app.querySelectorAll(SCR)]; keepSc.forEach(([k,top],i)=>{ const e=els[i]; if(e&&(e.getAttribute('aria-label')||e.className)===k&&top) e.scrollTop=top; }); }
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);

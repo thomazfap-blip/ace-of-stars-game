@@ -1858,7 +1858,8 @@ async function runGame(tok){
     S.turn=null; setMsg(null); render();
     if(alive().length===0){
       const best=Math.max(...results.map(r=>r.p.lives));
-      results.filter(r=>r.p.lives===best).forEach(r=>{ r.p.alive=true; r.p.lives=Math.max(r.p.lives,0); r.out=false; });
+      // todo mundo zerou na mesma mão: quem perdeu menos volta com 1 vida pra desempatar
+      results.filter(r=>r.p.lives===best).forEach(r=>{ r.p.alive=true; r.p.lives=1; r.out=false; });
     }
     const max=maxCards();
     if(S.n>max){ S.n=max; S.dir=-1; }

@@ -4,7 +4,7 @@
 //
 // GET  ranking.php?id=XYZ                      -> placar geral/semanal + perfil do jogador
 // POST {a:'game', id, name, av, pts, ...}      -> soma uma partida
-// POST {a:'use', id, item:'beer'|'jack'|'cat'} -> gasta um drinque ou uma bola de cristal do estoque
+// POST {a:'use', id, item:'beer'|'jack'|'cat'|'dark'} -> gasta um drinque ou uma bola de cristal do estoque
 // POST {a:'code', id, email, lang}             -> manda código de confirmação pro e-mail
 // POST {a:'verify', id, email, code, optin, src, name, av, lang} -> liga o aparelho à conta
 
@@ -18,6 +18,8 @@ const LV_BEER = [0, 1, 1, 0, 2];
 const LV_JACK = [0, 0, 0, 1, 1];
 // Mystical Cat: libera no Palco (ganha 1 bola de presente) e dá +1 bola a cada vitória, até 3 no estoque
 const CAT_LV = 3; const CAT_WINS = 1; const CAT_MAX = 3;
+// Dark Side: libera na Lenda (ganha 1 de presente) e dá +1 a cada 3 vitórias, até 3 no estoque
+const DARK_LV = 4; const DARK_WINS = 3; const DARK_MAX = 3;
 
 $dir = dirname(__DIR__, 2) . '/ace-of-stars-ranking';
 if (!is_dir($dir) && !@mkdir($dir, 0750, true)) {
@@ -45,15 +47,27 @@ function mask_email($e) { [$u, $d] = explode('@', $e, 2); return mb_substr($u, 0
 
 function norm(&$R, &$P) {
     foreach (['all', 'weeks'] as $k) if (!isset($R[$k]) || !is_array($R[$k])) $R[$k] = [];
-    foreach (['links', 'acc', 'inv', 'codes', 'cat'] as $k) if (!isset($P[$k]) || !is_array($P[$k])) $P[$k] = [];
+    foreach (['links', 'acc', 'inv', 'codes', 'cat', 'dark'] as $k) if (!isset($P[$k]) || !is_array($P[$k])) $P[$k] = [];
 }
 function key_for($P, $id) { return $P['links'][$id] ?? $id; }
-function cat_of($P, $key) { return $P['cat'][$key] ?? ['n' => 0, 'w' => 0, 'g' => 0]; }
-function merge_cat(&$P, $from, $to) {
-    if (!isset($P['cat'][$from])) return;
-    $a = $P['cat'][$from]; $b = $P['cat'][$to] ?? null;
-    $P['cat'][$to] = $b ? ['n' => min(CAT_MAX, $a['n'] + $b['n']), 'w' => max($a['w'], $b['w']), 'g' => max($a['g'], $b['g'])] : $a;
-    unset($P['cat'][$from]);
+// poderes guardados por jogador: n = no estoque, w = vitórias contando pra próxima, g = já ganhou o presente
+function pow_of($P, $pw, $key) { return $P[$pw][$key] ?? ['n' => 0, 'w' => 0, 'g' => 0]; }
+function cat_of($P, $key) { return pow_of($P, 'cat', $key); }
+function merge_pow(&$P, $pw, $max, $from, $to) {
+    if (!isset($P[$pw][$from])) return;
+    $a = $P[$pw][$from]; $b = $P[$pw][$to] ?? null;
+    $P[$pw][$to] = $b ? ['n' => min($max, $a['n'] + $b['n']), 'w' => max($a['w'], $b['w']), 'g' => max($a['g'], $b['g'])] : $a;
+    unset($P[$pw][$from]);
+}
+function merge_cat(&$P, $from, $to) { merge_pow($P, 'cat', CAT_MAX, $from, $to); merge_pow($P, 'dark', DARK_MAX, $from, $to); }
+// depois de cada partida: presente ao chegar no nível e +1 a cada N vitórias. Devolve [ganhou, primeira vez]
+function pow_after_game(&$P, $pw, $key, $lvl, $needLv, $wins, $max, $win) {
+    if ($lvl < $needLv) return [false, false];
+    $c = pow_of($P, $pw, $key); $got = false; $first = false;
+    if (!$c['g']) { $c['g'] = 1; if ($c['n'] < $max) { $c['n']++; $got = true; $first = true; } }
+    elseif ($win && $c['n'] < $max) { $c['w']++; if ($c['w'] >= $wins) { $c['w'] = 0; $c['n']++; $got = true; } }
+    $P[$pw][$key] = $c;
+    return [$got, $first];
 }
 
 function add_game(&$map, $key, $g) {
@@ -93,12 +107,13 @@ function profile($R, $P, $key) {
     $acc = $P['acc'][$key] ?? null;
     // contas de teste: tudo liberado e estoque cheio (o ranking continua com os pontos reais)
     if ($acc && in_array($acc['email'], TESTERS, true)) {
-        return ['pts' => max($pts, 2000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'tester' => true,
+        return ['pts' => max($pts, 2000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true,
                 'linked' => true, 'email' => mask_email($acc['email']), 'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
     }
     return ['pts' => $pts, 'level' => $lv, 'next' => LV_PTS[$lv + 1] ?? null,
             'beer' => max(0, earned($lv, LV_BEER) - ($used['b'] ?? 0)), 'jack' => max(0, earned($lv, LV_JACK) - ($used['j'] ?? 0)),
             'cat' => cat_of($P, $key)['n'], 'catW' => cat_of($P, $key)['w'],
+            'dark' => pow_of($P, 'dark', $key)['n'], 'darkW' => pow_of($P, 'dark', $key)['w'],
             'linked' => (bool)$acc, 'email' => $acc ? mask_email($acc['email']) : null,
             'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
 }
@@ -172,19 +187,16 @@ if ($a === 'game') {
     add_game($R['all'], $key, $g);
     if (isset($P['acc'][$key])) { $P['acc'][$key]['name'] = $g['name']; if ($g['av'] !== '') $P['acc'][$key]['av'] = $g['av']; }
     // bolas de cristal do Mystical Cat
-    $c = cat_of($P, $key); $catGot = false; $catFirst = false;
-    if (level_of($R['all'][$key]['pts']) >= CAT_LV) {
-        if (!$c['g']) { $c['g'] = 1; if ($c['n'] < CAT_MAX) { $c['n']++; $catGot = true; $catFirst = true; } }
-        elseif ($g['win'] && $c['n'] < CAT_MAX) { $c['w']++; if ($c['w'] >= CAT_WINS) { $c['w'] = 0; $c['n']++; $catGot = true; } }
-        $P['cat'][$key] = $c;
-    }
+    $lvNow = level_of($R['all'][$key]['pts']);
+    [$catGot, $catFirst] = pow_after_game($P, 'cat', $key, $lvNow, CAT_LV, CAT_WINS, CAT_MAX, $g['win']);
+    [$darkGot, $darkFirst] = pow_after_game($P, 'dark', $key, $lvNow, DARK_LV, DARK_WINS, DARK_MAX, $g['win']);
     jsave($playFile, $P);
     add_game($R['weeks'][$wk], $key, $g);
     ksort($R['weeks']);
     $R['weeks'] = array_slice($R['weeks'], -8, null, true);
     jsave($rankFile, $R);
     flock($lock, LOCK_UN);
-    out(full($R, $P, $key) + ['prevLevel' => $prevLevel, 'catGot' => $catGot, 'catFirst' => $catFirst]);
+    out(full($R, $P, $key) + ['prevLevel' => $prevLevel, 'catGot' => $catGot, 'catFirst' => $catFirst, 'darkGot' => $darkGot, 'darkFirst' => $darkFirst]);
 }
 
 if ($a === 'profile') {
@@ -204,9 +216,10 @@ if ($a === 'profile') {
 
 if ($a === 'use') {
     $pr = profile($R, $P, $key);
-    if (($in['item'] ?? '') === 'cat') {
-        if ($pr['cat'] < 1) { flock($lock, LOCK_UN); out(['error' => 'empty', 'profile' => $pr], 409); }
-        if (empty($pr['tester'])) { $c = cat_of($P, $key); $c['n']--; $P['cat'][$key] = $c; jsave($playFile, $P); }
+    if (in_array($in['item'] ?? '', ['cat', 'dark'], true)) {
+        $pw = $in['item'];
+        if ($pr[$pw] < 1) { flock($lock, LOCK_UN); out(['error' => 'empty', 'profile' => $pr], 409); }
+        if (empty($pr['tester'])) { $c = pow_of($P, $pw, $key); $c['n']--; $P[$pw][$key] = $c; jsave($playFile, $P); }
         flock($lock, LOCK_UN);
         out(['profile' => profile($R, $P, $key)]);
     }

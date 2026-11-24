@@ -172,9 +172,9 @@ if ($a === 'game') {
     add_game($R['all'], $key, $g);
     if (isset($P['acc'][$key])) { $P['acc'][$key]['name'] = $g['name']; if ($g['av'] !== '') $P['acc'][$key]['av'] = $g['av']; }
     // bolas de cristal do Mystical Cat
-    $c = cat_of($P, $key); $catGot = false;
+    $c = cat_of($P, $key); $catGot = false; $catFirst = false;
     if (level_of($R['all'][$key]['pts']) >= CAT_LV) {
-        if (!$c['g']) { $c['g'] = 1; if ($c['n'] < CAT_MAX) { $c['n']++; $catGot = true; } }
+        if (!$c['g']) { $c['g'] = 1; if ($c['n'] < CAT_MAX) { $c['n']++; $catGot = true; $catFirst = true; } }
         elseif ($g['win'] && $c['n'] < CAT_MAX) { $c['w']++; if ($c['w'] >= CAT_WINS) { $c['w'] = 0; $c['n']++; $catGot = true; } }
         $P['cat'][$key] = $c;
     }
@@ -184,7 +184,7 @@ if ($a === 'game') {
     $R['weeks'] = array_slice($R['weeks'], -8, null, true);
     jsave($rankFile, $R);
     flock($lock, LOCK_UN);
-    out(full($R, $P, $key) + ['prevLevel' => $prevLevel, 'catGot' => $catGot]);
+    out(full($R, $P, $key) + ['prevLevel' => $prevLevel, 'catGot' => $catGot, 'catFirst' => $catFirst]);
 }
 
 if ($a === 'profile') {

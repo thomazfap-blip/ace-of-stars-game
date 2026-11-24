@@ -16,8 +16,8 @@ const TESTERS = ['thomazfap@gmail.com'];
 const LV_PTS  = [0, 50, 150, 300, 600];
 const LV_BEER = [0, 1, 1, 0, 2];
 const LV_JACK = [0, 0, 0, 1, 1];
-// Mystical Cat: libera no Palco (ganha 1 bola de presente) e dá +1 bola a cada 3 vitórias, até 3 no estoque
-const CAT_LV = 3; const CAT_WINS = 3; const CAT_MAX = 3;
+// Mystical Cat: libera no Palco (ganha 1 bola de presente) e dá +1 bola a cada vitória, até 3 no estoque
+const CAT_LV = 3; const CAT_WINS = 1; const CAT_MAX = 3;
 
 $dir = dirname(__DIR__, 2) . '/ace-of-stars-ranking';
 if (!is_dir($dir) && !@mkdir($dir, 0750, true)) {

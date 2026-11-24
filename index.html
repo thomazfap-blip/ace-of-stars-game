@@ -1762,6 +1762,7 @@ function darkRiff(t0){
   DARK_MEL.forEach(([s,,n])=>{ o.frequency.setTargetAtTime(hz(n),t0+s,.06); o2.frequency.setTargetAtTime(hz(n),t0+s,.06); });
   const v=c.createOscillator(), vg=c.createGain(); v.frequency.value=4.2; vg.gain.value=22; v.connect(vg); vg.connect(o.detune); vg.connect(o2.detune);
   [o,o2,v].forEach(x=>{ x.start(t0); x.stop(end+.1); DK.nodes.push(x); });
+  darkThunder(end-.45);
   // quadrada abafada
   const sq=c.createGain(); sq.gain.value=.35; sq.connect(out);
   DARK_MEL.forEach(([s,d,n])=>{
@@ -1771,6 +1772,24 @@ function darkRiff(t0){
     fl.connect(g).connect(sq);
     [-4,4].forEach(dt=>{ const q=c.createOscillator(); q.type='square'; q.frequency.value=f; q.detune.value=dt; q.connect(fl); q.start(t); q.stop(t+d+.5); DK.nodes.push(q); });
   });
+}
+// trovão: estalo agudo + ronco grave que rola e some
+function darkThunder(t){
+  if(!DK) return; const c=Snd.ctx, out=DK.out;
+  if(!darkThunder.nb){ const len=c.sampleRate*5, b=c.createBuffer(2,len,c.sampleRate); for(let ch=0;ch<2;ch++){ const d=b.getChannelData(ch); let last=0; for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=ch?last*3.5:w; } } darkThunder.nb=b; }
+  const mk=()=>{ const n=c.createBufferSource(); n.buffer=darkThunder.nb; DK.nodes.push(n); return n; };
+  // estalo
+  { const n=mk(), hp=c.createBiquadFilter(), g=c.createGain(); hp.type='highpass'; hp.frequency.value=900;
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.5,t+.01); g.gain.exponentialRampToValueAtTime(.08,t+.12); g.gain.linearRampToValueAtTime(.3,t+.18); g.gain.exponentialRampToValueAtTime(.001,t+.7);
+    n.connect(hp).connect(g).connect(out); n.start(t,Math.random()*2); n.stop(t+.8); }
+  // ronco
+  { const n=mk(), lp=c.createBiquadFilter(), g=c.createGain(); lp.type='lowpass'; lp.Q.value=.7; lp.frequency.setValueAtTime(900,t+.05); lp.frequency.exponentialRampToValueAtTime(90,t+4);
+    g.gain.setValueAtTime(0,t+.05); g.gain.linearRampToValueAtTime(1,t+.3);
+    [[.7,.55],[1.1,.9],[1.6,.5],[2.2,.7],[3.2,.25]].forEach(([d,v])=>g.gain.linearRampToValueAtTime(v,t+d));
+    g.gain.exponentialRampToValueAtTime(.001,t+5);
+    n.connect(lp).connect(g).connect(out); n.start(t+.05,Math.random()*.5); n.stop(t+5.1); }
+  // impacto grave
+  { const o=c.createOscillator(), g=c.createGain(); o.frequency.setValueAtTime(70,t+.05); o.frequency.exponentialRampToValueAtTime(30,t+1.5); g.gain.setValueAtTime(.6,t+.05); g.gain.exponentialRampToValueAtTime(.001,t+1.6); o.connect(g).connect(out); o.start(t+.05); o.stop(t+1.7); DK.nodes.push(o); }
 }
 function darkBeat(t,strong){
   const c=Snd.ctx; [0,.17].forEach((dd,k)=>{ const o=c.createOscillator(), g=c.createGain(); o.frequency.setValueAtTime(60,t+dd); o.frequency.exponentialRampToValueAtTime(36,t+dd+.25); g.gain.setValueAtTime((k?.3:.5)*(strong?1:.7),t+dd); g.gain.exponentialRampToValueAtTime(.001,t+dd+.28); o.connect(g).connect(DK.out); o.start(t+dd); o.stop(t+dd+.3); DK.nodes.push(o); });

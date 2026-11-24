@@ -1216,7 +1216,7 @@ const BAND=[
   {id:'sp_bia',   name:'Bia da Ioga',    short:'Bia★',   look:'yoga',  group:'special', role:'yogi',   style:'pro', pro:true, needPts:1250, bias:0, noise:0},
   {id:'sp_chris', name:'Chris Tenista',  short:'Chris★', look:'tennis',group:'special', role:'tennis', style:'pro', pro:true, needPts:1500, bias:0, noise:0},
   {id:'sp_thomaz',name:'Thomaz Pescador',short:'Thomaz★',look:'fisher',group:'special', role:'fisher', style:'pro', pro:true, needPts:1750, bias:0, noise:0},
-  {id:'boss_realx', name:'REAL-X', short:'REAL-X', look:'realx', group:'boss', role:'architect', style:'pro', pro:true, boss:true, song:'music/real.mp3', songTitle:'Real', needPts:3000, bias:0, noise:0},
+  {id:'boss_realx', name:'REAL-X', short:'REAL-X', look:'realx', group:'boss', role:'architect', style:'pro', pro:true, boss:true, song:'music/08_Real.mp3', songTitle:'Real', needPts:3000, bias:0, noise:0},
   {id:'sp_luiz',  name:'Luiz Piloto',    short:'Luiz★',  look:'f1',    group:'special', role:'f1',     style:'pro', pro:true, needPts:2000, bias:0, noise:0},
   {id:'fox',   name:'Fox',           short:'Fox',   look:'fox',      group:'crew', role:'video',     style:'hooked3', bias:-.05,noise:.02},
 ];
@@ -1556,7 +1556,7 @@ try{ speechSynthesis.getVoices(); }catch(e){}
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&Snd.ctx&&Snd.ctx.state==='suspended') Snd.ctx.resume().catch(()=>{}); });
 
 /* ================= Música da banda ================= */
-const TRACKS=["01_Right_in_the_Middle", "02_Dark_Side", "03_Mystical_Cat", "04_When_the_Light_Has_Gone", "05_My_America", "06_Break_Out_To_Mars", "07_One_More_Night_In_Nashville", "09_Thousand_Ways", "10_Fighting_My_Shadow", "12_Another_Day_Gone_By"].map(n=>({file:'music/'+n+'.mp3',title:n.replace(/^\d+_/,'').replace(/_/g,' ')}));
+const TRACKS=["01_Right_in_the_Middle", "02_Dark_Side", "03_Mystical_Cat", "04_When_the_Light_Has_Gone", "05_My_America", "06_Break_Out_To_Mars", "07_One_More_Night_In_Nashville", "09_Thousand_Ways", "10_Fighting_My_Shadow", "11_Blue_Water", "12_Another_Day_Gone_By"].map(n=>({file:'music/'+n+'.mp3',title:n.replace(/^\d+_/,'').replace(/_/g,' ')}));
 const Music={
   el:null, on:true, vol:.3, order:[], i:0, fails:0,
   title(){ return this.solo?this.soloTitle:this.el?TRACKS[this.order[this.i]].title:''; },

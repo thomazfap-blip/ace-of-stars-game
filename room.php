@@ -134,6 +134,7 @@ if ($a === 'push') {
         $R['views'] = new stdClass();
         foreach ($views as $pid => $v) $R['views']->{preg_replace('/[^a-z0-9]/', '', $pid)} = $v;
         if (!empty($in['over'])) $R['status'] = 'over';
+        if (is_array($in['snap'] ?? null)) $R['snap'] = $in['snap']; // retrato do começo da mão, pra outro jogador assumir a mesa
         return ['__save' => $R, 'ver' => $R['ver']];
     }));
 }
@@ -145,6 +146,15 @@ if ($a === 'poll') {
         $pid = $R['players'][$me]['pid']; $host = null;
         foreach ($R['players'] as $p) if ($p['pid'] === $R['hostPid']) $host = $p;
         $o = ['status' => $R['status'], 'ver' => $R['ver'], 'hostSeen' => time() - ($host['seen'] ?? 0), 'chat' => chat_since($R, $in)];
+        // anfitrião saiu ou caiu: o primeiro jogador que ainda está na mesa assume a partida
+        if ($R['status'] === 'playing' && $host && (!empty($host['left']) || time() - $host['seen'] > 30)) {
+            $cand = null;
+            foreach ($R['players'] as $q) if ($q['pid'] !== $R['hostPid'] && empty($q['left']) && time() - $q['seen'] <= 10) { $cand = $q['pid']; break; }
+            if ($cand === $pid) {
+                $R['hostPid'] = $pid; $R['actions'] = []; $R['migrated'] = ($R['migrated'] ?? 0) + 1;
+                $o['becomeHost'] = true; $o['snap'] = $R['snap'] ?? null;
+            }
+        }
         $views = (array)$R['views'];
         if ((int)($in['since'] ?? -1) < $R['ver'] && isset($views[$pid])) $o['view'] = $views[$pid];
         return ['__save' => $R] + $o;
@@ -202,7 +212,7 @@ if ($a === 'leave') {
     out(with_room($dir, $code, function ($R) use ($token) {
         $me = me_of($R, $token); if ($me < 0) return ['error' => 'auth'];
         $R['players'][$me]['left'] = true;
-        if ($R['players'][$me]['pid'] === $R['hostPid']) $R['status'] = 'closed';
+        if ($R['players'][$me]['pid'] === $R['hostPid'] && $R['status'] !== 'playing') $R['status'] = 'closed'; // no meio da partida outro assume
         elseif ($R['status'] === 'lobby') array_splice($R['players'], $me, 1);
         return ['__save' => $R, 'ok' => true];
     }));

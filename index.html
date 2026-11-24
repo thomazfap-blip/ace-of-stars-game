@@ -836,8 +836,8 @@ const TXT={
     changeOpp:'Trocar adversários', again:'Jogar de novo', home:'Menu inicial', leave:'Sair da partida?', leaveSub:'A partida atual vai ser perdida.', keep:'Continuar jogando',
     sound:'Som', sfx:'Efeitos sonoros', music:'Música', nowPlaying:'Tocando', nextTrack:'Próxima música', voice:'Voz', lang:'Idioma', num:['nenhuma','uma','duas','três','quatro','cinco','seis','sete','oito'], menu:'Menu', close:'Voltar pro jogo',
     trump:'Manilha', flip:'Vira', you:'Você', madeOf:(m,b)=>`fez ${m}/${b}`,
-    styles:{bold:'Ousado',sly:'Sagaz',careful:'Cauteloso',calc:'Calculista',wild:'Imprevisível',hooked:'Preciso',hooked2:'Agressivo',hooked3:'Frio',master:'Estrategista',pro:'Lendário'},
-    roles:{architect:'Arquiteto da Realidade',surfer:'Surfista',yogi:'Mestre da ioga',tennis:'Tenista',fisher:'Pescador',f1:'Piloto de F1',producer:'Produtor',guitarVox:'Guitarra',drums:'Bateria',bassVox:'Baixo',voxKeys:'Teclado e violão',guitar:'Guitarra',sound:'Técnico de som',roadie:'Roadie',video:'Videomaker'},
+    styles:{bold:'Ousado',sly:'Sagaz',careful:'Cauteloso',calc:'Calculista',wild:'Imprevisível',hooked:'Preciso',hooked2:'Agressivo',hooked3:'Frio',road:'Organizado',master:'Estrategista',pro:'Lendário'},
+    roles:{roadmgr:'Road manager',architect:'Arquiteto da Realidade',surfer:'Surfista',yogi:'Mestre da ioga',tennis:'Tenista',fisher:'Pescador',f1:'Piloto de F1',producer:'Produtor',guitarVox:'Guitarra',drums:'Bateria',bassVox:'Baixo',voxKeys:'Teclado e violão',guitar:'Guitarra',sound:'Técnico de som',roadie:'Roadie',video:'Videomaker'},
     spNames:{boss_realx:'REAL-X',sp_julio:'Julio Surfista',sp_bia:'Bia da Ioga',sp_chris:'Chris Tenista',sp_thomaz:'Thomaz Pescador',sp_luiz:'Luiz Piloto'}, introSkip:'Pular',bossT:'Chefões', tabBoss:'👑 Chefões', bossSub:'Os Chefões: os adversários mais difíceis do jogo. Contra um Chefão é sempre 1 contra 1, com a música dele. REAL-X, o Arquiteto da Realidade, enxerga tudo, escaneia sua mão, toma cerveja e uísque pra voltar e ainda pode invocar o Dark Side. Vencer um Chefão vale muitos pontos.', bossLv:'chefão com poderes, o mais difícil do jogo', scanMsg:n=>`🔍 ${n} escaneou sua mão!`, bossDrink:(n,j)=>j?`${n} tomou um uísque e voltou com 2 vidas!`:`${n} tomou uma cerveja e voltou com 1 vida!`, bossDark:n=>`${n} invocou o Dark Side!`, lvSpT:'Banda Especial', lvSpSub:'libera na mesa, joga muito e vale mais pontos', tabSpecial:'★ Especial', specialSub:'A Banda Especial: versões lendárias da StarAce. Jogam quase sem errar e são muito difíceis de vencer, mas cada um na mesa vale muito mais pontos. Liberam a partir de 1000 pts.',
     tabBand:'Banda', tabCrew:'Equipe', allTab:g=>g==='band'?'Chamar a banda toda':g==='crew'?'Chamar a equipe toda':g==='boss'?'Chamar os Chefões':'Chamar a Banda Especial', crewSub:'A equipe que roda com a StarAce. Nível mais alto que o da banda: aqui o jogo é sério.',
     edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereços (escolha vários)', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Monte seu personagem', edEdit:'Editar seu personagem',
@@ -933,8 +933,8 @@ const TXT={
     changeOpp:'Change opponents', again:'Play again', home:'Main menu', leave:'Leave this game?', leaveSub:'The current game will be lost.', keep:'Keep playing',
     sound:'Sound', sfx:'Sound effects', music:'Music', nowPlaying:'Now playing', nextTrack:'Next song', voice:'Voice', lang:'Language', num:['none','one','two','three','four','five','six','seven','eight'], menu:'Menu', close:'Back to the game',
     trump:'Trump', flip:'Flip', you:'You', madeOf:(m,b)=>`took ${m}/${b}`,
-    styles:{bold:'Bold',sly:'Sharp',careful:'Careful',calc:'Calculating',wild:'Wild card',hooked:'Precise',hooked2:'Aggressive',hooked3:'Ice-cold',master:'Strategist',pro:'Legendary'},
-    roles:{architect:'The Architect of Reality',surfer:'Surfer',yogi:'Yoga master',tennis:'Tennis player',fisher:'Fisherman',f1:'F1 driver',producer:'Producer',guitarVox:'Guitar',drums:'Drums',bassVox:'Bass',voxKeys:'Keys & acoustic guitar',guitar:'Guitar',sound:'Sound engineer',roadie:'Roadie',video:'Video maker'},
+    styles:{bold:'Bold',sly:'Sharp',careful:'Careful',calc:'Calculating',wild:'Wild card',hooked:'Precise',hooked2:'Aggressive',hooked3:'Ice-cold',road:'Organized',master:'Strategist',pro:'Legendary'},
+    roles:{roadmgr:'Road manager',architect:'The Architect of Reality',surfer:'Surfer',yogi:'Yoga master',tennis:'Tennis player',fisher:'Fisherman',f1:'F1 driver',producer:'Producer',guitarVox:'Guitar',drums:'Drums',bassVox:'Bass',voxKeys:'Keys & acoustic guitar',guitar:'Guitar',sound:'Sound engineer',roadie:'Roadie',video:'Video maker'},
     spNames:{boss_realx:'REAL-X',sp_julio:'Surfer Julio',sp_bia:'Yogi Bia',sp_chris:'Tennis Pro Chris',sp_thomaz:'Fisherman Thomaz',sp_luiz:'Racer Luiz'}, introSkip:'Skip',bossT:'Bosses', tabBoss:'👑 Bosses', bossSub:'The Bosses: the hardest opponents in the game. A Boss is always one-on-one, with their own song. REAL-X, the Architect of Reality, sees everything, scans your hand, drinks beer and whisky to come back and can even summon the Dark Side. Beating a Boss is worth a lot of points.', bossLv:'boss with powers, the hardest in the game', scanMsg:n=>`🔍 ${n} scanned your hand!`, bossDrink:(n,j)=>j?`${n} had a whisky and came back with 2 lives!`:`${n} had a beer and came back with 1 life!`, bossDark:n=>`${n} summoned the Dark Side!`, lvSpT:'Special Band', lvSpSub:'unlocks at the table, plays great and is worth more points', tabSpecial:'★ Special', specialSub:'The Special Band: legendary versions of StarAce. They almost never miss and are very hard to beat, but each one at the table is worth a lot more points. Unlocks from 1000 pts.',
     tabBand:'Band', tabCrew:'Crew', allTab:g=>g==='band'?'Call the whole band':g==='crew'?'Call the whole crew':g==='boss'?'Call the Bosses':'Call the Special Band', crewSub:'The crew that tours with StarAce. A higher level than the band: this is the serious table.',
     edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessories (pick several)', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create your character', edEdit:'Edit your character',
@@ -1030,8 +1030,8 @@ const TXT={
     changeOpp:'Cambiar rivales', again:'Jugar de nuevo', home:'Menú principal', leave:'¿Salir de la partida?', leaveSub:'Se perderá la partida actual.', keep:'Seguir jugando',
     sound:'Sonido', sfx:'Efectos de sonido', music:'Música', nowPlaying:'Sonando', nextTrack:'Siguiente canción', voice:'Voz', lang:'Idioma', num:['ninguna','una','dos','tres','cuatro','cinco','seis','siete','ocho'], menu:'Menú', close:'Volver al juego',
     trump:'Manilla', flip:'Muestra', you:'Tú', madeOf:(m,b)=>`hizo ${m}/${b}`,
-    styles:{bold:'Atrevido',sly:'Sagaz',careful:'Cauteloso',calc:'Calculadora',wild:'Impredecible',hooked:'Preciso',hooked2:'Agresivo',hooked3:'Frío',master:'Estratega',pro:'Legendario'},
-    roles:{architect:'Arquitecto de la Realidad',surfer:'Surfista',yogi:'Maestra de yoga',tennis:'Tenista',fisher:'Pescador',f1:'Piloto de F1',producer:'Productor',guitarVox:'Guitarra',drums:'Batería',bassVox:'Bajo',voxKeys:'Teclado y guitarra acústica',guitar:'Guitarra',sound:'Técnico de sonido',roadie:'Roadie',video:'Videomaker'},
+    styles:{bold:'Atrevido',sly:'Sagaz',careful:'Cauteloso',calc:'Calculadora',wild:'Impredecible',hooked:'Preciso',hooked2:'Agresivo',hooked3:'Frío',road:'Organizado',master:'Estratega',pro:'Legendario'},
+    roles:{roadmgr:'Road manager',architect:'Arquitecto de la Realidad',surfer:'Surfista',yogi:'Maestra de yoga',tennis:'Tenista',fisher:'Pescador',f1:'Piloto de F1',producer:'Productor',guitarVox:'Guitarra',drums:'Batería',bassVox:'Bajo',voxKeys:'Teclado y guitarra acústica',guitar:'Guitarra',sound:'Técnico de sonido',roadie:'Roadie',video:'Videomaker'},
     spNames:{boss_realx:'REAL-X',sp_julio:'Julio Surfista',sp_bia:'Bia del Yoga',sp_chris:'Chris Tenista',sp_thomaz:'Thomaz Pescador',sp_luiz:'Luiz Piloto'}, introSkip:'Saltar',bossT:'Jefes', tabBoss:'👑 Jefes', bossSub:'Los Jefes: los rivales más difíciles del juego. Contra un Jefe siempre es mano a mano, con su propia canción. REAL-X, el Arquitecto de la Realidad, lo ve todo, escanea tu mano, toma cerveza y whisky para volver y hasta puede invocar el Dark Side. Vencer a un Jefe vale muchos puntos.', bossLv:'jefe con poderes, el más difícil del juego', scanMsg:n=>`🔍 ¡${n} escaneó tu mano!`, bossDrink:(n,j)=>j?`¡${n} se tomó un whisky y volvió con 2 vidas!`:`¡${n} se tomó una cerveza y volvió con 1 vida!`, bossDark:n=>`¡${n} invocó el Dark Side!`, lvSpT:'Banda Especial', lvSpSub:'se desbloquea en la mesa, juega muy bien y vale más puntos', tabSpecial:'★ Especial', specialSub:'La Banda Especial: versiones legendarias de StarAce. Casi no fallan y son muy difíciles de vencer, pero cada uno en la mesa vale muchos más puntos. Se desbloquean desde 1000 pts.',
     tabBand:'Banda', tabCrew:'Equipo', allTab:g=>g==='band'?'Llamar a toda la banda':g==='crew'?'Llamar a todo el equipo':g==='boss'?'Llamar a los Jefes':'Llamar a la Banda Especial', crewSub:'El equipo que sale de gira con StarAce. Nivel más alto que la banda: acá se juega en serio.',
     edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorios (elige varios)', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Arma tu personaje', edEdit:'Edita tu personaje',
@@ -1138,6 +1138,19 @@ const LOOKS={
     top:`<path d="M28 42 Q28 20 50 19 Q72 20 72 42 Q66 30 50 30 Q34 30 28 42Z" fill="#231a16"/>
       <path d="M27 33 Q50 20 73 33 L73 28 Q50 15 27 28Z" fill="#141414"/>`,
     extra:`<path d="M36 58 Q30 57 29 52 Q33 56 38 56Z M64 58 Q70 57 71 52 Q67 56 62 56Z" fill="#231a16"/>`,
+  },
+  // Boreia: road manager, rosto redondo, boné preto da Nike, camisetão preto e correntes de prata
+  boreia:{
+    bg:'#2f5fb3', skin:'#efc0a0', hair:'#2a211c', mouth:'grin', brow:37,
+    sides:`<ellipse cx="50" cy="50" rx="25" ry="21" fill="#efc0a0"/><path d="M27 52 Q30 66 40 70 M73 52 Q70 66 60 70" stroke="rgba(0,0,0,.06)" stroke-width="3" fill="none"/>`,
+    outfit:s=>`<path d="M4 100 Q6 74 50 72 Q94 74 96 100Z" fill="#14161c"/>
+      <path d="M40 73 Q50 79 60 73" stroke="#262a33" stroke-width="3" fill="none"/>
+      <path d="M36 74 Q50 98 64 74" stroke="#d9dde4" stroke-width="2.6" fill="none" stroke-dasharray="2.2 1.2"/>
+      <path d="M39 75 Q50 92 61 75" stroke="#b9bec8" stroke-width="2" fill="none" stroke-dasharray="1.8 1"/>`,
+    top:`<path d="M25 38 Q25 14 50 13 Q75 14 75 38 Q62 32 50 32 Q38 32 25 38Z" fill="#111317"/>
+      <path d="M24 38 Q50 30 76 38 Q86 40 88 44 Q74 40 50 38 Q30 38 24 40Z" fill="#0b0c10"/>
+      <path d="M43 25 Q50 28 58 21 Q52 27 44 26.5Z" fill="#fff"/>
+      <circle cx="50" cy="14" r="1.6" fill="#22252c"/>`,
   },
   // Fox: videomaker, cabelo curto, barba aparada, camiseta preta da StarAce
   fox:{
@@ -1289,6 +1302,7 @@ const BAND=[
   {id:'sp_thomaz',name:'Thomaz Pescador',short:'Thomaz★',look:'fisher',group:'special', role:'fisher', style:'pro', pro:true, needPts:1750, bias:0, noise:0},
   {id:'boss_realx', name:'REAL-X', short:'REAL-X', look:'realx', group:'boss', role:'architect', style:'pro', pro:true, boss:true, song:'music/08_Real.mp3', songTitle:'Real', needPts:3000, bias:0, noise:0},
   {id:'sp_luiz',  name:'Luiz Piloto',    short:'Luiz★',  look:'f1',    group:'special', role:'f1',     style:'pro', pro:true, needPts:2000, bias:0, noise:0},
+  {id:'boreia',name:'Boreia',        short:'Boreia',look:'boreia',  group:'crew', role:'roadmgr',   style:'road',    bias:.05, noise:.05},
   {id:'fox',   name:'Fox',           short:'Fox',   look:'fox',      group:'crew', role:'video',     style:'hooked3', bias:-.05,noise:.02},
 ];
 let ACE='';

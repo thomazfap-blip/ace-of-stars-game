@@ -265,7 +265,9 @@ small{color:var(--muted)}
 /* no fim da rodada, as cartas voam pra quem fez e somem */
 .played.collect{animation:collect .45s ease-in forwards}
 @keyframes collect{to{left:calc(50% + var(--wx) * 40%);top:calc(50% + var(--wy) * 38%);transform:translate(-50%,-50%) scale(.25);opacity:0}}
-.infobar{display:flex;align-items:center;gap:10px;min-height:58px}
+.infobar{display:flex;align-items:center;gap:10px;min-height:58px;flex-wrap:wrap}
+.infobar .ticker{flex:1 1 120px}
+.infobar .ticker:empty,.infobar .ticker.blank{display:none}
 .virabox{display:flex;align-items:center;gap:8px;flex:none}
 .virabox .card{--cw:40px}
 .virabox .card .ix{font-size:16px}
@@ -3105,7 +3107,7 @@ function tableHTML(){
       ${S.catPick?`<div class="cathint" role="status"><b>🔮 ${CT().pick}</b><span>${CT().pickSub}</span><button id="catcancel">${CT().cancel}</button></div>`:''}
     </div>
   </section>
-  <div class="infobar${S.coach&&['h1b','h2a'].includes(S.coach.key)?' tutfocus':''}${S.dark?' darkhand':''}"><div class="virabox">${viraHTML}</div><button class="helpbtn" id="cheat" aria-label="${t.cheatT}">?</button>${catBtnHTML()}${darkBtnHTML()}${S.online?Chat.btnHTML():''}<p class="ticker" aria-live="polite">${S.msg&&!S.betReq&&!S.playReq?S.msg():'&nbsp;'}</p></div>
+  <div class="infobar${S.coach&&['h1b','h2a'].includes(S.coach.key)?' tutfocus':''}${S.dark?' darkhand':''}"><div class="virabox">${viraHTML}</div><button class="helpbtn" id="cheat" aria-label="${t.cheatT}">?</button>${catBtnHTML()}${darkBtnHTML()}${S.online?Chat.btnHTML():''}${S.msg&&!S.betReq&&!S.playReq?`<p class="ticker" aria-live="polite">${S.msg()}</p>`:''}</div>
   ${coachHTML()}
   <section class="dock ${S.turn==='you'?'turn':''}">
     ${S.online&&S.turnDL&&(S.betReq||S.playReq)?(()=>{ const l=Math.max(0,(S.turnDL-Date.now())/1000); return `<div class="ttimer${l<=10?' hot':''}"><i style="width:${Math.min(100,l/30*100).toFixed(1)}%"></i><b>${OT().turnS(Math.ceil(l))}</b></div>`; })():''}
@@ -3267,13 +3269,14 @@ function modalHTML(){
 
 function render(){
   svgSeq=0;
+  { const fx=S.phase==='table'?introHTML()+catVeilHTML()+darkVeilHTML():''; let L=document.getElementById('fxlayer'); if(!L){ L=document.createElement('div'); L.id='fxlayer'; document.body.appendChild(L); } if(L._h!==fx){ L._h=fx; L.innerHTML=fx; } svgSeq=0; }
   document.documentElement.lang={pt:'pt-BR',en:'en',es:'es'}[LANG];
   const app=document.getElementById('app'), game=S.phase==='table';
   if(!game) Music.clearSolo();
   if(game&&!byId('you')){ app.className=''; app.innerHTML=`<div class="connecting"><p class="lobbywait">${OT().waitHost}</p><button class="ghost" id="roomleave">${OT().leave}</button></div>`; return; }
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+(S.online?Chat.toastHTML():'')+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+introHTML()+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+catVeilHTML()+darkVeilHTML()+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+(S.online?Chat.toastHTML():'')+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);

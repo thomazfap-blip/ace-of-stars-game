@@ -638,10 +638,10 @@ details.rulesbox .rules{margin-top:8px}
 .seat.catok .frame{box-shadow:0 0 0 3px #b98cff,0 0 24px rgba(170,110,255,1);animation:catseat 1s ease-in-out infinite}
 @keyframes catseat{50%{transform:scale(1.07)}}
 .catpickbtn{position:absolute;inset:-6px;z-index:5;background:none;border:0;border-radius:14px;cursor:pointer}
-.cathint{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;width:min(calc(100vw - 32px),440px);display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;background:rgba(23,10,42,.96);border:2px solid #b98cff;color:#fff;border-radius:16px;padding:10px 14px;text-align:left;font-weight:700;font-size:14px;box-shadow:0 0 30px rgba(170,110,255,.6)}
-.cathint span{grid-column:1}
-.cathint button{grid-column:2;grid-row:1/3}
-.cathint b{display:block;grid-column:1;font-family:var(--f-display);font-size:22px;color:#e2d0ff;font-weight:400;letter-spacing:.04em}
+.cathint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:21;width:max-content;max-width:min(44%,190px);display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(23,10,42,.9);border:2px solid #b98cff;color:#fff;border-radius:14px;padding:8px 12px;text-align:center;font-weight:700;font-size:12px;line-height:1.3;box-shadow:0 0 24px rgba(170,110,255,.55);pointer-events:none}
+.cathint button{pointer-events:auto}
+.seat.catok{z-index:23}
+.cathint b{display:block;font-family:var(--f-display);font-size:18px;white-space:nowrap;color:#e2d0ff;font-weight:400;letter-spacing:.04em}
 .cathint button{background:none;border:1px solid #b98cff;color:#e2d0ff;border-radius:99px;padding:4px 14px;font:inherit;font-size:13px}
 .catveil{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,rgba(80,35,150,.85),rgba(8,2,16,.97) 65%);animation:catfade .35s ease-out;color:#fff}
 .catback{display:block;margin:10px auto 0;font-family:var(--f-display);font-size:24px;letter-spacing:.05em;padding:10px 28px;border-radius:99px;border:0;background:linear-gradient(#d2b2ff,#8f52ef);color:#1d0838;box-shadow:0 4px 0 #5b2aa3,0 0 24px rgba(170,110,255,.7);cursor:pointer}
@@ -2560,6 +2560,7 @@ function tableHTML(){
       ${S.players.map(seatHTML).join('')}
       ${played}
       ${splash}
+      ${S.catPick?`<div class="cathint" role="status"><b>🔮 ${CT().pick}</b><span>${CT().pickSub}</span><button id="catcancel">${CT().cancel}</button></div>`:''}
     </div>
   </section>
   <div class="infobar${S.coach&&['h1b','h2a'].includes(S.coach.key)?' tutfocus':''}${S.dark?' darkhand':''}"><div class="virabox">${viraHTML}</div><button class="helpbtn" id="cheat" aria-label="${t.cheatT}">?</button>${catBtnHTML()}${darkBtnHTML()}<p class="ticker" aria-live="polite">${S.msg&&!S.betReq&&!S.playReq?S.msg():'&nbsp;'}</p></div>
@@ -2723,7 +2724,7 @@ function render(){
   const app=document.getElementById('app'), game=S.phase!=='setup';
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+(S.catPick?`<div class="cathint" role="status"><b>🔮 ${CT().pick}</b><span>${CT().pickSub}</span><button id="catcancel">${CT().cancel}</button></div>`:'')+catVeilHTML()+darkVeilHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML())+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+catVeilHTML()+darkVeilHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML())+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);

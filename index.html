@@ -671,6 +671,17 @@ details.rulesbox .rules{margin-top:8px}
 @keyframes ctail{50%{transform:rotate(-8deg)}}
 .catgot .lvname{font-size:clamp(30px,9vw,42px)!important;line-height:1.05}
 .rankpts.catwon{color:#d9c2ff;display:flex;align-items:center;justify-content:center;gap:8px}.rankpts.catwon svg{width:1.4em;height:1.4em;flex:none}
+.bossintro{position:fixed;inset:0;z-index:92;display:grid;place-items:center;background:linear-gradient(90deg,#5a0c08,#0b0c1a 45%,#0b0c1a 55%,#123070);animation:catfade .4s ease-out;color:#fff;text-align:center;padding:16px}
+.bibox{width:min(92vw,420px)}
+.biav{width:min(56vw,220px);aspect-ratio:1;margin:0 auto 14px;border-radius:22px;overflow:hidden;box-shadow:0 0 0 4px #fff,0 0 40px rgba(90,140,255,.6);animation:biin .8s cubic-bezier(.2,1.3,.4,1)}
+.biav .avatar,.biav svg{display:block;width:100%;height:100%}
+@keyframes biin{from{transform:scale(.4);opacity:0}}
+.bossintro h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:48px;letter-spacing:.08em;line-height:1;text-shadow:0 0 18px rgba(90,140,255,.9)}
+.bossintro small{display:block;color:#ffb3a8;font-weight:700;letter-spacing:.04em;margin-top:2px}
+.bilines{min-height:120px;margin:14px 0 10px}
+.bilines p{margin:4px 0;font-family:var(--f-display);font-size:clamp(24px,7vw,32px);letter-spacing:.05em;line-height:1.05;color:#dfe8ff;animation:biline .35s ease-out}
+.bilines p:last-child{color:#fff;text-shadow:0 0 14px rgba(255,80,60,.8)}
+@keyframes biline{from{opacity:0;transform:translateY(8px)}}
 .hand.scanning{position:relative}
 .scanlbl{position:absolute;left:50%;top:-14px;transform:translate(-50%,-100%);z-index:6;white-space:nowrap;background:#140406;border:2px solid #ff3b3b;color:#fff;font-weight:800;font-size:14px;padding:5px 12px;border-radius:999px;box-shadow:0 0 16px rgba(255,40,40,.6)}
 .hand.scanning::after{content:'';position:absolute;left:-3%;right:-3%;top:0;height:4px;border-radius:2px;background:#ff3b3b;box-shadow:0 0 14px 5px rgba(255,40,40,.75);animation:scanline 1.1s ease-in-out 2 alternate;pointer-events:none;z-index:5}
@@ -768,7 +779,7 @@ const TXT={
     trump:'Manilha', flip:'Vira', you:'Você', madeOf:(m,b)=>`fez ${m}/${b}`,
     styles:{bold:'Ousado',sly:'Sagaz',careful:'Cauteloso',calc:'Calculista',wild:'Imprevisível',hooked:'Preciso',hooked2:'Agressivo',hooked3:'Frio',master:'Estrategista',pro:'Lendário'},
     roles:{architect:'Arquiteto da Realidade',surfer:'Surfista',yogi:'Mestre da ioga',tennis:'Tenista',fisher:'Pescador',f1:'Piloto de F1',producer:'Produtor',guitarVox:'Guitarra',drums:'Bateria',bassVox:'Baixo',voxKeys:'Teclado e violão',guitar:'Guitarra',sound:'Técnico de som',roadie:'Roadie',video:'Videomaker'},
-    spNames:{boss_realx:'REAL-X',sp_julio:'Julio Surfista',sp_bia:'Bia da Ioga',sp_chris:'Chris Tenista',sp_thomaz:'Thomaz Pescador',sp_luiz:'Luiz Piloto'}, bossT:'Chefões', tabBoss:'👑 Chefões', bossSub:'Os Chefões: os adversários mais difíceis do jogo. Contra um Chefão é sempre 1 contra 1, com a música dele. REAL-X, o Arquiteto da Realidade, enxerga tudo, escaneia sua mão, toma cerveja e uísque pra voltar e ainda pode invocar o Dark Side. Vencer um Chefão vale muitos pontos.', bossLv:'chefão com poderes, o mais difícil do jogo', scanMsg:n=>`🔍 ${n} escaneou sua mão!`, bossDrink:(n,j)=>j?`${n} tomou um uísque e voltou com 2 vidas!`:`${n} tomou uma cerveja e voltou com 1 vida!`, bossDark:n=>`${n} invocou o Dark Side!`, lvSpT:'Banda Especial', lvSpSub:'libera na mesa, joga muito e vale mais pontos', tabSpecial:'★ Especial', specialSub:'A Banda Especial: versões lendárias da StarAce. Jogam quase sem errar e são muito difíceis de vencer, mas cada um na mesa vale muito mais pontos. Liberam a partir de 1000 pts.',
+    spNames:{boss_realx:'REAL-X',sp_julio:'Julio Surfista',sp_bia:'Bia da Ioga',sp_chris:'Chris Tenista',sp_thomaz:'Thomaz Pescador',sp_luiz:'Luiz Piloto'}, introSkip:'Pular',bossT:'Chefões', tabBoss:'👑 Chefões', bossSub:'Os Chefões: os adversários mais difíceis do jogo. Contra um Chefão é sempre 1 contra 1, com a música dele. REAL-X, o Arquiteto da Realidade, enxerga tudo, escaneia sua mão, toma cerveja e uísque pra voltar e ainda pode invocar o Dark Side. Vencer um Chefão vale muitos pontos.', bossLv:'chefão com poderes, o mais difícil do jogo', scanMsg:n=>`🔍 ${n} escaneou sua mão!`, bossDrink:(n,j)=>j?`${n} tomou um uísque e voltou com 2 vidas!`:`${n} tomou uma cerveja e voltou com 1 vida!`, bossDark:n=>`${n} invocou o Dark Side!`, lvSpT:'Banda Especial', lvSpSub:'libera na mesa, joga muito e vale mais pontos', tabSpecial:'★ Especial', specialSub:'A Banda Especial: versões lendárias da StarAce. Jogam quase sem errar e são muito difíceis de vencer, mas cada um na mesa vale muito mais pontos. Liberam a partir de 1000 pts.',
     tabBand:'Banda', tabCrew:'Equipe', allTab:g=>g==='band'?'Chamar a banda toda':g==='crew'?'Chamar a equipe toda':g==='boss'?'Chamar os Chefões':'Chamar a Banda Especial', crewSub:'A equipe que roda com a StarAce. Nível mais alto que o da banda: aqui o jogo é sério.',
     edT:'Crie seu Ace', edSex:'Corpo', edSexes:['Masculino','Feminino'], edSkin:'Tom de pele', edHair:'Cabelo', edHairColor:'Cor do cabelo', edBeard:'Barba', edAcc:'Adereços (escolha vários)', edOut:'Roupa', edBg:'Fundo', edRand:'🎲 Sortear', edSave:'Salvar', edCancel:'Cancelar', edNew:'Monte seu personagem', edEdit:'Editar seu personagem',
     tWeak:'mais fraca', tStrong:'mais forte', tKills:'mata', tLoses:'perde pra', tWith:'com o Zap na rodada', tWithout:'sem o Zap: qualquer carta', tVira:'vira', tMani:'manilha',
@@ -865,7 +876,7 @@ const TXT={
     trump:'Trump', flip:'Flip', you:'You', madeOf:(m,b)=>`took ${m}/${b}`,
     styles:{bold:'Bold',sly:'Sharp',careful:'Careful',calc:'Calculating',wild:'Wild card',hooked:'Precise',hooked2:'Aggressive',hooked3:'Ice-cold',master:'Strategist',pro:'Legendary'},
     roles:{architect:'The Architect of Reality',surfer:'Surfer',yogi:'Yoga master',tennis:'Tennis player',fisher:'Fisherman',f1:'F1 driver',producer:'Producer',guitarVox:'Guitar',drums:'Drums',bassVox:'Bass',voxKeys:'Keys & acoustic guitar',guitar:'Guitar',sound:'Sound engineer',roadie:'Roadie',video:'Video maker'},
-    spNames:{boss_realx:'REAL-X',sp_julio:'Surfer Julio',sp_bia:'Yogi Bia',sp_chris:'Tennis Pro Chris',sp_thomaz:'Fisherman Thomaz',sp_luiz:'Racer Luiz'}, bossT:'Bosses', tabBoss:'👑 Bosses', bossSub:'The Bosses: the hardest opponents in the game. A Boss is always one-on-one, with their own song. REAL-X, the Architect of Reality, sees everything, scans your hand, drinks beer and whisky to come back and can even summon the Dark Side. Beating a Boss is worth a lot of points.', bossLv:'boss with powers, the hardest in the game', scanMsg:n=>`🔍 ${n} scanned your hand!`, bossDrink:(n,j)=>j?`${n} had a whisky and came back with 2 lives!`:`${n} had a beer and came back with 1 life!`, bossDark:n=>`${n} summoned the Dark Side!`, lvSpT:'Special Band', lvSpSub:'unlocks at the table, plays great and is worth more points', tabSpecial:'★ Special', specialSub:'The Special Band: legendary versions of StarAce. They almost never miss and are very hard to beat, but each one at the table is worth a lot more points. Unlocks from 1000 pts.',
+    spNames:{boss_realx:'REAL-X',sp_julio:'Surfer Julio',sp_bia:'Yogi Bia',sp_chris:'Tennis Pro Chris',sp_thomaz:'Fisherman Thomaz',sp_luiz:'Racer Luiz'}, introSkip:'Skip',bossT:'Bosses', tabBoss:'👑 Bosses', bossSub:'The Bosses: the hardest opponents in the game. A Boss is always one-on-one, with their own song. REAL-X, the Architect of Reality, sees everything, scans your hand, drinks beer and whisky to come back and can even summon the Dark Side. Beating a Boss is worth a lot of points.', bossLv:'boss with powers, the hardest in the game', scanMsg:n=>`🔍 ${n} scanned your hand!`, bossDrink:(n,j)=>j?`${n} had a whisky and came back with 2 lives!`:`${n} had a beer and came back with 1 life!`, bossDark:n=>`${n} summoned the Dark Side!`, lvSpT:'Special Band', lvSpSub:'unlocks at the table, plays great and is worth more points', tabSpecial:'★ Special', specialSub:'The Special Band: legendary versions of StarAce. They almost never miss and are very hard to beat, but each one at the table is worth a lot more points. Unlocks from 1000 pts.',
     tabBand:'Band', tabCrew:'Crew', allTab:g=>g==='band'?'Call the whole band':g==='crew'?'Call the whole crew':g==='boss'?'Call the Bosses':'Call the Special Band', crewSub:'The crew that tours with StarAce. A higher level than the band: this is the serious table.',
     edT:'Create your Ace', edSex:'Body', edSexes:['Male','Female'], edSkin:'Skin tone', edHair:'Hair', edHairColor:'Hair color', edBeard:'Beard', edAcc:'Accessories (pick several)', edOut:'Outfit', edBg:'Background', edRand:'🎲 Shuffle', edSave:'Save', edCancel:'Cancel', edNew:'Create your character', edEdit:'Edit your character',
     tWeak:'weakest', tStrong:'strongest', tKills:'kills', tLoses:'loses to', tWith:'with the Zap in the trick', tWithout:'no Zap: any card', tVira:'flip', tMani:'trump',
@@ -962,7 +973,7 @@ const TXT={
     trump:'Manilla', flip:'Muestra', you:'Tú', madeOf:(m,b)=>`hizo ${m}/${b}`,
     styles:{bold:'Atrevido',sly:'Sagaz',careful:'Cauteloso',calc:'Calculadora',wild:'Impredecible',hooked:'Preciso',hooked2:'Agresivo',hooked3:'Frío',master:'Estratega',pro:'Legendario'},
     roles:{architect:'Arquitecto de la Realidad',surfer:'Surfista',yogi:'Maestra de yoga',tennis:'Tenista',fisher:'Pescador',f1:'Piloto de F1',producer:'Productor',guitarVox:'Guitarra',drums:'Batería',bassVox:'Bajo',voxKeys:'Teclado y guitarra acústica',guitar:'Guitarra',sound:'Técnico de sonido',roadie:'Roadie',video:'Videomaker'},
-    spNames:{boss_realx:'REAL-X',sp_julio:'Julio Surfista',sp_bia:'Bia del Yoga',sp_chris:'Chris Tenista',sp_thomaz:'Thomaz Pescador',sp_luiz:'Luiz Piloto'}, bossT:'Jefes', tabBoss:'👑 Jefes', bossSub:'Los Jefes: los rivales más difíciles del juego. Contra un Jefe siempre es mano a mano, con su propia canción. REAL-X, el Arquitecto de la Realidad, lo ve todo, escanea tu mano, toma cerveza y whisky para volver y hasta puede invocar el Dark Side. Vencer a un Jefe vale muchos puntos.', bossLv:'jefe con poderes, el más difícil del juego', scanMsg:n=>`🔍 ¡${n} escaneó tu mano!`, bossDrink:(n,j)=>j?`¡${n} se tomó un whisky y volvió con 2 vidas!`:`¡${n} se tomó una cerveza y volvió con 1 vida!`, bossDark:n=>`¡${n} invocó el Dark Side!`, lvSpT:'Banda Especial', lvSpSub:'se desbloquea en la mesa, juega muy bien y vale más puntos', tabSpecial:'★ Especial', specialSub:'La Banda Especial: versiones legendarias de StarAce. Casi no fallan y son muy difíciles de vencer, pero cada uno en la mesa vale muchos más puntos. Se desbloquean desde 1000 pts.',
+    spNames:{boss_realx:'REAL-X',sp_julio:'Julio Surfista',sp_bia:'Bia del Yoga',sp_chris:'Chris Tenista',sp_thomaz:'Thomaz Pescador',sp_luiz:'Luiz Piloto'}, introSkip:'Saltar',bossT:'Jefes', tabBoss:'👑 Jefes', bossSub:'Los Jefes: los rivales más difíciles del juego. Contra un Jefe siempre es mano a mano, con su propia canción. REAL-X, el Arquitecto de la Realidad, lo ve todo, escanea tu mano, toma cerveza y whisky para volver y hasta puede invocar el Dark Side. Vencer a un Jefe vale muchos puntos.', bossLv:'jefe con poderes, el más difícil del juego', scanMsg:n=>`🔍 ¡${n} escaneó tu mano!`, bossDrink:(n,j)=>j?`¡${n} se tomó un whisky y volvió con 2 vidas!`:`¡${n} se tomó una cerveza y volvió con 1 vida!`, bossDark:n=>`¡${n} invocó el Dark Side!`, lvSpT:'Banda Especial', lvSpSub:'se desbloquea en la mesa, juega muy bien y vale más puntos', tabSpecial:'★ Especial', specialSub:'La Banda Especial: versiones legendarias de StarAce. Casi no fallan y son muy difíciles de vencer, pero cada uno en la mesa vale muchos más puntos. Se desbloquean desde 1000 pts.',
     tabBand:'Banda', tabCrew:'Equipo', allTab:g=>g==='band'?'Llamar a toda la banda':g==='crew'?'Llamar a todo el equipo':g==='boss'?'Llamar a los Jefes':'Llamar a la Banda Especial', crewSub:'El equipo que sale de gira con StarAce. Nivel más alto que la banda: acá se juega en serio.',
     edT:'Crea tu Ace', edSex:'Cuerpo', edSexes:['Masculino','Femenino'], edSkin:'Tono de piel', edHair:'Pelo', edHairColor:'Color de pelo', edBeard:'Barba', edAcc:'Accesorios (elige varios)', edOut:'Ropa', edBg:'Fondo', edRand:'🎲 Sortear', edSave:'Guardar', edCancel:'Cancelar', edNew:'Arma tu personaje', edEdit:'Edita tu personaje',
     tWeak:'más baja', tStrong:'más alta', tKills:'mata', tLoses:'pierde con', tWith:'con el Zap en la ronda', tWithout:'sin el Zap: cualquier carta', tVira:'muestra', tMani:'manilla',
@@ -1849,6 +1860,30 @@ function darkApply(){
   for(let k=0;k<S.n;k++) alive().forEach(p=>p.hand.push({card:deck.pop(),vis:'dark'}));
   S.betSum=0; S.bubbles={}; S.darkReset=true;
 }
+// entrada do chefão: rosto grande + a fala do REAL-X, depois entra a música dele
+let realxVo=null;
+const INTRO_LINES=['ATTENTION.','THIS IS HUMAN TERRITORY!','ARE YOU READY FOR REAL ROCK N\' ROLL?'];
+async function bossIntro(b,tok){
+  Music.hold=true; Music.sync();
+  S.introFx={pid:b.id,line:1}; render();
+  try{ if(!realxVo){ realxVo=new Audio('music/realx_vo.mp3'); realxVo.preload='auto'; } realxVo.currentTime=0; realxVo.volume=1; if(Snd.on!==false) realxVo.play().catch(()=>{}); }catch(e){}
+  const marks=[0,1250,3450], t0=Date.now();
+  await new Promise(res=>{ const iv=setInterval(()=>{
+    if(tok!==S.token||!S.introFx||S.introFx.skip||Date.now()-t0>11200){ clearInterval(iv); res(); return; }
+    const ln=marks.filter(m=>Date.now()-t0>=m).length; if(ln!==S.introFx.line){ S.introFx.line=ln; render(); }
+  },100); });
+  try{ realxVo.pause(); }catch(e){}
+  S.introFx=null; Music.hold=false; Music.sync(); render();
+  if(tok!==S.token) throw new Abort();
+}
+function introHTML(){
+  if(!S.introFx) return ''; const b=byId(S.introFx.pid);
+  return `<div class="bossintro" role="dialog" aria-label="${b.name}"><div class="bibox">
+    <div class="biav">${avatarHTML(b)}</div>
+    <h3>${b.name}</h3><small>${T().roles[b.role]}</small>
+    <div class="bilines">${INTRO_LINES.slice(0,S.introFx.line).map(l=>`<p>${l}</p>`).join('')}</div>
+    <button class="ghost" id="introskip">${T().introSkip}</button></div></div>`;
+}
 function scanSnd(){
   if(!Snd.ok()) return; const c=Snd.ctx, t=c.currentTime+.02, out=c.createGain(); out.gain.value=.5; out.connect(Snd.out);
   for(let k=0;k<2;k++){ const t0=t+k*1.1, o=c.createOscillator(), f=c.createBiquadFilter(), g=c.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(180,t0); o.frequency.exponentialRampToValueAtTime(1400,t0+1); f.type='bandpass'; f.Q.value=8; f.frequency.setValueAtTime(400,t0); f.frequency.exponentialRampToValueAtTime(3000,t0+1);
@@ -1937,14 +1972,14 @@ function startGame(){
   const human={id:'you',short:'Você',isHuman:true};
   let bots=BAND.filter(b=>S.picked.has(b.id)&&!charLocked(b)).map(b=>({...b}));
   const boss=bots.find(b=>b.boss);
-  if(boss){ bots=[boss]; Music.setSolo(boss.song,boss.songTitle); } else Music.clearSolo();
+  if(boss){ bots=[boss]; Music.hold=true; Music.setSolo(boss.song,boss.songTitle); } else Music.clearSolo();
   S.players=[human,...bots].map(p=>({...p,lives:S.startLives,alive:true,hand:[],bet:null,made:0,...(p.boss?{scans:1+Math.floor(Math.random()*3),rev:0,darkLeft:1}:{})}));
   const N=S.players.length;
   S.players.forEach((p,k)=>{ const a=(90+k*360/N)*Math.PI/180; p.cx=+Math.cos(a).toFixed(4); p.cy=+Math.sin(a).toFixed(4); });
   Object.assign(S,{dark:false,darkFx:null,darkWon:false,catWon:false,catUsed:false,catPick:false,catShow:null,drinks:0,lastDrink:'beer',inv:{beer:Rank.me?Rank.me.beer:0,jack:Rank.me?Rank.me.jack:0,cat:Rank.me?(Rank.me.cat|0):0,dark:Rank.me?(Rank.me.dark|0):0},beerTaken:false,st:{hands:0,nailed:0,mz:0},place:null,reported:false,lastPts:null,duelDone:false,tut:false,coach:null,tutAllow:null,beerUsed:false,n:1,dir:1,handNo:0,fast:false,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],msg:null});
   S.dealer=Math.floor(Math.random()*N);
   S.phase='table';
-  runGame(tok).catch(e=>{ if(!(e instanceof Abort)) console.error(e); });
+  (boss?bossIntro(boss,tok):Promise.resolve()).then(()=>runGame(tok)).catch(e=>{ if(!(e instanceof Abort)) console.error(e); });
 }
 function dealHand(){
   // quem voltou com um drinque entra na conta: nunca dá mais cartas do que o baralho tem
@@ -2793,7 +2828,7 @@ function render(){
   if(!game) Music.clearSolo();
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+catVeilHTML()+darkVeilHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML())+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+introHTML()+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+catVeilHTML()+darkVeilHTML()+modalHTML()+rankingHTML() : rankingHTML()+setupHTML())+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);
@@ -2836,6 +2871,7 @@ document.addEventListener('click',e=>{
   if(t.id==='tutyes'){ S.tutOffer=false; startTutorial(); return; }
   if(t.id==='tutskip'){ S.tutOffer=false; markTutSeen(); startGame(); return; }
   if(t.id==='catbtn'){ meowLoad(); if(catUsable()){ S.catPick=true; render(); } return; }
+  if(t.id==='introskip'){ if(S.introFx) S.introFx.skip=true; return; }
   if(t.id==='darkbtn'){ if(darkUsable()) darkInvoke(); return; }
   if(t.id==='catcancel'){ S.catPick=false; render(); return; }
   if(t.dataset.cat){ S.catPick=false; S.catUsed=true; S.inv.cat--; Rank.use('cat'); S.catShow={pid:t.dataset.cat}; catMystic(); render(); return; }

@@ -4,7 +4,7 @@
 //
 // GET  ranking.php?id=XYZ                      -> placar geral/semanal + perfil do jogador
 // POST {a:'game', id, name, av, pts, ...}      -> soma uma partida
-// POST {a:'use', id, item:'beer'|'jack'}       -> gasta um drinque do estoque
+// POST {a:'use', id, item:'beer'|'jack'|'cat'} -> gasta um drinque ou uma bola de cristal do estoque
 // POST {a:'code', id, email, lang}             -> manda código de confirmação pro e-mail
 // POST {a:'verify', id, email, code, optin, src, name, av, lang} -> liga o aparelho à conta
 
@@ -16,6 +16,8 @@ const TESTERS = ['thomazfap@gmail.com'];
 const LV_PTS  = [0, 50, 150, 300, 600];
 const LV_BEER = [0, 1, 1, 0, 2];
 const LV_JACK = [0, 0, 0, 1, 1];
+// Mystical Cat: libera no Palco (ganha 1 bola de presente) e dá +1 bola a cada 3 vitórias, até 3 no estoque
+const CAT_LV = 3; const CAT_WINS = 3; const CAT_MAX = 3;
 
 $dir = dirname(__DIR__, 2) . '/ace-of-stars-ranking';
 if (!is_dir($dir) && !@mkdir($dir, 0750, true)) {
@@ -43,9 +45,16 @@ function mask_email($e) { [$u, $d] = explode('@', $e, 2); return mb_substr($u, 0
 
 function norm(&$R, &$P) {
     foreach (['all', 'weeks'] as $k) if (!isset($R[$k]) || !is_array($R[$k])) $R[$k] = [];
-    foreach (['links', 'acc', 'inv', 'codes'] as $k) if (!isset($P[$k]) || !is_array($P[$k])) $P[$k] = [];
+    foreach (['links', 'acc', 'inv', 'codes', 'cat'] as $k) if (!isset($P[$k]) || !is_array($P[$k])) $P[$k] = [];
 }
 function key_for($P, $id) { return $P['links'][$id] ?? $id; }
+function cat_of($P, $key) { return $P['cat'][$key] ?? ['n' => 0, 'w' => 0, 'g' => 0]; }
+function merge_cat(&$P, $from, $to) {
+    if (!isset($P['cat'][$from])) return;
+    $a = $P['cat'][$from]; $b = $P['cat'][$to] ?? null;
+    $P['cat'][$to] = $b ? ['n' => min(CAT_MAX, $a['n'] + $b['n']), 'w' => max($a['w'], $b['w']), 'g' => max($a['g'], $b['g'])] : $a;
+    unset($P['cat'][$from]);
+}
 
 function add_game(&$map, $key, $g) {
     $r = $map[$key] ?? ['pts' => 0, 'wins' => 0, 'games' => 0, 'nailed' => 0, 'hands' => 0, 'mz' => 0];
@@ -84,11 +93,12 @@ function profile($R, $P, $key) {
     $acc = $P['acc'][$key] ?? null;
     // contas de teste: tudo liberado e estoque cheio (o ranking continua com os pontos reais)
     if ($acc && in_array($acc['email'], TESTERS, true)) {
-        return ['pts' => max($pts, 2000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'tester' => true,
+        return ['pts' => max($pts, 2000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'tester' => true,
                 'linked' => true, 'email' => mask_email($acc['email']), 'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
     }
     return ['pts' => $pts, 'level' => $lv, 'next' => LV_PTS[$lv + 1] ?? null,
             'beer' => max(0, earned($lv, LV_BEER) - ($used['b'] ?? 0)), 'jack' => max(0, earned($lv, LV_JACK) - ($used['j'] ?? 0)),
+            'cat' => cat_of($P, $key)['n'], 'catW' => cat_of($P, $key)['w'],
             'linked' => (bool)$acc, 'email' => $acc ? mask_email($acc['email']) : null,
             'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
 }
@@ -160,13 +170,21 @@ if ($a === 'game') {
     $wk = week_key();
     if (!isset($R['weeks'][$wk])) $R['weeks'][$wk] = [];
     add_game($R['all'], $key, $g);
-    if (isset($P['acc'][$key])) { $P['acc'][$key]['name'] = $g['name']; if ($g['av'] !== '') $P['acc'][$key]['av'] = $g['av']; jsave($playFile, $P); }
+    if (isset($P['acc'][$key])) { $P['acc'][$key]['name'] = $g['name']; if ($g['av'] !== '') $P['acc'][$key]['av'] = $g['av']; }
+    // bolas de cristal do Mystical Cat
+    $c = cat_of($P, $key); $catGot = false;
+    if (level_of($R['all'][$key]['pts']) >= CAT_LV) {
+        if (!$c['g']) { $c['g'] = 1; if ($c['n'] < CAT_MAX) { $c['n']++; $catGot = true; } }
+        elseif ($g['win'] && $c['n'] < CAT_MAX) { $c['w']++; if ($c['w'] >= CAT_WINS) { $c['w'] = 0; $c['n']++; $catGot = true; } }
+        $P['cat'][$key] = $c;
+    }
+    jsave($playFile, $P);
     add_game($R['weeks'][$wk], $key, $g);
     ksort($R['weeks']);
     $R['weeks'] = array_slice($R['weeks'], -8, null, true);
     jsave($rankFile, $R);
     flock($lock, LOCK_UN);
-    out(full($R, $P, $key) + ['prevLevel' => $prevLevel]);
+    out(full($R, $P, $key) + ['prevLevel' => $prevLevel, 'catGot' => $catGot]);
 }
 
 if ($a === 'profile') {
@@ -185,8 +203,14 @@ if ($a === 'profile') {
 }
 
 if ($a === 'use') {
-    $item = ($in['item'] ?? '') === 'jack' ? 'j' : 'b';
     $pr = profile($R, $P, $key);
+    if (($in['item'] ?? '') === 'cat') {
+        if ($pr['cat'] < 1) { flock($lock, LOCK_UN); out(['error' => 'empty', 'profile' => $pr], 409); }
+        if (empty($pr['tester'])) { $c = cat_of($P, $key); $c['n']--; $P['cat'][$key] = $c; jsave($playFile, $P); }
+        flock($lock, LOCK_UN);
+        out(['profile' => profile($R, $P, $key)]);
+    }
+    $item = ($in['item'] ?? '') === 'jack' ? 'j' : 'b';
     if (($item === 'j' ? $pr['jack'] : $pr['beer']) < 1) { flock($lock, LOCK_UN); out(['error' => 'empty', 'profile' => $pr], 409); }
     if (!empty($pr['tester'])) { flock($lock, LOCK_UN); out(['profile' => $pr]); }
     $u = $P['inv'][$key] ?? ['b' => 0, 'j' => 0];
@@ -250,6 +274,7 @@ if ($a === 'verify' || $a === 'link') {
         merge_row($R['all'], $acctKey, $orphan);
         foreach ($R['weeks'] as $wk => $m) { merge_row($m, $acctKey, $orphan); $R['weeks'][$wk] = $m; }
         if (isset($P['inv'][$acctKey])) { $P['inv'][$orphan] = $P['inv'][$acctKey]; unset($P['inv'][$acctKey]); }
+        merge_cat($P, $acctKey, $orphan);
         foreach ($P['links'] as $d => $k) if ($k === $acctKey) $P['links'][$d] = $orphan;
         $P['acc'][$acctKey]['name'] = $devName;
         if ($devAv !== '') $P['acc'][$acctKey]['av'] = $devAv; else unset($P['acc'][$acctKey]['av']);
@@ -263,6 +288,7 @@ if ($a === 'verify' || $a === 'link') {
             $u['b'] += $P['inv'][$key]['b'] ?? 0; $u['j'] += $P['inv'][$key]['j'] ?? 0;
             $P['inv'][$acctKey] = $u; unset($P['inv'][$key]);
         }
+        merge_cat($P, $key, $acctKey);
         foreach ($P['links'] as $d => $k) if ($k === $key) $P['links'][$d] = $acctKey;
     }
     $P['links'][$id] = $acctKey;

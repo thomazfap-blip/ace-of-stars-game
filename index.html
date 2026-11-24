@@ -3015,7 +3015,7 @@ function seatHTML(p){
     for(let i=0;i<Math.min(backs,8);i++) minis+=cardHTML(null,{size:'sm',back:true,anim:an});
   }
   let chip='';
-  if(p.alive && p.bet!=null){ const cls=p.made===p.bet?'done':p.made>p.bet?'over':''; chip=`<span class="betchip ${cls}">${S.players.length>7?`${p.made}/${p.bet}`:p.bet}</span>`; }
+  if(p.alive && p.bet!=null){ const cls=p.made===p.bet?'done':p.made>p.bet?'over':''; chip=`<span class="betchip ${cls}">${S.players.length>6?`${p.made}/${p.bet}`:p.bet}</span>`; }
   const b=S.bubbles[p.id], bubble=b?`<span class="bubble${b.fresh?' anim':''}">${b.f()}</span>`:'';
   const side=p.cy>-.5&&p.cx<-.5?'side-l':p.cy>-.5&&p.cx>.5?'side-r':'';
   const catok=S.catPick&&!p.isHuman&&p.alive&&p.hand.length, scanner=S.scanFx&&S.scanFx.pid===p.id;
@@ -3033,10 +3033,10 @@ function seatHTML(p){
 
 // tamanho das cartas jogadas: o maior possível sem uma encostar na outra
 // mesa cheia: retratos menores, mesa oval mais alta e menos informação em volta de cada um
-function swFrac(){ const N=S.players.length; return N>7?Math.min(.17, 2*.4*Math.sin(Math.PI/N)*.7):.175; }
+function swFrac(){ const N=S.players.length; return N>6?Math.min(.17, 2*.4*Math.sin(Math.PI/N)*.7):.175; }
 // maior carta possível sem que duas cartas jogadas se encostem (confere todos os pares de lugares)
 function pwFrac(){
-  const ps=S.players, many=ps.length>7, Rx=many?.15:.22, Ry=many?.17:.175;
+  const ps=S.players, many=ps.length>6, Rx=many?.15:.22, Ry=many?.17:.175;
   let w=swFrac()*.85;
   for(let i=0;i<ps.length;i++) for(let j=i+1;j<ps.length;j++){
     const dx=Math.abs(ps[i].cx-ps[j].cx)*Rx, dy=Math.abs(ps[i].cy-ps[j].cy)*Ry;
@@ -3117,7 +3117,7 @@ function tableHTML(){
     <button class="iconbtn" id="menu" aria-label="${t.menu}">${ICON_MENU}</button>
   </header>
   <section class="stage">
-    <div class="ring${S.players.length>7?' many':''}${S.coach&&S.coach.key==='h1a'?' hlminis':''}${sp&&sp.fresh&&sp.type==='matazap'?' shake':''}${S.catPick?' catpick':''}${S.dark?' darkhand':''}" style="--sw:calc(min(100cqw,100cqh) * ${swFrac().toFixed(3)});--pw:calc(min(100cqw,100cqh) * ${pwFrac().toFixed(3)})">
+    <div class="ring${S.players.length>6?' many':''}${S.coach&&S.coach.key==='h1a'?' hlminis':''}${sp&&sp.fresh&&sp.type==='matazap'?' shake':''}${S.catPick?' catpick':''}${S.dark?' darkhand':''}" style="--sw:calc(min(100cqw,100cqh) * ${swFrac().toFixed(3)});--pw:calc(min(100cqw,100cqh) * ${pwFrac().toFixed(3)})">
       <div class="table"><img class="logo" src="${LOGO_W}" alt=""></div>
       ${S.players.map(seatHTML).join('')}
       ${played}

@@ -406,6 +406,14 @@ td .lifebar{margin:0;width:58px}
 .tabs button span{padding:1px 6px}
 @media (max-width:440px){ .tabs{gap:0} .tabs button{font-size:15px;padding:8px 3px;gap:3px} .tabs button span{font-size:10px;padding:1px 5px} }
 .tabs button[data-tab="special"]{color:#f5c94f}
+/* abas de grupos com cara de botão */
+.tabs.grouptabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border-bottom:0;overflow:visible;margin-bottom:14px}
+.grouptabs button{justify-content:center;margin:0;padding:10px 6px;border:2px solid rgba(245,201,79,.45);border-radius:14px;background:rgba(0,0,0,.35);color:var(--ink);font-size:22px;box-shadow:0 3px 0 rgba(0,0,0,.4);cursor:pointer;transition:transform .1s}
+.grouptabs button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.grouptabs button[data-tab="special"]{color:var(--ink)}
+.grouptabs button[aria-selected="true"]{background:linear-gradient(#f8d978,#e2b33a);color:#2a1d00;border-color:#f8d978;box-shadow:0 3px 0 #8a6414,0 0 18px rgba(245,201,79,.45)}
+.grouptabs button[aria-selected="true"] span{background:#2a1d00;color:var(--gold)}
+@media (max-width:560px){ .tabs.grouptabs{grid-template-columns:repeat(2,1fr)} .grouptabs button{font-size:22px;padding:10px 6px;gap:6px} .grouptabs button span{font-size:12px;padding:1px 7px} }
 .linkbtn.inl{display:inline;font-size:12px}
 .linkbtn{align-self:flex-start;background:none;border:none;padding:2px 0;color:var(--teal-light);font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .pick.locked{cursor:not-allowed}
@@ -2521,7 +2529,7 @@ function setupHTML(){
       <span><b>${b.short}</b><span class="role">${T().roles[b.role]}</span><small>${T().styles[b.style]}</small></span>
     </button>`).join('');
   const cnt=g=>BAND.filter(b=>b.group===g&&S.picked.has(b.id)&&!charLocked(b)).length;
-  const tabs=`<div class="tabs" role="tablist">${['band','crew','special','boss'].map(g=>`<button role="tab" data-tab="${g}" aria-selected="${S.tab===g}">${g==='band'?T().tabBand:g==='crew'?T().tabCrew:g==='boss'?T().tabBoss:T().tabSpecial}<span>${cnt(g)}</span></button>`).join('')}</div>`;
+  const tabs=`<div class="tabs grouptabs" role="tablist">${['band','crew','special','boss'].map(g=>`<button role="tab" data-tab="${g}" aria-selected="${S.tab===g}">${g==='band'?T().tabBand:g==='crew'?T().tabCrew:g==='boss'?T().tabBoss:T().tabSpecial}<span>${cnt(g)}</span></button>`).join('')}</div>`;
   const lives=[1,2,3,4,5].map(n=>`<button class="pchip" data-lives="${n}" aria-pressed="${S.startLives===n}" aria-label="${n} ${T().lives}">${n}</button>`).join('');
   const sample=[{r:9,s:'c'},{r:0,s:'h'},{star:true,r:-1,s:'S'}];
   return `

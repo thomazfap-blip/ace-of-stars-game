@@ -397,7 +397,9 @@ td .lifebar{margin:0;width:58px}
 .pickacc b{font-family:var(--f-display);font-weight:400;font-size:22px;color:var(--gold)}
 .pickacc small{font-size:11px}
 .helpbtn{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid var(--gold);background:rgba(10,2,4,.85);color:var(--gold);font-family:var(--f-display);font-size:22px;line-height:1;padding-top:3px;display:grid;place-items:center}
-.cheat{text-align:center}
+.cheat{text-align:center;position:relative}
+.sheetx{position:sticky;top:0;align-self:flex-end;margin:-8px -8px -46px 0;width:40px;height:40px;z-index:2;flex:none}
+.overlay{height:100dvh}
 .cheat h3{font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.03em;color:var(--gold);margin:6px 0 0}
 .cheat .ladlab{color:var(--muted)}
 .cheat .maniv small{color:var(--ink)}
@@ -2664,6 +2666,7 @@ function cheatHTML(){
   const mr=S.phase!=='setup'&&S.viraShown&&S.mr!=null?S.mr:null;
   const maniRow=mr!=null?`<div class="maniv">${['d','s','h','c'].map((x,i)=>`<div>${c(mr,x)}<small>${t.maniNames[3-i]}</small></div>`).join('')}</div><div class="ladlab"><span>${t.tWeak}</span><i></i><span>${t.tStrong}</span></div>`:`<p class="tsub">${t.cheatNoVira}</p>`;
   return `<div class="overlay rankov"><div class="sheet cheat" role="dialog" aria-label="${t.cheatT}">
+    <button class="iconbtn sheetx" id="cheatclose" aria-label="${t.rankClose}">✕</button>
     <h2>${t.cheatT}</h2>
     <h3>${t.cheatRanks}</h3>
     <div class="ladder">${RANKS.map((_,r)=>c(r,su[r])).join('')}</div>
@@ -2675,7 +2678,7 @@ function cheatHTML(){
     <h3>Ace of Stars</h3>
     <div class="maniv mzv"><div>${cardHTML(mkCard(['S']),{size:'tc'})}<small>Ace of Stars</small></div><em class="kill">${t.tKills}</em><div>${mr!=null?c(mr,'c'):''}<small>Zap</small></div></div>
     <p class="tsub">${t.cheatMz}</p>
-    <div class="row"><button class="cta" id="cheatclose">${t.rankClose}</button></div>
+    <div class="row"><button class="cta" id="cheatclose2">${t.rankClose}</button></div>
   </div></div>`;
 }
 const POW_T={
@@ -3274,9 +3277,11 @@ function render(){
   const app=document.getElementById('app'), game=S.phase==='table';
   if(!game) Music.clearSolo();
   if(game&&!byId('you')){ app.className=''; app.innerHTML=`<div class="connecting"><p class="lobbywait">${OT().waitHost}</p><button class="ghost" id="roomleave">${OT().leave}</button></div>`; return; }
+  const SCR='.sheet,.scroll,.tbl'; const keepSc=[...app.querySelectorAll(SCR)].map(e=>[e.getAttribute('aria-label')||e.className,e.scrollTop]);
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
   app.innerHTML = (game ? tableHTML()+(S.online?Chat.toastHTML():'')+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  { const els=[...app.querySelectorAll(SCR)]; keepSc.forEach(([k,top],i)=>{ const e=els[i]; if(e&&(e.getAttribute('aria-label')||e.className)===k&&top) e.scrollTop=top; }); }
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);
@@ -3328,7 +3333,7 @@ document.addEventListener('click',e=>{
   if(t.dataset.cat){ S.catPick=false; S.catUsed=true; S.inv.cat--; Rank.use('cat'); S.catShow={pid:t.dataset.cat}; catMystic(); render(); return; }
   if(t.id==='catclose'){ catClose(); return; }
   if(t.id==='cheat'){ S.cheat=true; render(); return; }
-  if(t.id==='cheatclose'){ S.cheat=false; render(); return; }
+  if(t.id==='cheatclose'||t.id==='cheatclose2'){ S.cheat=false; render(); return; }
   if(t.id==='lvopen'){ S.levelsOpen=true; render(); return; }
   if(t.id==='lvclose'){ S.levelsOpen=false; render(); return; }
   if(t.id==='powopen'||t.id==='powopen2'){ S.levelsOpen=false; S.powOpen=true; render(); return; }

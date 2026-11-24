@@ -11,6 +11,8 @@
 // POST {a:'poll', code, token, since}              -> jogador busca a própria tela
 // POST {a:'act', code, token, act}                 -> jogador manda uma jogada
 // POST {a:'take', code, token}                     -> anfitrião pega as jogadas
+// POST {a:'say', code, token, text}               -> mensagem no chat da sala
+//      (lobby, poll e take devolvem as mensagens novas: mande cs = id da última que já tem)
 // POST {a:'reopen', code, token}                   -> anfitrião volta todo mundo pra sala de espera
 // POST {a:'leave', code, token}                    -> sai da sala (anfitrião fecha a sala)
 
@@ -61,6 +63,7 @@ function me_of(&$R, $token) { foreach ($R['players'] as $i => $p) if (hash_equal
 function pub_players($R) {
     return array_map(fn($p) => ['pid' => $p['pid'], 'name' => $p['name'], 'av' => $p['av'], 'lang' => $p['lang'], 'left' => !empty($p['left']), 'seen' => $p['seen']], $R['players']);
 }
+function chat_since($R, $in) { $cs = (int)($in['cs'] ?? 0); return array_values(array_filter($R['chat'] ?? [], fn($m) => $m['id'] > $cs)); }
 function lobby_out($R, $me) {
     return ['code' => $R['code'], 'status' => $R['status'], 'hostPid' => $R['hostPid'], 'pid' => $R['players'][$me]['pid'],
             'players' => pub_players($R), 'now' => time()];
@@ -107,10 +110,10 @@ if ($a === 'join') {
 $token = (string)($in['token'] ?? '');
 
 if ($a === 'lobby') {
-    out(with_room($dir, $code, function ($R) use ($token) {
+    out(with_room($dir, $code, function ($R) use ($token, $in) {
         $me = me_of($R, $token); if ($me < 0) return ['error' => 'auth'];
         $R['players'][$me]['seen'] = time();
-        return ['__save' => $R] + lobby_out($R, $me);
+        return ['__save' => $R, 'chat' => chat_since($R, $in)] + lobby_out($R, $me);
     }));
 }
 
@@ -141,7 +144,7 @@ if ($a === 'poll') {
         $R['players'][$me]['seen'] = time();
         $pid = $R['players'][$me]['pid']; $host = null;
         foreach ($R['players'] as $p) if ($p['pid'] === $R['hostPid']) $host = $p;
-        $o = ['status' => $R['status'], 'ver' => $R['ver'], 'hostSeen' => time() - ($host['seen'] ?? 0)];
+        $o = ['status' => $R['status'], 'ver' => $R['ver'], 'hostSeen' => time() - ($host['seen'] ?? 0), 'chat' => chat_since($R, $in)];
         $views = (array)$R['views'];
         if ((int)($in['since'] ?? -1) < $R['ver'] && isset($views[$pid])) $o['view'] = $views[$pid];
         return ['__save' => $R] + $o;
@@ -160,12 +163,29 @@ if ($a === 'act') {
 }
 
 if ($a === 'take') {
-    out(with_room($dir, $code, function ($R) use ($token) {
+    out(with_room($dir, $code, function ($R) use ($token, $in) {
         $me = me_of($R, $token); if ($me < 0 || $R['players'][$me]['pid'] !== $R['hostPid']) return ['error' => 'auth'];
         $R['players'][$me]['seen'] = time();
         $acts = $R['actions']; $R['actions'] = [];
         $seen = []; foreach ($R['players'] as $p) $seen[$p['pid']] = ['ago' => time() - $p['seen'], 'left' => !empty($p['left'])];
-        return ['__save' => $R, 'actions' => $acts, 'seen' => $seen];
+        return ['__save' => $R, 'actions' => $acts, 'seen' => $seen, 'chat' => chat_since($R, $in)];
+    }));
+}
+
+if ($a === 'say') {
+    out(with_room($dir, $code, function ($R) use ($token, $in) {
+        $me = me_of($R, $token); if ($me < 0) return ['error' => 'auth'];
+        $text = trim(preg_replace('/\s+/u', ' ', strip_tags((string)($in['text'] ?? ''))));
+        $text = mb_substr($text, 0, 140);
+        if ($text === '') return ['error' => 'empty'];
+        $p = &$R['players'][$me];
+        if (time() - ($p['lastSay'] ?? 0) < 1) return ['error' => 'slow'];
+        $p['lastSay'] = time(); $p['seen'] = time();
+        $R['chatN'] = ($R['chatN'] ?? 0) + 1;
+        $R['chat'][] = ['id' => $R['chatN'], 'pid' => $p['pid'], 'name' => $p['name'], 'text' => $text, 't' => time()];
+        if (count($R['chat']) > 60) $R['chat'] = array_slice($R['chat'], -60);
+        unset($p);
+        return ['__save' => $R, 'ok' => true, 'chat' => chat_since($R, $in)];
     }));
 }
 

@@ -718,6 +718,27 @@ details.rulesbox .rules{margin-top:8px}
 @keyframes pulse{50%{opacity:.45}}
 .hostlost{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:70;background:#7a1210;color:#fff;font-weight:700;border-radius:999px;padding:8px 16px;box-shadow:0 4px 18px rgba(0,0,0,.5);max-width:calc(100vw - 32px);text-align:center}
 .connecting{min-height:60vh;display:grid;place-content:center;gap:16px;text-align:center}
+.chatbtn{flex:none;position:relative;width:40px;height:40px;border-radius:50%;border:2px solid var(--gold);background:rgba(0,0,0,.4);font-size:18px;display:grid;place-items:center;padding:0;cursor:pointer}
+.chatbtn span{position:absolute;right:-6px;top:-6px;min-width:18px;height:18px;border-radius:9px;background:#e23b3b;color:#fff;font:800 11px/18px Montserrat,sans-serif;padding:0 4px}
+.chattoast{position:fixed;left:50%;top:calc(64px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:75;max-width:calc(100vw - 32px);background:rgba(15,10,10,.94);color:#fff;border:2px solid var(--gold);border-radius:14px;padding:8px 14px;font:600 14px Montserrat,sans-serif;text-align:left;box-shadow:0 6px 20px rgba(0,0,0,.5);animation:biline .3s ease-out;cursor:pointer}
+.chattoast b{color:var(--gold)}
+#chatpanel{position:fixed;inset:auto 0 0 0;z-index:96;display:flex;justify-content:center;padding:0 max(8px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(8px,env(safe-area-inset-left,0px));pointer-events:none}
+.chatsheet{pointer-events:auto;width:min(100%,520px);max-height:min(70vh,560px);display:flex;flex-direction:column;background:#1b0f0f;border:2px solid var(--gold);border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.6);color:var(--ink);font-family:Montserrat,sans-serif}
+.chathead{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 6px 16px}
+.chathead b{font-family:var(--f-display);font-weight:400;font-size:24px;color:var(--gold);letter-spacing:.03em}
+.chathead .iconbtn{width:36px;height:36px}
+.chatlist{flex:1;min-height:120px;overflow-y:auto;padding:4px 14px 10px;display:flex;flex-direction:column;gap:6px}
+.cmsg{align-self:flex-start;max-width:82%;background:rgba(255,255,255,.08);border-radius:14px 14px 14px 4px;padding:6px 10px;overflow-wrap:anywhere}
+.cmsg small{display:block;font-size:11px;font-weight:800;color:var(--gold)}
+.cmsg.mine{align-self:flex-end;background:rgba(245,201,79,.18);border-radius:14px 14px 4px 14px}
+.cmsg.mine small{text-align:right}
+.chatempty{color:var(--muted);text-align:center;margin:20px 0}
+.chatquick{display:flex;gap:6px;overflow-x:auto;padding:4px 12px;scrollbar-width:none}.chatquick::-webkit-scrollbar{display:none}
+.chatquick .chipbtn{flex:none;white-space:nowrap}
+.chatform{display:flex;gap:8px;padding:8px 12px 12px}
+.chatform input{flex:1;min-width:0;font:500 16px Montserrat,sans-serif;padding:10px 12px;border-radius:12px;border:2px solid rgba(245,201,79,.45);background:rgba(0,0,0,.35);color:var(--ink)}
+.chatform .cta{margin:0;flex:none;font-size:18px;padding:8px 16px}
+.lobbychat{width:100%}
 .catwait{color:#fff;font-size:34px;animation:pulse 1s infinite}
 .darkgotart{width:min(40vw,150px);margin:6px auto 10px;border-radius:50%;box-shadow:0 0 30px 6px rgba(214,38,43,.7)}.darkgotart .yy{width:100%;height:auto;display:block}
 .rankpts.darkwon{color:#ff8a8a}
@@ -2218,9 +2239,9 @@ async function runGame(tok){
 // O celular de quem cria a sala (anfitrião) roda a partida; cada jogador recebe só o que pode ver.
 const ROOM_URL='room.php';
 const ON_T={
-  pt:{boxT:'🌐 Jogar online',boxSub:'Jogue com amigos e fãs, cada um no seu celular.',create:'Criar sala',join:'Entrar',codePh:'Código',lobbyT:'Sala',share:'Mande o código ou o link pros amigos:',copy:'Copiar link',copied:'Link copiado!',wa:'Mandar no WhatsApp',waText:(c,u)=>`Bora jogar Ace of Stars comigo? Sala ${c}: ${u}`,players:n=>`Na mesa (${n}/8)`,hostTag:'anfitrião',you:'você',waitHost:'Esperando o anfitrião começar…',needTwo:'Precisa de pelo menos 2 pessoas pra começar.',start:'Começar partida',leave:'Sair da sala',bots:'Completar a mesa com a banda',botsSub:n=>n?`Entram também: ${n}`:'Escolha os personagens em "Quem senta na mesa" antes de criar a sala.',errNoroom:'Sala não encontrada. Confira o código.',errStarted:'Essa partida já começou.',errFull:'A sala está cheia.',errNet:'Sem conexão. Tente de novo.',closed:'O anfitrião fechou a sala.',hostLost:'A conexão do anfitrião caiu… esperando ele voltar.',waitRemote:n=>`Esperando ${n}…`,waitDrink:n=>`${n} está decidindo se toma uma…`,onlineTag:'Online',backLobby:'Voltar pra sala',again:'Jogar de novo na mesma sala',hostWarn:'Você é o anfitrião: mantenha o jogo aberto até o fim, senão a partida para pra todo mundo.',lives:'Vidas',winT:'Você ganhou a partida online!',winSub:'Ganhou de todo mundo na mesa. Pode cobrar a rodada!'},
-  en:{boxT:'🌐 Play online',boxSub:'Play with friends and fans, each on their own phone.',create:'Create room',join:'Join',codePh:'Code',lobbyT:'Room',share:'Send the code or the link to your friends:',copy:'Copy link',copied:'Link copied!',wa:'Send on WhatsApp',waText:(c,u)=>`Let’s play Ace of Stars? Room ${c}: ${u}`,players:n=>`At the table (${n}/8)`,hostTag:'host',you:'you',waitHost:'Waiting for the host to start…',needTwo:'You need at least 2 people to start.',start:'Start game',leave:'Leave room',bots:'Fill the table with the band',botsSub:n=>n?`Also joining: ${n}`:'Pick characters in "Who sits at the table" before creating the room.',errNoroom:'Room not found. Check the code.',errStarted:'That game has already started.',errFull:'The room is full.',errNet:'No connection. Try again.',closed:'The host closed the room.',hostLost:'The host lost connection… waiting for them.',waitRemote:n=>`Waiting for ${n}…`,waitDrink:n=>`${n} is deciding whether to have a drink…`,onlineTag:'Online',backLobby:'Back to the room',again:'Play again in the same room',hostWarn:'You are the host: keep the game open until the end, or the game stops for everyone.',lives:'Lives',winT:'You won the online game!',winSub:'You beat everyone at the table. Drinks are on them!'},
-  es:{boxT:'🌐 Jugar online',boxSub:'Juega con amigos y fans, cada uno en su celular.',create:'Crear sala',join:'Entrar',codePh:'Código',lobbyT:'Sala',share:'Manda el código o el link a tus amigos:',copy:'Copiar link',copied:'¡Link copiado!',wa:'Mandar por WhatsApp',waText:(c,u)=>`¿Jugamos Ace of Stars? Sala ${c}: ${u}`,players:n=>`En la mesa (${n}/8)`,hostTag:'anfitrión',you:'tú',waitHost:'Esperando que el anfitrión empiece…',needTwo:'Se necesitan al menos 2 personas para empezar.',start:'Empezar partida',leave:'Salir de la sala',bots:'Completar la mesa con la banda',botsSub:n=>n?`También entran: ${n}`:'Elige personajes en "Quién se sienta" antes de crear la sala.',errNoroom:'Sala no encontrada. Revisa el código.',errStarted:'Esa partida ya empezó.',errFull:'La sala está llena.',errNet:'Sin conexión. Inténtalo de nuevo.',closed:'El anfitrión cerró la sala.',hostLost:'Se cayó la conexión del anfitrión… esperando que vuelva.',waitRemote:n=>`Esperando a ${n}…`,waitDrink:n=>`${n} está decidiendo si se toma una…`,onlineTag:'Online',backLobby:'Volver a la sala',again:'Jugar otra vez en la misma sala',hostWarn:'Eres el anfitrión: mantén el juego abierto hasta el final, o la partida se detiene para todos.',lives:'Vidas',winT:'¡Ganaste la partida online!',winSub:'Le ganaste a toda la mesa. ¡Que paguen la ronda!'}
+  pt:{boxT:'🌐 Jogar online',boxSub:'Jogue com amigos e fãs, cada um no seu celular.',create:'Criar sala',join:'Entrar',codePh:'Código',lobbyT:'Sala',share:'Mande o código ou o link pros amigos:',copy:'Copiar link',copied:'Link copiado!',wa:'Mandar no WhatsApp',waText:(c,u)=>`Bora jogar Ace of Stars comigo? Sala ${c}: ${u}`,players:n=>`Na mesa (${n}/8)`,hostTag:'anfitrião',you:'você',waitHost:'Esperando o anfitrião começar…',needTwo:'Precisa de pelo menos 2 pessoas pra começar.',start:'Começar partida',leave:'Sair da sala',bots:'Completar a mesa com a banda',botsSub:n=>n?`Entram também: ${n}`:'Escolha os personagens em "Quem senta na mesa" antes de criar a sala.',errNoroom:'Sala não encontrada. Confira o código.',errStarted:'Essa partida já começou.',errFull:'A sala está cheia.',errNet:'Sem conexão. Tente de novo.',closed:'O anfitrião fechou a sala.',hostLost:'A conexão do anfitrião caiu… esperando ele voltar.',waitRemote:n=>`Esperando ${n}…`,waitDrink:n=>`${n} está decidindo se toma uma…`,onlineTag:'Online',backLobby:'Voltar pra sala',again:'Jogar de novo na mesma sala',hostWarn:'Você é o anfitrião: mantenha o jogo aberto até o fim, senão a partida para pra todo mundo.',chatT:'Chat da mesa',chatPh:'Escreva uma mensagem…',chatSend:'Enviar',chatEmpty:'Ninguém falou nada ainda. Manda um oi!',chatQuick:['🤘','Bora!','Zap! ⚡','Kkkkk','Tô de olho 👀','Boa! 👏','GG'],lives:'Vidas',winT:'Você ganhou a partida online!',winSub:'Ganhou de todo mundo na mesa. Pode cobrar a rodada!'},
+  en:{boxT:'🌐 Play online',boxSub:'Play with friends and fans, each on their own phone.',create:'Create room',join:'Join',codePh:'Code',lobbyT:'Room',share:'Send the code or the link to your friends:',copy:'Copy link',copied:'Link copied!',wa:'Send on WhatsApp',waText:(c,u)=>`Let’s play Ace of Stars? Room ${c}: ${u}`,players:n=>`At the table (${n}/8)`,hostTag:'host',you:'you',waitHost:'Waiting for the host to start…',needTwo:'You need at least 2 people to start.',start:'Start game',leave:'Leave room',bots:'Fill the table with the band',botsSub:n=>n?`Also joining: ${n}`:'Pick characters in "Who sits at the table" before creating the room.',errNoroom:'Room not found. Check the code.',errStarted:'That game has already started.',errFull:'The room is full.',errNet:'No connection. Try again.',closed:'The host closed the room.',hostLost:'The host lost connection… waiting for them.',waitRemote:n=>`Waiting for ${n}…`,waitDrink:n=>`${n} is deciding whether to have a drink…`,onlineTag:'Online',backLobby:'Back to the room',again:'Play again in the same room',hostWarn:'You are the host: keep the game open until the end, or the game stops for everyone.',chatT:'Table chat',chatPh:'Write a message…',chatSend:'Send',chatEmpty:'Nobody has said anything yet. Say hi!',chatQuick:['🤘','Let’s go!','Zap! ⚡','Lol','Watching you 👀','Nice! 👏','GG'],lives:'Lives',winT:'You won the online game!',winSub:'You beat everyone at the table. Drinks are on them!'},
+  es:{boxT:'🌐 Jugar online',boxSub:'Juega con amigos y fans, cada uno en su celular.',create:'Crear sala',join:'Entrar',codePh:'Código',lobbyT:'Sala',share:'Manda el código o el link a tus amigos:',copy:'Copiar link',copied:'¡Link copiado!',wa:'Mandar por WhatsApp',waText:(c,u)=>`¿Jugamos Ace of Stars? Sala ${c}: ${u}`,players:n=>`En la mesa (${n}/8)`,hostTag:'anfitrión',you:'tú',waitHost:'Esperando que el anfitrión empiece…',needTwo:'Se necesitan al menos 2 personas para empezar.',start:'Empezar partida',leave:'Salir de la sala',bots:'Completar la mesa con la banda',botsSub:n=>n?`También entran: ${n}`:'Elige personajes en "Quién se sienta" antes de crear la sala.',errNoroom:'Sala no encontrada. Revisa el código.',errStarted:'Esa partida ya empezó.',errFull:'La sala está llena.',errNet:'Sin conexión. Inténtalo de nuevo.',closed:'El anfitrión cerró la sala.',hostLost:'Se cayó la conexión del anfitrión… esperando que vuelva.',waitRemote:n=>`Esperando a ${n}…`,waitDrink:n=>`${n} está decidiendo si se toma una…`,onlineTag:'Online',backLobby:'Volver a la sala',again:'Jugar otra vez en la misma sala',hostWarn:'Eres el anfitrión: mantén el juego abierto hasta el final, o la partida se detiene para todos.',chatT:'Chat de la mesa',chatPh:'Escribe un mensaje…',chatSend:'Enviar',chatEmpty:'Nadie ha dicho nada todavía. ¡Saluda!',chatQuick:['🤘','¡Vamos!','¡Zap! ⚡','Jajaja','Te estoy mirando 👀','¡Bien! 👏','GG'],lives:'Vidas',winT:'¡Ganaste la partida online!',winSub:'Le ganaste a toda la mesa. ¡Que paguen la ronda!'}
 };
 function OT(){ return ON_T[LANG]||ON_T.pt; }
 const Online={
@@ -2236,14 +2257,14 @@ const Online={
 function saveRoom(){ try{ if(S.room&&S.room.token) localStorage.setItem('fodinha-room',JSON.stringify({code:S.room.code,token:S.room.token,pid:S.room.pid,host:S.room.host,t:Date.now()})); else localStorage.removeItem('fodinha-room'); }catch(e){} }
 async function roomCreate(){
   if(S.room&&S.room.busy) return;
-  S.room={busy:true}; render();
+  S.room={busy:true}; Chat.reset(); render();
   try{ const d=await Online.post({a:'create',...Online.me()}); S.room={code:d.code,token:d.token,pid:d.pid,host:true,players:[],status:'lobby',bots:false}; S.phase='lobby'; saveRoom(); lobbyLoop(); }
   catch(e){ S.room={err:Online.errText(e)}; }
   render();
 }
 async function roomJoin(code){
   code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6); if(!code) return;
-  S.room={busy:true,joinCode:code}; render();
+  S.room={busy:true,joinCode:code}; Chat.reset(); render();
   try{ const d=await Online.post({a:'join',code,...Online.me()});
     S.room={code:d.code,token:d.token,pid:d.pid,host:false,players:[],status:d.status||'lobby'}; saveRoom();
     if(d.status==='playing') clientStart(); else { S.phase='lobby'; lobbyLoop(); }
@@ -2251,14 +2272,14 @@ async function roomJoin(code){
   render();
 }
 async function roomLeave(){
-  const R=S.room; S.room=null; saveRoom(); S.online=null; clearInterval(S.onIv); darkStop(true); S.token++;
+  const R=S.room; S.room=null; saveRoom(); S.online=null; Chat.reset(); clearInterval(S.onIv); darkStop(true); S.token++;
   S.modal=null; S.menu=false; S.leaving=false; S.phase='setup'; render();
   if(R&&R.token) try{ await Online.post({a:'leave',code:R.code,token:R.token}); }catch(e){}
 }
 async function lobbyLoop(){
   const R=S.room; if(!R) return;
   while(S.room===R&&S.phase==='lobby'){
-    try{ const d=await Online.post({a:'lobby',code:R.code,token:R.token}); R.players=d.players.filter(p=>!p.left); R.status=d.status; R.err=null;
+    try{ const d=await Online.post({a:'lobby',code:R.code,token:R.token,cs:Chat.last}); Chat.take(d.chat); R.players=d.players.filter(p=>!p.left); R.status=d.status; R.err=null;
       if(d.status==='closed'){ S.room={err:OT().closed}; saveRoom(); S.phase='setup'; render(); return; }
       if(!R.host&&d.status==='playing'){ clientStart(); return; }
     }catch(e){ if(e==='noroom'||e==='auth'){ S.room={err:Online.errText(e)}; saveRoom(); S.phase='setup'; render(); return; } R.err=OT().errNet; }
@@ -2276,6 +2297,8 @@ function lobbyHTML(){
     <h2>${o.lobbyT} <span class="roomcode">${R.code||''}</span></h2>
     <p>${o.share}</p>
     <div class="row"><button class="ghost" id="copylink">${R.copied?o.copied:o.copy}</button><a class="ghost wa" href="https://wa.me/?text=${encodeURIComponent(o.waText(R.code,link))}" target="_blank" rel="noopener">${o.wa}</a></div>
+    <div class="row"><button class="ghost lobbychat" id="chatopen">💬 ${o.chatT}${Chat.unread?` (${Chat.unread})`:''}</button></div>
+    ${Chat.toastHTML()}
     <h3>${o.players((R.players||[]).length)}</h3>
     <ul class="lobbyps">${ps}</ul>
     ${R.host?`<div class="item lbots"><span><b>${o.bots}</b><small>${o.botsSub(bots.map(b=>b.short).join(', '))}</small></span><button class="toggle" id="roombots" aria-pressed="${!!R.bots}" ${bots.length?'':'disabled'}></button></div>
@@ -2294,6 +2317,49 @@ function onlineBoxHTML(){
     <div class="joinrow"><input id="roomcode" type="text" inputmode="text" autocapitalize="characters" maxlength="6" placeholder="${o.codePh}" value="${esc(R.joinCode||'')}" aria-label="${o.codePh}"><button class="ghost" id="roomjoin" ${R.busy?'disabled':''}>${o.join}</button></div></div>
     ${R.err?`<p class="warn">${R.err}</p>`:''}</section>`;
 }
+
+/* ---------- chat da sala ---------- */
+const Chat={
+  msgs:[], last:0, open:false, unread:0, toast:null, el:null,
+  reset(){ this.msgs=[]; this.last=0; this.open=false; this.unread=0; this.toast=null; this.draw(); },
+  take(list){
+    if(!list||!list.length) return; let fresh=0, lastOther=null;
+    list.forEach(m=>{ if(m.id<=this.last) return; this.msgs.push(m); this.last=m.id; if(!S.room||m.pid!==S.room.pid){ fresh++; lastOther=m; } });
+    if(this.msgs.length>60) this.msgs=this.msgs.slice(-60);
+    if(fresh&&!this.open){ this.unread+=fresh; this.toast={...lastOther,k:Date.now()}; const k=this.toast.k; Snd.bell&&Snd.bell(1568,0,.06,.5); setTimeout(()=>{ if(this.toast&&this.toast.k===k){ this.toast=null; this.draw(); render(); } },4000); }
+    this.draw(); if(fresh&&!this.open) render();
+  },
+  async send(text){
+    text=String(text||'').trim().slice(0,140); if(!text||!S.room||!S.room.token) return;
+    const inp=document.getElementById('chatin'); if(inp) inp.value='';
+    try{ const d=await Online.post({a:'say',code:S.room.code,token:S.room.token,text,cs:this.last}); this.take(d.chat); }catch(e){}
+  },
+  toggle(v){ this.open=v==null?!this.open:v; if(this.open){ this.unread=0; this.toast=null; } this.draw(); render(); if(this.open){ const i=document.getElementById('chatin'); if(i&&matchMedia('(pointer:fine)').matches) i.focus(); } },
+  draw(){
+    if(!this.el){ this.el=document.createElement('div'); this.el.id='chatpanel'; document.body.appendChild(this.el); }
+    if(!this.open||!S.room||!S.room.token){ this.el.hidden=true; this.el.innerHTML=''; return; }
+    const o=OT(), me=S.room.pid;
+    const listHTML=this.msgs.length?this.msgs.map(m=>`<div class="cmsg${m.pid===me?' mine':''}"><small>${esc(m.name)}</small><span>${esc(m.text)}</span></div>`).join(''):`<p class="chatempty">${o.chatEmpty}</p>`;
+    const cur=document.getElementById('chatlist');
+    if(cur&&this.el.dataset.lang===LANG){ cur.innerHTML=listHTML; cur.scrollTop=cur.scrollHeight; return; } // só atualiza a lista: não fecha o teclado
+    this.el.dataset.lang=LANG;
+    const keep=document.getElementById('chatin'), draft=keep?keep.value:'';
+    this.el.hidden=false;
+    this.el.innerHTML=`<div class="chatsheet" role="dialog" aria-label="${o.chatT}">
+      <div class="chathead"><b>💬 ${o.chatT}</b><button class="iconbtn" id="chatclose" aria-label="${T().close}">✕</button></div>
+      <div class="chatlist" id="chatlist">${listHTML}</div>
+      <div class="chatquick">${o.chatQuick.map(q=>`<button class="chipbtn" data-say="${esc(q)}">${esc(q)}</button>`).join('')}</div>
+      <form class="chatform" id="chatform"><input id="chatin" type="text" maxlength="140" autocomplete="off" enterkeyhint="send" placeholder="${o.chatPh}" aria-label="${o.chatPh}"><button class="cta" type="submit">${o.chatSend}</button></form>
+    </div>`;
+    const i=document.getElementById('chatin'); if(i&&draft){ i.value=draft; }
+    const l=document.getElementById('chatlist'); if(l) l.scrollTop=l.scrollHeight;
+  },
+  btnHTML(){ if(!S.room||!S.room.token) return ''; return `<button class="chatbtn" id="chatopen" aria-label="${OT().chatT}">💬${this.unread?`<span>${this.unread>9?'9+':this.unread}</span>`:''}</button>`; },
+  toastHTML(){ const t=this.toast; return t&&!this.open?`<button class="chattoast" id="chatopen2"><b>${esc(t.name)}:</b> ${esc(t.text)}</button>`:''; },
+};
+document.addEventListener('submit',e=>{ if(e.target.id==='chatform'){ e.preventDefault(); const i=document.getElementById('chatin'); Chat.send(i&&i.value); } });
+document.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
+  if(b.id==='chatclose'){ Chat.toggle(false); } else if(b.dataset.say){ Chat.send(b.dataset.say); } });
 
 /* ---------- anfitrião ---------- */
 async function hostStart(){
@@ -2314,7 +2380,8 @@ async function hostPush(){
 }
 async function hostTick(){
   if(!S.online||!S.online.host) return;
-  let d; try{ d=await Online.post({a:'take',code:S.online.code,token:S.online.token}); }catch(e){ return; }
+  let d; try{ d=await Online.post({a:'take',code:S.online.code,token:S.online.token,cs:Chat.last}); }catch(e){ return; }
+  Chat.take(d.chat);
   (d.actions||[]).forEach(a=>hostAct(a.pid,a.act||{}));
   S.online.seen=d.seen||{};
   // quem demora ou caiu: o jogo joga por ele
@@ -2380,7 +2447,7 @@ function clientStart(){
 async function clientLoop(){
   const tok=S.token;
   while(S.token===tok&&S.online&&!S.online.host){
-    try{ const d=await Online.post({a:'poll',code:S.online.code,token:S.online.token,since:S.online.ver});
+    try{ const d=await Online.post({a:'poll',code:S.online.code,token:S.online.token,since:S.online.ver,cs:Chat.last}); Chat.take(d.chat);
       if(d.status==='closed'){ S.room={err:OT().closed}; saveRoom(); S.online=null; S.phase='setup'; darkStop(true); render(); return; }
       if(d.status==='lobby'&&S.online.ver>0){ S.online=null; S.phase='lobby'; S.modal=null; darkStop(true); render(); lobbyLoop(); return; }
       S.hostLost=d.hostSeen>20;
@@ -2953,7 +3020,7 @@ function tableHTML(){
       ${S.catPick?`<div class="cathint" role="status"><b>🔮 ${CT().pick}</b><span>${CT().pickSub}</span><button id="catcancel">${CT().cancel}</button></div>`:''}
     </div>
   </section>
-  <div class="infobar${S.coach&&['h1b','h2a'].includes(S.coach.key)?' tutfocus':''}${S.dark?' darkhand':''}"><div class="virabox">${viraHTML}</div><button class="helpbtn" id="cheat" aria-label="${t.cheatT}">?</button>${catBtnHTML()}${darkBtnHTML()}<p class="ticker" aria-live="polite">${S.msg&&!S.betReq&&!S.playReq?S.msg():'&nbsp;'}</p></div>
+  <div class="infobar${S.coach&&['h1b','h2a'].includes(S.coach.key)?' tutfocus':''}${S.dark?' darkhand':''}"><div class="virabox">${viraHTML}</div><button class="helpbtn" id="cheat" aria-label="${t.cheatT}">?</button>${catBtnHTML()}${darkBtnHTML()}${S.online?Chat.btnHTML():''}<p class="ticker" aria-live="polite">${S.msg&&!S.betReq&&!S.playReq?S.msg():'&nbsp;'}</p></div>
   ${coachHTML()}
   <section class="dock ${S.turn==='you'?'turn':''}">
     ${actions}
@@ -3118,7 +3185,7 @@ function render(){
   if(game&&!byId('you')){ app.className=''; app.innerHTML=`<div class="connecting"><p class="lobbywait">${OT().waitHost}</p><button class="ghost" id="roomleave">${OT().leave}</button></div>`; return; }
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+introHTML()+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+catVeilHTML()+darkVeilHTML()+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+(S.online?Chat.toastHTML():'')+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+introHTML()+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+catVeilHTML()+darkVeilHTML()+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
   Object.values(S.bubbles).forEach(b=>b.fresh=false);
@@ -3212,6 +3279,7 @@ document.addEventListener('click',e=>{
   if(t.id==='gohome'&&S.online){ roomLeave(); return; }
   if(t.id==='gohome'){ darkStop(true); S.token++; S.modal=null; S.menu=false; S.leaving=false; S.phase='setup'; try{speechSynthesis.cancel()}catch(e){} render(); return; }
   if(t.id==='restart'){ S.menu=false; if(S.online) { render(); return; } startGame(); return; }
+  if(t.id==='chatopen'||t.id==='chatopen2'){ Chat.toggle(true); return; }
   if(t.id==='roomcreate'){ roomCreate(); return; }
   if(t.id==='roomjoin'){ const i=document.getElementById('roomcode'); roomJoin(i&&i.value); return; }
   if(t.id==='roomleave'){ roomLeave(); return; }

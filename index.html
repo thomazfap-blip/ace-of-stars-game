@@ -362,8 +362,11 @@ td .lifebar{margin:0;width:58px}
 .lvstrip{margin-top:14px;display:flex;flex-direction:column;gap:6px}
 .lvhead{display:flex;align-items:center;gap:10px;background:none;border:none;padding:0;text-align:left;color:var(--ink);font-size:14px}
 .lvhead b{color:var(--gold);font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.03em}
-.lvtop{display:flex;align-items:center;gap:8px}
-.lvtop .lvhead{flex:1;min-width:0}
+.lvtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lvtop .lvhead{flex:1 1 auto;min-width:0;border:1px solid var(--gold);border-radius:999px;padding:4px 12px 4px 14px;background:rgba(0,0,0,.3);cursor:pointer}
+.lvhead i{margin-left:auto;font-style:normal;color:var(--gold);font-size:20px;line-height:1}
+.lvtop .lvhead:active,.powbtn:active{transform:translateY(1px)}
+.lvhead b{white-space:nowrap}.lvhead span{white-space:nowrap}
 .powbtn{flex:none;display:flex;align-items:center;gap:6px;border:1px solid var(--gold);border-radius:999px;padding:5px 10px;background:rgba(0,0,0,.3);color:var(--ink);font:700 13px Montserrat,sans-serif;cursor:pointer}
 .powbtn i{font-style:normal;color:var(--gold)}
 .powlist{display:grid;gap:10px;text-align:left}
@@ -2103,7 +2106,7 @@ function levelStripHTML(){
   const t=T(), m=Rank.me, lv=m.level|0, next=LV_PTS[lv+1];
   const pct=next!=null?Math.round(100*(m.pts-LV_PTS[lv])/(next-LV_PTS[lv])):100;
   return `<div class="lvstrip">
-    <div class="lvtop"><button class="lvhead" id="lvopen"><b>${t.lvLevel(t.lvNames[lv])}</b><span>${m.tester?'🧪 teste':m.pts+' pts'}</span></button><button class="powbtn" id="powopen" aria-label="${PT().title}">🍺${m.beer} 🥃${m.jack}${lv>=3?` 🔮${m.cat|0}`:''}${lv>=4?` ☯${m.dark|0}`:''}<i>›</i></button></div>
+    <div class="lvtop"><button class="lvhead" id="lvopen" aria-label="${t.lvSeeAll}"><b>${t.lvLevel(t.lvNames[lv])}</b><span>${m.tester?'🧪 teste':m.pts+' pts'}</span><i>›</i></button><button class="powbtn" id="powopen" aria-label="${PT().title}">🍺${m.beer} 🥃${m.jack}${lv>=3?` 🔮${m.cat|0}`:''}${lv>=4?` ☯${m.dark|0}`:''}<i>›</i></button></div>
     <div class="lvbar"><i style="width:${Math.max(3,Math.min(100,pct))}%"></i></div>
     <small>${next!=null?t.lvNext(next-m.pts,t.lvNames[lv+1]):t.lvMax}</small>
     ${lv>=3&&!m.tester?`<small>${(m.cat|0)>=3?CT().full:CT().next}</small>`:''}

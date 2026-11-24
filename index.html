@@ -1861,18 +1861,27 @@ function darkApply(){
   S.betSum=0; S.bubbles={}; S.darkReset=true;
 }
 // entrada do chefão: rosto grande + a fala do REAL-X, depois entra a música dele
-let realxVo=null;
-const INTRO_LINES=['ATTENTION.','THIS IS HUMAN TERRITORY!','ARE YOU READY FOR REAL ROCK N\' ROLL?'];
+const RX_VO={};
+function rxClip(n){ if(!RX_VO[n]){ const a=new Audio('music/realx_'+n+'.mp3'); a.preload='auto'; RX_VO[n]=a; } return RX_VO[n]; }
+// fala do robô: toca o trecho, abaixa a música e mostra o balão de fala
+let rxLast=0, rxPrev=null;
+function rxTalk(b,force){
+  if(!b||!b.boss||S.tut||Snd.on===false) return;
+  const now=Date.now(); if(!force&&now-rxLast<6000) return;
+  const pool=[1,2,3,7].filter(n=>n!==rxPrev), n=pool[Math.floor(Math.random()*pool.length)];
+  rxLast=now; rxPrev=n;
+  try{ const a=rxClip(n); a.currentTime=0; a.volume=1; a.play().catch(()=>{}); Music.duck(3000); }catch(e){}
+  say(b,()=>'🤖🔊',2200);
+}
+const INTRO_LINES=['ARE YOU READY FOR REAL ROCK N\' ROLL?'];
 async function bossIntro(b,tok){
   Music.hold=true; Music.sync();
-  S.introFx={pid:b.id,line:1}; render();
-  try{ if(!realxVo){ realxVo=new Audio('music/realx_vo.mp3'); realxVo.preload='auto'; } realxVo.currentTime=0; realxVo.volume=1; if(Snd.on!==false) realxVo.play().catch(()=>{}); }catch(e){}
-  const marks=[0,1250,3450], t0=Date.now();
-  await new Promise(res=>{ const iv=setInterval(()=>{
-    if(tok!==S.token||!S.introFx||S.introFx.skip||Date.now()-t0>11200){ clearInterval(iv); res(); return; }
-    const ln=marks.filter(m=>Date.now()-t0>=m).length; if(ln!==S.introFx.line){ S.introFx.line=ln; render(); }
-  },100); });
-  try{ realxVo.pause(); }catch(e){}
+  [1,2,3,7].forEach(rxClip);
+  S.introFx={pid:b.id,line:0}; render();
+  const a=rxClip(4); let t0=Date.now();
+  setTimeout(()=>{ if(!S.introFx) return; S.introFx.line=1; render(); try{ a.currentTime=0; a.volume=1; if(Snd.on!==false) a.play().catch(()=>{}); }catch(e){} },900);
+  await new Promise(res=>{ const iv=setInterval(()=>{ if(tok!==S.token||!S.introFx||S.introFx.skip||Date.now()-t0>4600){ clearInterval(iv); res(); } },100); });
+  try{ a.pause(); }catch(e){}
   S.introFx=null; Music.hold=false; Music.sync(); render();
   if(tok!==S.token) throw new Abort();
 }
@@ -1891,7 +1900,7 @@ function scanSnd(){
   [0,.12,.24].forEach(d=>{ const o=c.createOscillator(), g=c.createGain(); o.type='square'; o.frequency.value=1760; const tt=t+2.25+d; g.gain.setValueAtTime(.12,tt); g.gain.exponentialRampToValueAtTime(.001,tt+.08); o.connect(g).connect(out); o.start(tt); o.stop(tt+.1); });
 }
 async function bossScan(b,tok){
-  S.scanFx={pid:b.id}; setMsg(()=>T().scanMsg(b.short)); scanSnd(); render();
+  S.scanFx={pid:b.id}; setMsg(()=>T().scanMsg(b.short)); scanSnd(); render(); setTimeout(()=>rxTalk(b,true),1500);
   await wait(2600,tok); S.scanFx=null; render();
 }
 function darkInvoke(by){
@@ -1998,6 +2007,7 @@ function askModal(m){ return new Promise(res=>{ S.modal={...m,res}; render(); })
 
 async function resolveTrick(tok){
       const wi=trickWinnerIdx(S.trick.map(x=>x.card),S.mr), w=byId(S.trick[wi].pid);
+      if(w.boss&&Math.random()<.4) rxTalk(w);
       w.made++; S.trickWinner=wi; S.turn=null;
       const wc=S.trick[wi].card;
       if(wc.star && w.isHuman && !S.tut) S.st.mz++;
@@ -2037,7 +2047,7 @@ async function runGame(tok){
     // poderes do chefão antes dos pedidos
     for(const b of alive().filter(p=>p.boss)){
       if(!byId('you').alive||S.n<2) break;
-      if(b.darkLeft>0 && b.lives<=1 && !S.dark && Math.random()<.6){ b.darkLeft--; darkInvoke(b); await wait(300,tok); }
+      if(b.darkLeft>0 && b.lives<=1 && !S.dark && Math.random()<.6){ b.darkLeft--; darkInvoke(b); await wait(300,tok); rxTalk(b,true); }
       else if(b.scans>0 && Math.random()<Math.min(.9,.2+.18*b.scans)){ b.scans--; await bossScan(b,tok); }
     }
 
@@ -2086,11 +2096,12 @@ async function runGame(tok){
     const results=alive().map(p=>({p,bet:p.bet,made:p.made,lost:Math.abs(p.bet-p.made)}));
     darkStop();
     results.forEach(r=>{ r.p.lives-=r.lost; if(r.p.lives<=0){ r.p.alive=false; r.out=true; } });
+    { const rb=results.find(r=>r.p.boss); if(rb&&!rb.out&&Math.random()<.55) rxTalk(rb.p); }
     // chefão toma cerveja (1 vida) e depois uísque (2 vidas)
     for(const r of results.filter(r=>r.out&&r.p.boss&&r.p.rev<2)){
       const b=r.p; b.rev++; const jack=b.rev===2;
       S.modal={type:'beer',jack,who:b.id}; render(); Music.duck(4200); if(jack) Snd.ice(); else Snd.canOpen(); Snd.gulps(.9);
-      await wait(3200,tok); b.alive=true; b.lives=jack?2:1; r.out=false; S.modal=null; setMsg(()=>T().bossDrink(b.short,jack)); Snd.ok2(); render(); await wait(1600,tok);
+      await wait(3200,tok); b.alive=true; b.lives=jack?2:1; r.out=false; S.modal=null; setMsg(()=>T().bossDrink(b.short,jack)); Snd.ok2(); render(); rxTalk(b,true); await wait(1600,tok);
     }
     { const yr=results.find(r=>r.p.isHuman); if(yr){ S.st.hands++; if(!yr.lost) S.st.nailed++; } }
     S.turn=null; setMsg(null); render();

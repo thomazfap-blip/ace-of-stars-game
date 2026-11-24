@@ -749,6 +749,8 @@ details.rulesbox .rules{margin-top:8px}
 .ttimer i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#3bbf6a,#f5c94f);transition:width 1s linear}
 .ttimer.hot i{background:#e23b3b}
 .ttimer b{position:relative;display:block;text-align:center;font:800 13px/20px Montserrat,sans-serif;color:#fff;text-shadow:0 1px 2px #000}
+.bosswarn{color:#ffb3a8!important;font-weight:700}
+.bosslost h2{color:#ff8a7a}
 .catwait{color:#fff;font-size:34px;animation:pulse 1s infinite}
 .darkgotart{width:min(40vw,150px);margin:6px auto 10px;border-radius:50%;box-shadow:0 0 30px 6px rgba(214,38,43,.7)}.darkgotart .yy{width:100%;height:auto;display:block}
 .rankpts.darkwon{color:#ff8a8a}
@@ -831,7 +833,7 @@ const TXT={
     next:n=>`Próxima: ${n} ${n===1?'carta':'cartas'}`,
     noLives:'Acabaram suas vidas', bandGoes:'A banda segue jogando. Quer ver quem ganha?',
     newGame:'Nova partida', watch:'Assistir o fim',
-    youWon:'Você ganhou da banda!', youBeatBoss:n=>`Você ganhou do ${n}!`, youBeatBossSub:'O Arquiteto da Realidade caiu. Isso é Real Rock N\' Roll!', won:n=>`${n} venceu!`, tie:'Empate na mesa',
+    youWon:'Você ganhou da banda!', youBeatBoss:n=>`Você ganhou do ${n}!`, bossBeat:n=>`${n} te derrubou!`, bossLast:n=>`Suas vidas acabaram. Se não tomar uma, você perde a partida e o ${n} vence.`, bossGiveUp:'Não tomar e perder', youLostBoss:n=>`Você perdeu pro ${n}!`, youLostBossSub:'O Arquiteto da Realidade venceu dessa vez. Bora a revanche?', bossRetry:'Revanche!', youBeatBossSub:'O Arquiteto da Realidade caiu. Isso é Real Rock N\' Roll!', won:n=>`${n} venceu!`, tie:'Empate na mesa',
     youWonSub:'Pode cobrar a rodada no próximo ensaio.', hands:n=>`Foram ${n} mãos.`,
     changeOpp:'Trocar adversários', again:'Jogar de novo', home:'Menu inicial', leave:'Sair da partida?', leaveSub:'A partida atual vai ser perdida.', keep:'Continuar jogando',
     sound:'Som', sfx:'Efeitos sonoros', music:'Música', nowPlaying:'Tocando', nextTrack:'Próxima música', voice:'Voz', lang:'Idioma', num:['nenhuma','uma','duas','três','quatro','cinco','seis','sete','oito'], menu:'Menu', close:'Voltar pro jogo',
@@ -928,7 +930,7 @@ const TXT={
     next:n=>`Next: ${n} ${n===1?'card':'cards'}`,
     noLives:'You’re out of lives', bandGoes:'The band keeps playing. Want to see who wins?',
     newGame:'New game', watch:'Watch the end',
-    youWon:'You beat the band!', youBeatBoss:n=>`You beat ${n}!`, youBeatBossSub:'The Architect of Reality is down. That’s Real Rock N\' Roll!', won:n=>`${n} wins!`, tie:'It’s a tie',
+    youWon:'You beat the band!', youBeatBoss:n=>`You beat ${n}!`, bossBeat:n=>`${n} took you down!`, bossLast:n=>`You’re out of lives. If you don’t have a drink, you lose the game and ${n} wins.`, bossGiveUp:'Skip the drink and lose', youLostBoss:n=>`You lost to ${n}!`, youLostBossSub:'The Architect of Reality won this time. Rematch?', bossRetry:'Rematch!', youBeatBossSub:'The Architect of Reality is down. That’s Real Rock N\' Roll!', won:n=>`${n} wins!`, tie:'It’s a tie',
     youWonSub:'Next round at rehearsal is on them.', hands:n=>`${n} hands played.`,
     changeOpp:'Change opponents', again:'Play again', home:'Main menu', leave:'Leave this game?', leaveSub:'The current game will be lost.', keep:'Keep playing',
     sound:'Sound', sfx:'Sound effects', music:'Music', nowPlaying:'Now playing', nextTrack:'Next song', voice:'Voice', lang:'Language', num:['none','one','two','three','four','five','six','seven','eight'], menu:'Menu', close:'Back to the game',
@@ -1025,7 +1027,7 @@ const TXT={
     next:n=>`Siguiente: ${n} ${n===1?'carta':'cartas'}`,
     noLives:'Te quedaste sin vidas', bandGoes:'La banda sigue jugando. ¿Quieres ver quién gana?',
     newGame:'Nueva partida', watch:'Ver el final',
-    youWon:'¡Le ganaste a la banda!', youBeatBoss:n=>`¡Le ganaste a ${n}!`, youBeatBossSub:'El Arquitecto de la Realidad cayó. ¡Eso es Real Rock N\' Roll!', won:n=>`¡${n} ganó!`, tie:'Empate en la mesa',
+    youWon:'¡Le ganaste a la banda!', youBeatBoss:n=>`¡Le ganaste a ${n}!`, bossBeat:n=>`¡${n} te derribó!`, bossLast:n=>`Se acabaron tus vidas. Si no te tomas una, pierdes la partida y gana ${n}.`, bossGiveUp:'No tomar y perder', youLostBoss:n=>`¡Perdiste contra ${n}!`, youLostBossSub:'El Arquitecto de la Realidad ganó esta vez. ¿Revancha?', bossRetry:'¡Revancha!', youBeatBossSub:'El Arquitecto de la Realidad cayó. ¡Eso es Real Rock N\' Roll!', won:n=>`¡${n} ganó!`, tie:'Empate en la mesa',
     youWonSub:'La próxima ronda en el ensayo la pagan ellos.', hands:n=>`Se jugaron ${n} manos.`,
     changeOpp:'Cambiar rivales', again:'Jugar de nuevo', home:'Menú principal', leave:'¿Salir de la partida?', leaveSub:'Se perderá la partida actual.', keep:'Seguir jugando',
     sound:'Sonido', sfx:'Efectos de sonido', music:'Música', nowPlaying:'Sonando', nextTrack:'Siguiente canción', voice:'Voz', lang:'Idioma', num:['ninguna','una','dos','tres','cuatro','cinco','seis','siete','ocho'], menu:'Menú', close:'Volver al juego',
@@ -2193,8 +2195,8 @@ async function runGame(tok){
     // chefão toma cerveja (1 vida) e depois uísque (2 vidas)
     for(const r of results.filter(r=>r.out&&r.p.boss&&r.p.rev<2)){
       const b=r.p; b.rev++; const jack=b.rev===2;
-      S.modal={k:(S.modalK=(S.modalK||0)+1),type:'beer',jack,who:b.id}; render(); Music.duck(4200); if(jack) Snd.ice(); else Snd.canOpen(); Snd.gulps(.9);
-      await wait(3200,tok); b.alive=true; b.lives=jack?2:1; r.out=false; S.modal=null; setMsg(()=>T().bossDrink(b.short,jack)); Snd.ok2(); say(b,()=>jack?'🥃':'🍺',3200); render(); rxTalk(b,true); await wait(3200,tok);
+      S.modal={k:(S.modalK=(S.modalK||0)+1),type:'beer',jack,who:b.id}; render(); Music.duck(6000); if(jack) Snd.ice(); else Snd.canOpen(); Snd.gulps(.9);
+      await wait(5000,tok); b.alive=true; b.lives=jack?2:1; r.out=false; S.modal=null; setMsg(()=>T().bossDrink(b.short,jack)); Snd.ok2(); say(b,()=>jack?'🥃':'🍺',4500); render(); rxTalk(b,true); await wait(4000,tok);
     }
     { const yr=results.find(r=>r.p.isHuman); if(yr){ S.st.hands++; if(!yr.lost) S.st.nailed++; } }
     S.turn=null; setMsg(null); render();
@@ -2424,6 +2426,9 @@ function hostDirty(){ if(!S.online||!S.online.host||pushT) return; pushT=setTime
 async function hostPush(){
   pushT=null; if(!S.online||!S.online.host) return;
   const views={}; S.players.filter(p=>p.remote).forEach(p=>views[p.rid]=buildView(p));
+  const sig=JSON.stringify(views,(k,v)=>k==='turnLeft'?undefined:v)+(S.online.final?'F':'')+(S.online.snap!==S.online.snapSent?'S':'');
+  if(sig===S.online.lastSig&&Date.now()-(S.online.lastPush||0)<8000) return;
+  S.online.lastSig=sig; S.online.lastPush=Date.now();
   const body={a:'push',code:S.online.code,token:S.online.token,views,over:!!S.online.final};
   if(S.online.snap&&S.online.snap!==S.online.snapSent){ body.snap=S.online.snap; }
   try{ await Online.post(body); if(body.snap) S.online.snapSent=body.snap; }catch(e){}
@@ -2531,7 +2536,9 @@ setInterval(()=>{
   if(!S.online||!S.turnDL||S.phase!=='table') return;
   const l=Math.ceil((S.turnDL-Date.now())/1000);
   if((S.betReq||S.playReq)&&(l===10||l===5)&&S.beeped!==l){ S.beeped=l; Snd.bell&&Snd.bell(1760,0,.08,.6); }
-  if(!S.modal) render();
+  const l2=Math.max(0,(S.turnDL-Date.now())/1000);
+  document.querySelectorAll('.tturn').forEach(e=>{ e.textContent=Math.ceil(l2); e.classList.toggle('hot',l2<=10); });
+  document.querySelectorAll('.ttimer').forEach(e=>{ e.classList.toggle('hot',l2<=10); const i=e.querySelector('i'), b=e.querySelector('b'); if(i) i.style.width=Math.min(100,l2/30*100).toFixed(1)+'%'; if(b) b.textContent=OT().turnS(Math.ceil(l2)); });
 },1000);
 /* ---------- jogador convidado ---------- */
 function clientStart(){
@@ -3240,8 +3247,9 @@ function modalHTML(){
       <h2>${t.tutDoneT}</h2><p>${t.tutDoneSub}</p>
       <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="cta" data-modal="play">${t.tutPlay}</button></div>
     </div></div>`;
+  const bossOpp=S.players&&S.players.find(p=>p.boss&&p.alive);
   if(m.type==='out' && m.beer) return `<div class="overlay"><div class="sheet beersheet" role="dialog" aria-label="${t.beerT}">
-      <h2>${t.noLives}</h2>
+      <h2>${bossOpp?t.bossBeat(bossOpp.short):t.noLives}</h2>${bossOpp?`<p class="bosswarn">${t.bossLast(bossOpp.short)}</p>`:''}
       <div class="beerwrap">${S.inv.jack>0&&S.beerUsed&&!S.inv.beer?jackSVG(false):beerSVG(false)}</div>
       <h3>${t.beerT}</h3><p>${S.inv.beer>0||S.inv.jack>0?t.stockSub:t.beerSub}</p>
       <div class="drinks">
@@ -3249,7 +3257,7 @@ function modalHTML(){
         ${S.inv.beer>0?`<button class="cta drink" data-modal="sbeer">${t.stockBeer(S.inv.beer)}</button>`:''}
         ${!S.beerUsed?`<button class="${S.inv.beer>0||S.inv.jack>0?'ghost':'cta'} drink" data-modal="beer">${t.beerYes}</button>`:''}
       </div>
-      <div class="row"><button class="ghost" data-modal="watch">${t.watch}</button>${S.online?'':`<button class="ghost" data-modal="again">${t.again}</button>`}<button class="ghost" data-modal="setup">${t.home}</button></div>
+      <div class="row">${bossOpp?`<button class="ghost" data-modal="watch">${t.bossGiveUp}</button>`:`<button class="ghost" data-modal="watch">${t.watch}</button>${S.online?'':`<button class="ghost" data-modal="again">${t.again}</button>`}<button class="ghost" data-modal="setup">${t.home}</button>`}</div>
     </div></div>`;
   if(m.type==='beer') return `<div class="overlay"><div class="beerdrink" role="dialog" aria-label="${t.beerDrink}">
       ${m.who?`<div class="bdwho">${avatarHTML(byId(m.who))}</div>`:''}
@@ -3266,6 +3274,12 @@ function modalHTML(){
     const w=m.winners, youWon=w.length===1&&w[0].isHuman;
     const bossP=S.players.find(p=>p.boss);
     const title=youWon?(bossP?t.youBeatBoss(bossP.short):S.online?OT().winT:t.youWon):w.length===1?t.won(w[0].short):t.tie;
+    if(!youWon&&bossP&&w.length===1&&w[0]===bossP) return `<div class="overlay"><div class="sheet bosslost" role="dialog" aria-label="${t.youLostBoss(bossP.short)}">
+      <div class="winner frame">${avatarHTML(bossP)}</div>
+      <h2>${t.youLostBoss(bossP.short)}</h2><p>${t.youLostBossSub}</p>
+      ${S.lastPts!=null?`<p class="rankpts">🏆 ${t.rankPts(S.lastPts)}${S.beerTaken?`<small>${t.beerTag}</small>`:''}</p>`:''}
+      <div class="row"><button class="ghost" data-modal="setup">${t.home}</button><button class="cta" data-modal="again">${t.bossRetry}</button></div>
+    </div></div>`;
     if(youWon) return `<div class="overlay party"><canvas id="fx" aria-hidden="true"></canvas><div class="celebrate" role="dialog" aria-label="${title}">
       <div class="winner frame">${avatarHTML(w[0])}</div>
       <div class="big"><span class="l1">${t.party[0]}</span><span>${t.party[1]}</span></div>
@@ -3287,7 +3301,7 @@ function modalHTML(){
 
 function render(){
   svgSeq=0;
-  { const fx=(S.phase==='table'?introHTML()+catVeilHTML()+darkVeilHTML():'')+(S.room&&S.room.token?Chat.toastHTML():''); let L=document.getElementById('fxlayer'); if(!L){ L=document.createElement('div'); L.id='fxlayer'; document.body.appendChild(L); } if(L._h!==fx){ L._h=fx; L.innerHTML=fx; } svgSeq=0; }
+  { const fx=(S.phase==='table'?introHTML()+catVeilHTML()+darkVeilHTML():'')+(S.room&&S.room.token?Chat.toastHTML():''); let L=document.getElementById('fxlayer'); if(!L){ L=document.createElement('div'); L.id='fxlayer'; document.body.appendChild(L); } if(L._h!==fx){ L._h=fx; L.innerHTML=fx; } svgSeq=500; }
   document.documentElement.lang={pt:'pt-BR',en:'en',es:'es'}[LANG];
   const app=document.getElementById('app'), game=S.phase==='table';
   if(!game) Music.clearSolo();

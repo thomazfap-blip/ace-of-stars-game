@@ -107,7 +107,7 @@ function profile($R, $P, $key) {
     $acc = $P['acc'][$key] ?? null;
     // contas de teste: tudo liberado e estoque cheio (o ranking continua com os pontos reais)
     if ($acc && in_array($acc['email'], TESTERS, true)) {
-        return ['pts' => max($pts, 2000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true,
+        return ['pts' => max($pts, 5000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true,
                 'linked' => true, 'email' => mask_email($acc['email']), 'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
     }
     return ['pts' => $pts, 'level' => $lv, 'next' => LV_PTS[$lv + 1] ?? null,

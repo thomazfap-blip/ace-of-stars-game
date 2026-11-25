@@ -769,9 +769,13 @@ details.rulesbox .rules{margin-top:8px}
 .invsheet{text-align:center}.invsheet .winner{width:110px;margin:0 auto}
 .appnav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(18,6,8,.97);border-top:2px solid var(--gold-deep);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));box-shadow:0 -6px 20px rgba(0,0,0,.5)}
 .navbtn{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:0;color:var(--muted);font:700 12px Montserrat,sans-serif;padding:4px 0;cursor:pointer;border-radius:12px}
-.navbtn .ni{font-size:22px;line-height:1.1;filter:grayscale(.6);opacity:.8}
+.navbtn .ni{display:block;width:32px;height:30px;line-height:0;opacity:.7}
+.navbtn .ni svg{width:30px;height:30px}
+.navav{display:block;width:26px;height:26px;margin:2px auto 0;border-radius:7px;overflow:hidden;box-shadow:0 0 0 2px #b9a49a}
+.navav .avatar,.navav svg{display:block;width:26px!important;height:26px!important}
+.navbtn[aria-current="page"] .navav{box-shadow:0 0 0 2px var(--gold)}
 .navbtn[aria-current="page"]{color:var(--gold);background:rgba(245,201,79,.1)}
-.navbtn[aria-current="page"] .ni{filter:none;opacity:1}
+.navbtn[aria-current="page"] .ni{opacity:1;filter:drop-shadow(0 0 6px rgba(245,201,79,.6))}
 .navbtn em{position:absolute;top:0;left:calc(50% + 8px);min-width:18px;height:18px;border-radius:9px;background:#3bbf6a;color:#06210f;font:800 11px/18px Montserrat,sans-serif;font-style:normal;padding:0 4px}
 #app:not(.game){padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .mequick{justify-content:center}
@@ -3113,10 +3117,11 @@ function pageMe(){
   </section>
   <div class="quick mequick"><button class="chipbtn" id="lvopen2">⭐ ${T().lvSeeAll}</button><button class="chipbtn" id="powopen3">🎒 ${PT().title}</button></div>`;
 }
+const NAV_IC={"play": "<svg viewBox=\"0 0 40 40\"><g transform=\"rotate(-18 20 32)\"><rect x=\"9\" y=\"6\" width=\"15\" height=\"21\" rx=\"2.5\" fill=\"#f7f1e3\" stroke=\"#1a0a0c\" stroke-width=\"1\"/><text x=\"12\" y=\"13\" font-size=\"6\" font-weight=\"800\" fill=\"#1a0a0c\">3</text></g><g transform=\"rotate(16 20 32)\"><rect x=\"16\" y=\"6\" width=\"15\" height=\"21\" rx=\"2.5\" fill=\"#f7f1e3\" stroke=\"#1a0a0c\" stroke-width=\"1\"/><text x=\"27\" y=\"13\" font-size=\"6\" fill=\"#d6262b\">♥</text></g><rect x=\"12.5\" y=\"4\" width=\"15\" height=\"21\" rx=\"2.5\" fill=\"#f7f1e3\" stroke=\"#f5c94f\" stroke-width=\"1.6\"/><path d=\"M20 9.5 L21.6 13.4 L25.8 13.6 L22.5 16.2 L23.7 20.2 L20 17.9 L16.3 20.2 L17.5 16.2 L14.2 13.6 L18.4 13.4Z\" fill=\"#d6262b\" stroke=\"#1a0a0c\" stroke-width=\".6\"/></svg>", "online": "<svg viewBox=\"0 0 40 40\"><g stroke=\"#f5c94f\" stroke-width=\"1.7\" fill=\"none\" opacity=\"1\"><circle cx=\"20\" cy=\"20\" r=\"14\"></circle><path d=\"M6 20 H34\"></path><path d=\"M8 13 Q20 15.5 32 13\"></path><path d=\"M8 27 Q20 24.5 32 27\"></path><ellipse cx=\"20\" cy=\"20\" rx=\"6\" ry=\"14\"></ellipse><path d=\"M20 6 V34\"></path></g><path d=\"M20.00 0.50L21.45 4.00L25.23 4.30L22.35 6.76L23.23 10.45L20.00 8.47L16.77 10.45L17.65 6.76L14.77 4.30L18.55 4.00Z\" fill=\"#d6262b\" stroke=\"#f5c94f\" stroke-width=\"1\"></path><circle cx=\"33\" cy=\"31\" r=\"3.4\" fill=\"#3bbf6a\" stroke=\"#1a0a0c\" stroke-width=\"1\"></circle></svg>", "rank": "<svg viewBox=\"0 0 40 40\"><path d=\"M11 6 H29 V14 Q29 23 20 24 Q11 23 11 14Z\" fill=\"#f5c94f\" stroke=\"#1a0a0c\" stroke-width=\"1\"/><path d=\"M11 9 H6 Q6 17 12 18 M29 9 H34 Q34 17 28 18\" stroke=\"#f5c94f\" stroke-width=\"2\" fill=\"none\"/><path d=\"M20 9 L21.3 12.3 L24.8 12.5 L22.1 14.6 L23 18 L20 16.1 L17 18 L17.9 14.6 L15.2 12.5 L18.7 12.3Z\" fill=\"#d6262b\"/><rect x=\"18\" y=\"24\" width=\"4\" height=\"5\" fill=\"#f5c94f\"/><rect x=\"12\" y=\"29\" width=\"16\" height=\"6\" rx=\"1.5\" fill=\"#8a6414\" stroke=\"#f5c94f\" stroke-width=\"1\"/><text x=\"20\" y=\"34\" font-size=\"4.5\" font-weight=\"800\" fill=\"#f5c94f\" text-anchor=\"middle\">#1</text></svg>"};
 function navHTML(){
   const o=OT(), pg=S.page||'play', b=(Hall.invites.length||0);
   const it=(k,ico,lab,extra)=>`<button class="navbtn" data-page="${k}" aria-current="${pg===k?'page':'false'}"><span class="ni">${ico}</span><span>${lab}</span>${extra||''}</button>`;
-  return `<nav class="appnav" aria-label="Menu">${it('play','🃏',T().navPlay)}${it('online','🌐',T().navOnline,b?`<em class="inv">${b}</em>`:Hall.count>1?`<em>${Hall.count-1}</em>`:'')}${it('me','👤',T().navMe)}<button class="navbtn" id="rankbtn"><span class="ni">🏆</span><span>${T().rankBtn}</span></button></nav>`;
+  return `<nav class="appnav" aria-label="Menu">${it('play',NAV_IC.play,T().navPlay)}${it('online',NAV_IC.online,T().navOnline,b?`<em class="inv">${b}</em>`:Hall.count>1?`<em>${Hall.count-1}</em>`:'')}${it('me',`<span class="navav">${avatarHTML({isHuman:true})}</span>`,T().navMe)}<button class="navbtn" id="rankbtn"><span class="ni">${NAV_IC.rank}</span><span>${T().rankBtn}</span></button></nav>`;
 }
 
 function seatHTML(p){

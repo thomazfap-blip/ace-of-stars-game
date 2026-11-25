@@ -692,6 +692,7 @@ details.rulesbox .rules{margin-top:8px}
 .bossintro small{display:block;color:#ffb3a8;font-weight:700;letter-spacing:.04em;margin-top:2px}
 .bilines{min-height:120px;margin:14px 0 10px}
 .bilines p{margin:4px 0;font-family:var(--f-display);font-size:clamp(24px,7vw,32px);letter-spacing:.05em;line-height:1.05;color:#dfe8ff;animation:biline .35s ease-out}
+.bilines p.late{animation:biline .4s .9s ease-out both}
 .bilines p:last-child{color:#fff;text-shadow:0 0 14px rgba(255,80,60,.8)}
 @keyframes biline{from{opacity:0;transform:translateY(8px)}}
 .hand.scanning{position:relative}
@@ -1955,7 +1956,7 @@ async function bossIntro(b,tok){
   [1,2,3,7].forEach(rxClip);
   S.introFx={pid:b.id,line:0}; render();
   const a=rxClip(4); let t0=Date.now();
-  setTimeout(()=>{ if(!S.introFx) return; S.introFx.line=1; render(); try{ a.currentTime=0; a.volume=1; if(Snd.on!==false) a.play().catch(()=>{}); }catch(e){} },900);
+  setTimeout(()=>{ if(!S.introFx) return; try{ a.currentTime=0; a.volume=1; if(Snd.on!==false) a.play().catch(()=>{}); }catch(e){} },900);
   await new Promise(res=>{ const iv=setInterval(()=>{ if(tok!==S.token||!S.introFx||S.introFx.skip||Date.now()-t0>4600){ clearInterval(iv); res(); } },100); });
   try{ a.pause(); }catch(e){}
   S.introFx=null; Music.hold=false; Music.sync(); render();
@@ -1966,7 +1967,7 @@ function introHTML(){
   return `<div class="bossintro" role="dialog" aria-label="${b.name}"><div class="bibox">
     <div class="biav">${avatarHTML(b)}</div>
     <h3>${b.name}</h3><small>${T().roles[b.role]}</small>
-    <div class="bilines">${INTRO_LINES.slice(0,S.introFx.line).map(l=>`<p>${l}</p>`).join('')}</div>
+    <div class="bilines">${INTRO_LINES.map(l=>`<p class="late">${l}</p>`).join('')}</div>
     <button class="ghost" id="introskip">${T().introSkip}</button></div></div>`;
 }
 function scanSnd(){

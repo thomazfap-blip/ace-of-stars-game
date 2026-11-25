@@ -3405,7 +3405,7 @@ const NAV_IC={"play": "<svg viewBox=\"0 0 40 40\"><g transform=\"rotate(-18 20 3
 function navHTML(){
   const o=OT(), pg=S.page||'play', b=(Hall.invites.length||0);
   const it=(k,ico,lab,extra)=>`<button class="navbtn" data-page="${k}" aria-current="${pg===k?'page':'false'}"><span class="ni">${ico}</span><span>${lab}</span>${extra||''}</button>`;
-  return `<nav class="appnav" aria-label="Menu">${it('play',NAV_IC.play,T().navPlay)}${it('online',NAV_IC.online,T().navOnline,b?`<em class="inv">${b}</em>`:Hall.count>1?`<em>${Hall.count-1}</em>`:'')}${it('me',`<span class="navav">${avatarHTML({isHuman:true})}</span>`,T().navMe)}<button class="navbtn" id="rankbtn"><span class="ni">${NAV_IC.rank}</span><span>${T().rankBtn}</span></button></nav>`;
+  return `<nav class="appnav" aria-label="Menu">${it('play',NAV_IC.play,T().navPlay)}${it('me',`<span class="navav">${avatarHTML({isHuman:true})}</span>`,T().navMe)}${it('online',NAV_IC.online,T().navOnline,b?`<em class="inv">${b}</em>`:Hall.count>1?`<em>${Hall.count-1}</em>`:'')}<button class="navbtn" id="rankbtn"><span class="ni">${NAV_IC.rank}</span><span>${T().rankBtn}</span></button></nav>`;
 }
 
 function seatHTML(p){

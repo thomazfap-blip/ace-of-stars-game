@@ -798,6 +798,7 @@ details.rulesbox .rules{margin-top:8px}
 .mlist{display:grid;gap:8px}
 .pickic{height:1.1em;width:auto;vertical-align:-.2em}
 .pickbtn{flex:none;display:flex;align-items:center;gap:5px;border:1px solid var(--gold);border-radius:999px;padding:5px 10px;background:rgba(0,0,0,.3);color:var(--gold);font:800 13px Montserrat,sans-serif;cursor:pointer}
+.giftpick .pickic{height:96px;filter:drop-shadow(0 6px 14px rgba(245,201,79,.5));animation:boom .6s cubic-bezier(.2,1.7,.4,1) both}.shoprow.ok b{color:#9ee07a}
 .pickgot{font-weight:800;color:var(--gold);font-size:16px;margin:4px 0 0}
 .shop{background:rgba(0,0,0,.28);border-radius:14px;padding:12px;text-align:left}.shop h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:24px;color:var(--gold);letter-spacing:.03em}
 .pickbal{text-align:left!important;margin:4px 0 8px!important;font-size:15px}
@@ -2782,7 +2783,7 @@ if(!DEVICE_ID){ DEVICE_ID=(window.crypto&&crypto.randomUUID)?crypto.randomUUID()
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const Rank={
   data:null, me:null, ok:null, loading:false, tab:'week',
-  take(d){ if(d&&d.all) this.data=d; if(d&&d.profile) this.me=d.profile; },
+  take(d){ if(d&&d.all) this.data=d; if(d&&d.profile){ this.me=d.profile; if(this.me.gift>0&&!this.giftAsked){ this.giftAsked=true; this.post({a:'gift'}).then(r=>{ if(r&&r.gift>0){ S.giftShow=r.gift; render(); } }).catch(()=>{}); } } },
   async load(quiet){
     if(!quiet){ this.loading=true; render(); }
     try{ const r=await fetch(RANK_URL+'?id='+encodeURIComponent(DEVICE_ID),{cache:'no-store'}); if(!r.ok) throw 0; this.take(await r.json()); this.ok=true; }
@@ -2833,7 +2834,7 @@ function levelStripHTML(){
   const t=T(), m=Rank.me, lv=m.level|0, next=LV_PTS[lv+1];
   const pct=next!=null?Math.round(100*(m.pts-LV_PTS[lv])/(next-LV_PTS[lv])):100;
   return `<div class="lvstrip">
-    <div class="lvtop"><button class="lvhead" id="lvopen" aria-label="${t.lvSeeAll}"><b>${t.lvLevel(t.lvNames[lv])}</b><span>${m.tester?'🧪 teste':m.pts+' pts'}</span><i>›</i></button><button class="powbtn" id="powopen" aria-label="${PT().title}"><span class="powlab">${PT().open}</span>🍺${m.beer} 🥃${m.jack}${lv>=3||m.cat>0?` 🔮${m.cat|0}`:''}${lv>=4||m.dark>0?` ☯${m.dark|0}`:''}<i>›</i></button><button class="pickbtn" id="powopen4" aria-label="StarPicks">${PICK_SVG}<b>${m.tester?'∞':m.picks|0}</b></button></div>
+    <div class="lvtop"><button class="lvhead" id="lvopen" aria-label="${t.lvSeeAll}"><b>${t.lvLevel(t.lvNames[lv])}</b><span>${m.tester?'🧪 teste':m.pts+' pts'}</span><i>›</i></button><button class="powbtn" id="powopen" aria-label="${PT().title}"><span class="powlab">${PT().open}</span>🍺${m.beer} 🥃${m.jack}${lv>=3||m.cat>0?` 🔮${m.cat|0}`:''}${lv>=4||m.dark>0?` ☯${m.dark|0}`:''}<i>›</i></button><button class="pickbtn" id="powopen4" aria-label="StarPicks">${PICK_SVG}<b>${m.picks|0}</b></button></div>
     <div class="lvbar"><i style="width:${Math.max(3,Math.min(100,pct))}%"></i></div>
     <small>${next!=null?t.lvNext(next-m.pts,t.lvNames[lv+1]):t.lvMax}</small>
     ${lv>=3&&!m.tester?`<small>${(m.cat|0)>=3?CT().full:CT().next}</small>`:''}
@@ -2884,19 +2885,24 @@ function PT(){ return POW_T[LANG]||POW_T.pt; }
 // ---------- StarPicks: a moeda do jogo ----------
 const PICK_SVG=`<svg class="pickic" viewBox="0 0 40 44" aria-hidden="true"><path d="M20 42 C10 34 3 22 3 12 C3 5 10 2 20 2 C30 2 37 5 37 12 C37 22 30 34 20 42Z" fill="#f5c94f" stroke="#8a6414" stroke-width="2"/><path d="M20 6 C12 6 7 8 7 12" stroke="#fff3c4" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M20 11 l2.6 5.4 5.9.6-4.4 3.9 1.3 5.8-5.4-3.1-5.4 3.1 1.3-5.8-4.4-3.9 5.9-.6z" fill="#d6262b"/></svg>`;
 const PK_T={
-  pt:{name:'StarPicks',sub:'A moeda do jogo. Você ganha jogando e troca por drinques e desafios extras.',how:'Ganhe: +2 por partida, +10 por vitória, +1 por rodada cravada (até 5), +5 na primeira partida do dia, +25 por nível e +5 por desafio bônus vencido.',shop:'🛒 Loja',have:n=>`Você tem ${n} StarPicks`,buy:'Comprar',full:'Estoque cheio',noMoney:'Faltam StarPicks',got:n=>`+${n} StarPicks`},
-  en:{name:'StarPicks',sub:'The game currency. Earn it by playing and trade it for drinks and extra challenges.',how:'Earn: +2 per game, +10 per win, +1 per nailed round (up to 5), +5 for the first game of the day, +25 per level and +5 per bonus challenge won.',shop:'🛒 Shop',have:n=>`You have ${n} StarPicks`,buy:'Buy',full:'Stock full',noMoney:'Not enough StarPicks',got:n=>`+${n} StarPicks`},
-  es:{name:'StarPicks',sub:'La moneda del juego. La ganas jugando y la cambias por tragos y desafíos extra.',how:'Gana: +2 por partida, +10 por victoria, +1 por ronda clavada (hasta 5), +5 en la primera partida del día, +25 por nivel y +5 por desafío bonus ganado.',shop:'🛒 Tienda',have:n=>`Tienes ${n} StarPicks`,buy:'Comprar',full:'Inventario lleno',noMoney:'Faltan StarPicks',got:n=>`+${n} StarPicks`},
+  pt:{name:'StarPicks',sub:'A moeda do jogo. Você ganha jogando e troca por drinques e desafios extras.',how:'Ganhe: +2 por partida, +5 por vitória, +5 na primeira partida do dia, +25 por nível e +5 por desafio bônus vencido.',done:'✓ Comprado!',giftT:'🎁 Presente de lançamento!',giftP:'Chegaram os StarPicks, a moeda do jogo. Obrigado por jogar desde o começo!',giftUse:'Use na loja do estoque ou pra jogar desafios bônus extras.',giftShop:'Ver a loja',giftOk:'Valeu!',shop:'🛒 Loja',have:n=>`Você tem ${n} StarPicks`,buy:'Comprar',full:'Estoque cheio',noMoney:'Faltam StarPicks',got:n=>`+${n} StarPicks`},
+  en:{name:'StarPicks',sub:'The game currency. Earn it by playing and trade it for drinks and extra challenges.',how:'Earn: +2 per game, +5 per win, +5 for the first game of the day, +25 per level and +5 per bonus challenge won.',done:'✓ Bought!',giftT:'🎁 Launch gift!',giftP:'StarPicks are here, the game currency. Thanks for playing since the beginning!',giftUse:'Use them in the stock shop or to play extra bonus challenges.',giftShop:'See the shop',giftOk:'Thanks!',shop:'🛒 Shop',have:n=>`You have ${n} StarPicks`,buy:'Buy',full:'Stock full',noMoney:'Not enough StarPicks',got:n=>`+${n} StarPicks`},
+  es:{name:'StarPicks',sub:'La moneda del juego. La ganas jugando y la cambias por tragos y desafíos extra.',how:'Gana: +2 por partida, +5 por victoria, +5 en la primera partida del día, +25 por nivel y +5 por desafío bonus ganado.',done:'✓ ¡Comprado!',giftT:'🎁 ¡Regalo de lanzamiento!',giftP:'Llegaron los StarPicks, la moneda del juego. ¡Gracias por jugar desde el principio!',giftUse:'Úsalos en la tienda del inventario o para jugar desafíos bonus extra.',giftShop:'Ver la tienda',giftOk:'¡Gracias!',shop:'🛒 Tienda',have:n=>`Tienes ${n} StarPicks`,buy:'Comprar',full:'Inventario lleno',noMoney:'Faltan StarPicks',got:n=>`+${n} StarPicks`},
 };
 function KT(){ return PK_T[LANG]||PK_T.pt; }
+function giftHTML(){
+  if(!S.giftShow) return ''; const k=KT();
+  return `<div class="overlay rankov miniinv"><div class="sheet ksheet gift"><h2>${k.giftT}</h2><div class="giftpick">${PICK_SVG}</div><p class="kname">+${S.giftShow} StarPicks</p><p>${k.giftP}</p><p><small>${k.giftUse}</small></p>
+    <div class="row"><button class="ghost" id="giftshop">${k.giftShop}</button><button class="cta" id="giftok">${k.giftOk}</button></div></div></div>`;
+}
 function myPicks(){ return Rank.me?(Rank.me.picks|0):0; }
 function shopHTML(){
   if(!Rank.me) return '';
   const k=KT(), m=Rank.me, sh=m.shop||{beer:30,jack:60};
-  const it=(id,ico,name,n)=>{ const price=sh[id], full=(n|0)>=3, poor=myPicks()<price;
-    return `<div class="shoprow"><span class="powico sm">${ico}</span><b>${name}</b><button class="cta shopbuy" data-buy="${id}" ${full||poor?'disabled':''}>${full?k.full:`${price} ${PICK_SVG}`}</button></div>`; };
-  return `<div class="shop"><h3>${k.shop}</h3><p class="pickbal">${PICK_SVG} <b>${k.have(m.tester?'∞':myPicks())}</b></p>
-    ${it('beer',beerSVG(false),PT().beer,m.beer)}${it('jack',jackSVG(false),PT().jack,m.jack)}<p class="pownote">${k.how}</p></div>`;
+  const it=(id,ico,name,n)=>{ const price=sh[id]; if(price==null) return ''; const full=!m.tester&&(n|0)>=3, poor=myPicks()<price, ok=S.bought===id;
+    return `<div class="shoprow${ok?' ok':''}"><span class="powico sm">${ico}</span><b>${name}</b><button class="cta shopbuy" data-buy="${id}" ${full||poor||ok?'disabled':''}>${ok?k.done:full?k.full:`${price} ${PICK_SVG}`}</button></div>`; };
+  return `<div class="shop"><h3>${k.shop}</h3><p class="pickbal">${PICK_SVG} <b>${k.have(myPicks())}</b></p>
+    ${it('beer',beerSVG(false),PT().beer,m.beer)}${it('jack',jackSVG(false),PT().jack,m.jack)}${it('cat',crystalSVG(),'Mystical Cat',m.cat)}${it('dark',YY_SVG,'Dark Side',m.dark)}<p class="pownote">${k.how}</p></div>`;
 }
 function powersHTML(){
   if(!S.powOpen) return '';
@@ -3275,8 +3281,8 @@ const MINI_T={
 const MT=()=>MINI_T[LANG]||MINI_T.pt;
 const MINI_LIST=[['kart','sp_luiz','🏁'],['fish','sp_thomaz','🎣'],['surf','sp_julio','🏄'],['yoga','sp_bia','🧘'],['tennis','sp_chris','🎾']];
 const miniOpp=g=>BAND.find(b=>b.id===MINI_LIST.find(x=>x[0]===g)[1]);
-function miniFree(){ return !Rank.me||!!Rank.me.tester||Rank.me.miniFree!==false; }
-function miniCanPay(){ return !!(Rank.me&&(Rank.me.tester||myPicks()>=miniCost())); }
+function miniFree(){ return !Rank.me||Rank.me.miniFree!==false; }
+function miniCanPay(){ return !!(Rank.me&&myPicks()>=miniCost()); }
 function miniCost(){ return (Rank.me&&Rank.me.miniCost)||20; }
 function miniDisc(){ let l=[]; try{ l=JSON.parse(localStorage.getItem('fodinha-disc')||'[]'); }catch(e){} const r=(Rank.me&&Rank.me.disc)||[]; return MINI_LIST.map(x=>x[0]).filter(g=>l.includes(g)||r.includes(g)); }
 function miniDiscover(g){ const l=miniDisc(); if(!l.includes(g)) l.push(g); try{ localStorage.setItem('fodinha-disc',JSON.stringify(l)); }catch(e){} if(Rank.me){ Rank.me.disc=l.slice(); } Rank.post({a:'discover',game:g}).catch(()=>{}); }
@@ -3583,7 +3589,7 @@ const Mini={
     const m=MT(), ic=MINI_LIST.find(x=>x[0]===this.g)[2];
     this.cardHTML(`<div class="kav"><span class="frame">${avatarHTML(this.opp)}</span><i>${ic}</i></div><h2>${m.g[this.g].t}</h2><p>${m.g[this.g].p}</p>
       <p class="kpz"><small>${m.prizes}</small><span>${['beer','jack','cat','dark'].map(k=>`<span class="kpi">${prizeIcon(k)}</span>`).join('')}</span></p>
-      <p class="konce">${Rank.me&&Rank.me.tester?'🧪 teste: sem limite':miniFree()?m.freeOne:miniCanPay()?m.costOne(miniCost()):m.noPts(miniCost())}</p>
+      <p class="konce">${miniFree()?m.freeOne:miniCanPay()?m.costOne(miniCost()):m.noPts(miniCost())}</p>
       <div class="row"><button class="ghost" id="k-back">${m.back}</button><button class="cta" id="k-start" ${miniFree()||miniCanPay()?'':'disabled'}>${miniFree()?m.start:m.payStart(miniCost())}</button></div>`);
   },
   resize(){ const W=this.W=Math.min(innerWidth,560), H=this.H=innerHeight, r=this.dpr=Math.min(2,devicePixelRatio||1);
@@ -3955,7 +3961,7 @@ function render(){
   const SCR='.sheet,.scroll,.tbl'; const keepSc=[...app.querySelectorAll(SCR)].map(e=>[e.getAttribute('aria-label')||e.className,e.scrollTop]);
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+inviteHTML()+levelsHTML()+powersHTML()+bonusSheetHTML()+miniInviteHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+inviteHTML()+levelsHTML()+powersHTML()+bonusSheetHTML()+miniInviteHTML()+giftHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   { const els=[...app.querySelectorAll(SCR)]; keepSc.forEach(([k,top],i)=>{ const e=els[i]; if(e&&(e.getAttribute('aria-label')||e.className)===k&&top) e.scrollTop=top; }); }
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
@@ -4047,7 +4053,9 @@ document.addEventListener('click',e=>{
   if(t.id==='turnclose'){ S.turnOpen=false; render(); return; }
   if(t.id==='lvopen2'){ S.levelsOpen=true; render(); return; }
   if(t.id==='powopen3'||t.id==='powopen4'){ S.powOpen=true; render(); return; }
-  if(t.dataset.buy){ const item=t.dataset.buy; t.disabled=true; Rank.post({a:'buy',item}).then(()=>{ Snd.canOpen&&Snd.canOpen(); render(); },()=>render()); return; }
+  if(t.dataset.buy){ const item=t.dataset.buy; t.disabled=true; Rank.post({a:'buy',item}).then(()=>{ S.bought=item; Snd.fanfare&&Snd.fanfare(); render(); setTimeout(()=>{ S.bought=null; render(); },1600); },()=>render()); return; }
+  if(t.id==='giftok'){ S.giftShow=null; render(); return; }
+  if(t.id==='giftshop'){ S.giftShow=null; S.powOpen=true; render(); return; }
   if(t.id==='rankbtn'){ S.rankOpen=true; S.menu=false; Rank.load(); return; }
   if(t.id==='closerank'){ S.rankOpen=false; render(); return; }
   if(t.dataset.rtab){ Rank.tab=t.dataset.rtab; render(); return; }

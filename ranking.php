@@ -4,7 +4,8 @@
 //
 // GET  ranking.php?id=XYZ                      -> placar geral/semanal + perfil do jogador
 // POST {a:'game', id, name, av, pts, ...}      -> soma uma partida
-// POST {a:'buy', id, item:'beer'|'jack'}      -> compra um drinque com StarPicks
+// POST {a:'gift', id}                         -> resgata o presente de lançamento dos StarPicks (uma vez)
+// POST {a:'buy', id, item:'beer'|'jack'|'cat'|'dark'} -> compra com StarPicks
 // POST {a:'use', id, item:'beer'|'jack'|'cat'|'dark'} -> gasta um drinque ou uma bola de cristal do estoque
 // POST {a:'discover', id, game}              -> o jogador descobriu um desafio bônus (convite no fim da partida)
 // POST {a:'ministart', id, game, pay}        -> começa um desafio: 1 grátis por dia (em qualquer jogo); depois, pay=true desconta MINI_COST pontos
@@ -27,8 +28,10 @@ const CAT_LV = 3; const CAT_WINS = 1; const CAT_MAX = 3;
 const MINI_GAMES = ['kart' => 25, 'fish' => 25, 'surf' => 25, 'yoga' => 25, 'tennis' => 10];               // jogo => segundos mínimos de partida
 // StarPicks: a moeda do jogo. Ganha jogando, gasta em desafio extra e na loja
 const MINI_COST = 20;                             // StarPicks pra jogar de novo um desafio no mesmo dia
-const PICK_GAME = 2; const PICK_WIN = 10; const PICK_NAIL_MAX = 5; const PICK_DAY = 5; const PICK_LEVEL = 25; const PICK_MINI = 5;
-const SHOP = ['beer' => 30, 'jack' => 60];
+const PICK_GAME = 2; const PICK_WIN = 5; const PICK_NAIL_MAX = 0; const PICK_DAY = 5; const PICK_LEVEL = 25; const PICK_MINI = 5;
+const SHOP = ['beer' => 60, 'jack' => 120, 'cat' => 200, 'dark' => 400];
+// presente de lançamento dos StarPicks: quem já tinha esses pontos quando a moeda chegou
+const GIFT_TIERS = [600 => 300, 300 => 150, 100 => 60]; const GIFT_TESTER = 1000;
 const MINI_PRIZES = ['beer' => 60, 'jack' => 25, 'cat' => 12, 'dark' => 3];
 const DRINK_MAX = 3;                              // prêmio de drinque só entra se tiver menos que isso
 const DARK_LV = 4; const DARK_WINS = 3; const DARK_MAX = 3;
@@ -63,6 +66,18 @@ function norm(&$R, &$P) {
 }
 function day_key() { return gmdate('Y-m-d', time() - 3 * 3600); }
 function mini_free($P, $key) { return ($P['mini'][$key]['_free'] ?? '') !== day_key(); }
+// na primeira vez depois do lançamento, anota quem já tinha pontos pra ganhar o presente
+function gift_snap($R, &$P, $playFile) {
+    if (isset($P['giftSnap'])) return;
+    $P['giftSnap'] = [];
+    foreach ($R['all'] as $k => $row) foreach (GIFT_TIERS as $min => $n) if (($row['pts'] ?? 0) >= $min) { $P['giftSnap'][$k] = $n; break; }
+    jsave($playFile, $P);
+}
+function gift_due($P, $key, $tester) {
+    if (isset($P['gift'][$key])) return 0;
+    if ($tester) return GIFT_TESTER;
+    return (int)($P['giftSnap'][$key] ?? 0);
+}
 function picks_of($P, $key) { return (int)($P['picks'][$key] ?? 0); }
 function picks_add(&$P, $key, $n) { $P['picks'][$key] = max(0, picks_of($P, $key) + $n); }
 function key_for($P, $id) { return $P['links'][$id] ?? $id; }
@@ -123,14 +138,14 @@ function profile($R, $P, $key) {
     $acc = $P['acc'][$key] ?? null;
     // contas de teste: tudo liberado e estoque cheio (o ranking continua com os pontos reais)
     if ($acc && in_array($acc['email'], TESTERS, true)) {
-        return ['pts' => max($pts, 5000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true, 'miniFree' => true, 'miniCost' => MINI_COST, 'picks' => 999, 'shop' => SHOP, 'disc' => array_values($P['disc'][$key] ?? []),
+        return ['pts' => max($pts, 5000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true, 'miniFree' => mini_free($P, $key), 'miniCost' => MINI_COST, 'picks' => picks_of($P, $key), 'gift' => gift_due($P, $key, true), 'shop' => SHOP, 'disc' => array_keys(MINI_GAMES),
                 'linked' => true, 'email' => mask_email($acc['email']), 'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
     }
     return ['pts' => $pts, 'level' => $lv, 'next' => LV_PTS[$lv + 1] ?? null,
             'beer' => max(0, earned($lv, LV_BEER) - ($used['b'] ?? 0)), 'jack' => max(0, earned($lv, LV_JACK) - ($used['j'] ?? 0)),
             'cat' => cat_of($P, $key)['n'], 'catW' => cat_of($P, $key)['w'],
             'dark' => pow_of($P, 'dark', $key)['n'], 'darkW' => pow_of($P, 'dark', $key)['w'],
-            'miniFree' => mini_free($P, $key), 'miniCost' => MINI_COST, 'picks' => picks_of($P, $key), 'shop' => SHOP, 'disc' => array_values($P['disc'][$key] ?? []),
+            'miniFree' => mini_free($P, $key), 'miniCost' => MINI_COST, 'picks' => picks_of($P, $key), 'gift' => gift_due($P, $key, false), 'shop' => SHOP, 'disc' => array_values($P['disc'][$key] ?? []),
             'linked' => (bool)$acc, 'email' => $acc ? mask_email($acc['email']) : null,
             'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
 }
@@ -175,8 +190,8 @@ $lock = fopen($dir . '/.lock', 'c');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $id = clean_id($_GET['id'] ?? '');
-    flock($lock, LOCK_SH);
-    $R = jload($rankFile); $P = jload($playFile); norm($R, $P);
+    flock($lock, LOCK_EX);
+    $R = jload($rankFile); $P = jload($playFile); norm($R, $P); gift_snap($R, $P, $playFile);
     flock($lock, LOCK_UN);
     out(full($R, $P, key_for($P, $id)));
 }
@@ -191,6 +206,7 @@ $lang = in_array($in['lang'] ?? '', ['pt', 'en', 'es'], true) ? $in['lang'] : 'p
 flock($lock, LOCK_EX);
 $R = jload($rankFile); $P = jload($playFile); norm($R, $P);
 $key = key_for($P, $id);
+gift_snap($R, $P, $playFile);
 
 if ($a === 'game') {
     $nailed = clamp($in['nailed'] ?? 0, 0, 80);
@@ -235,16 +251,26 @@ if ($a === 'profile') {
     out(['profile' => profile($R, $P, $key)]);
 }
 
+if ($a === 'gift') {
+    $pr = profile($R, $P, $key); $n = gift_due($P, $key, !empty($pr['tester']));
+    if ($n > 0) { picks_add($P, $key, $n); $P['gift'][$key] = $n; jsave($playFile, $P); }
+    flock($lock, LOCK_UN);
+    out(['gift' => $n, 'profile' => profile($R, $P, $key)]);
+}
+
 if ($a === 'buy') {
     $item = $in['item'] ?? ''; $pr = profile($R, $P, $key);
     if (!isset(SHOP[$item])) { flock($lock, LOCK_UN); out(['error' => 'item'], 400); }
-    if ($pr[$item] >= DRINK_MAX) { flock($lock, LOCK_UN); out(['error' => 'full', 'profile' => $pr], 409); }
-    if (empty($pr['tester'])) {
-        if (picks_of($P, $key) < SHOP[$item]) { flock($lock, LOCK_UN); out(['error' => 'picks', 'profile' => $pr], 409); }
-        picks_add($P, $key, -SHOP[$item]);
-        $u = $P['inv'][$key] ?? ['b' => 0, 'j' => 0]; $f = $item === 'beer' ? 'b' : 'j'; $u[$f] = ($u[$f] ?? 0) - 1; $P['inv'][$key] = $u;
-        jsave($playFile, $P);
+    $tester = !empty($pr['tester']); $cap = ['beer' => DRINK_MAX, 'jack' => DRINK_MAX, 'cat' => CAT_MAX, 'dark' => DARK_MAX][$item];
+    if (!$tester && $pr[$item] >= $cap) { flock($lock, LOCK_UN); out(['error' => 'full', 'profile' => $pr], 409); }
+    if (picks_of($P, $key) < SHOP[$item]) { flock($lock, LOCK_UN); out(['error' => 'picks', 'profile' => $pr], 409); }
+    picks_add($P, $key, -SHOP[$item]);
+    // conta de teste paga de verdade, mas o estoque dela já é infinito
+    if (!$tester) {
+        if ($item === 'beer' || $item === 'jack') { $u = $P['inv'][$key] ?? ['b' => 0, 'j' => 0]; $f = $item === 'beer' ? 'b' : 'j'; $u[$f] = ($u[$f] ?? 0) - 1; $P['inv'][$key] = $u; }
+        else { $c = pow_of($P, $item, $key); $c['n']++; $P[$item][$key] = $c; }
     }
+    jsave($playFile, $P);
     flock($lock, LOCK_UN);
     out(['ok' => true, 'profile' => profile($R, $P, $key)]);
 }
@@ -282,12 +308,10 @@ if ($a === 'ministart' || $a === 'minidone') {
     $pr = profile($R, $P, $key); $tester = !empty($pr['tester']);
     $m = $P['mini'][$key][$game] ?? ['d' => '', 's' => 0, 'done' => 1];
     if ($a === 'ministart') {
-        if (!$tester) {
-            if (mini_free($P, $key)) $P['mini'][$key]['_free'] = day_key();
-            elseif (empty($in['pay'])) { flock($lock, LOCK_UN); out(['error' => 'tried', 'profile' => $pr], 409); }
-            elseif (picks_of($P, $key) < MINI_COST) { flock($lock, LOCK_UN); out(['error' => 'picks', 'profile' => $pr], 409); }
-            else picks_add($P, $key, -MINI_COST);
-        }
+        if (mini_free($P, $key)) $P['mini'][$key]['_free'] = day_key();
+        elseif (empty($in['pay'])) { flock($lock, LOCK_UN); out(['error' => 'tried', 'profile' => $pr], 409); }
+        elseif (picks_of($P, $key) < MINI_COST) { flock($lock, LOCK_UN); out(['error' => 'picks', 'profile' => $pr], 409); }
+        else picks_add($P, $key, -MINI_COST);
         $P['mini'][$key][$game] = ['d' => day_key(), 's' => time(), 'done' => 0];
         jsave($playFile, $P); flock($lock, LOCK_UN);
         out(['ok' => true, 'profile' => profile($R, $P, $key)]);
@@ -297,8 +321,8 @@ if ($a === 'ministart' || $a === 'minidone') {
     $m['done'] = 1; $P['mini'][$key][$game] = $m;
     $prize = null; $picksGot = 0;
     if (!empty($in['win'])) {
-        $picksGot = PICK_MINI; if (!$tester) picks_add($P, $key, PICK_MINI);
-        $room = ['beer' => $pr['beer'] < DRINK_MAX, 'jack' => $pr['jack'] < DRINK_MAX, 'cat' => $pr['cat'] < CAT_MAX, 'dark' => $pr['dark'] < DARK_MAX];
+        $picksGot = PICK_MINI; picks_add($P, $key, PICK_MINI);
+        $room = $tester ? ['beer' => 1, 'jack' => 1, 'cat' => 1, 'dark' => 1] : ['beer' => $pr['beer'] < DRINK_MAX, 'jack' => $pr['jack'] < DRINK_MAX, 'cat' => $pr['cat'] < CAT_MAX, 'dark' => $pr['dark'] < DARK_MAX];
         $pool = array_filter(MINI_PRIZES, function ($w, $k) use ($room) { return $room[$k]; }, ARRAY_FILTER_USE_BOTH);
         if ($pool) {
             $r = random_int(1, array_sum($pool));

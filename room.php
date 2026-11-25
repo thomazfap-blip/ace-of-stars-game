@@ -62,12 +62,12 @@ function open_rooms($dir, $skip = '') {
     foreach (glob($dir . '/*.json') ?: [] as $f) {
         if (filemtime($f) < time() - 120) continue;
         $R = json_decode(@file_get_contents($f), true);
-        if (!is_array($R) || ($R['status'] ?? '') !== 'lobby' || empty($R['open']) || $R['code'] === $skip) continue;
+        if (!is_array($R) || !in_array($R['status'] ?? '', ['lobby', 'playing'], true) || empty($R['open']) || $R['code'] === $skip) continue;
         $ps = array_values(array_filter($R['players'], fn($p) => empty($p['left'])));
         if (count($ps) >= MAX_HUMANS || count($ps) === 0) continue;
         $host = null; foreach ($ps as $p) if ($p['pid'] === $R['hostPid']) $host = $p;
         if (!$host || time() - $host['seen'] > 20) continue;
-        $list[] = ['code' => $R['code'], 'host' => $host['name'], 'av' => $host['av'], 'n' => count($ps), 'lives' => $R['lives'] ?? null,
+        $list[] = ['code' => $R['code'], 'playing' => $R['status'] === 'playing', 'host' => $host['name'], 'av' => $host['av'], 'n' => count($ps), 'lives' => $R['lives'] ?? null,
                    'quick' => !empty($R['quick']), 'startIn' => !empty($R['quick']) ? max(0, ($R['startAt'] ?? 0) - time()) : null];
     }
     usort($list, fn($a, $b) => $b['n'] <=> $a['n']);
@@ -173,7 +173,7 @@ function pub_players($R) {
 }
 function chat_since($R, $in) { $cs = (int)($in['cs'] ?? 0); return array_values(array_filter($R['chat'] ?? [], fn($m) => $m['id'] > $cs)); }
 function lobby_out($R, $me) {
-    return ['open' => !empty($R['open']), 'quick' => !empty($R['quick']), 'startIn' => !empty($R['quick']) ? max(0, ($R['startAt'] ?? 0) - time()) : null,'code' => $R['code'], 'status' => $R['status'], 'hostPid' => $R['hostPid'], 'pid' => $R['players'][$me]['pid'],
+    return ['open' => !empty($R['open']), 'powers' => !isset($R['powers']) || !empty($R['powers']), 'quick' => !empty($R['quick']), 'startIn' => !empty($R['quick']) ? max(0, ($R['startAt'] ?? 0) - time()) : null,'code' => $R['code'], 'status' => $R['status'], 'hostPid' => $R['hostPid'], 'pid' => $R['players'][$me]['pid'],
             'players' => pub_players($R), 'now' => time()];
 }
 
@@ -206,13 +206,14 @@ if ($a === 'join') {
                 return ['__save' => $R, 'code' => $code, 'token' => $p['token'], 'pid' => $p['pid'], 'status' => $R['status'], 'hostPid' => $R['hostPid']];
             }
         }
-        if ($R['status'] !== 'lobby') return ['error' => 'started'];
+        if ($R['status'] !== 'lobby' && $R['status'] !== 'playing') return ['error' => 'started'];
+        $late = $R['status'] === 'playing'; // mesa já rolando: entra na próxima mão
         $alive = count(array_filter($R['players'], fn($p) => empty($p['left'])));
         if ($alive >= MAX_HUMANS) return ['error' => 'full'];
         $R['n']++; $pid = 'p' . $R['n']; $tok = new_token();
         $R['players'][] = ['pid' => $pid, 'id' => $id, 'name' => clean_name($in['name'] ?? ''), 'av' => clean_av($in['av'] ?? ''),
-                           'lang' => clean_lang($in['lang'] ?? ''), 'token' => $tok, 'seen' => time()];
-        return ['__save' => $R, 'code' => $code, 'token' => $tok, 'pid' => $pid, 'status' => 'lobby', 'hostPid' => $R['hostPid']];
+                           'lang' => clean_lang($in['lang'] ?? ''), 'token' => $tok, 'seen' => time()] + ($late ? ['late' => true] : []);
+        return ['__save' => $R, 'code' => $code, 'token' => $tok, 'pid' => $pid, 'status' => $R['status'], 'hostPid' => $R['hostPid'], 'late' => $late];
     }));
 }
 
@@ -287,14 +288,14 @@ if ($a === 'take') {
         $R['players'][$me]['seen'] = time();
         $acts = $R['actions']; $R['actions'] = [];
         $seen = []; foreach ($R['players'] as $p) $seen[$p['pid']] = ['ago' => time() - $p['seen'], 'left' => !empty($p['left'])];
-        return ['__save' => $R, 'actions' => $acts, 'seen' => $seen, 'chat' => chat_since($R, $in)];
+        return ['__save' => $R, 'actions' => $acts, 'seen' => $seen, 'roster' => pub_players($R), 'chat' => chat_since($R, $in)];
     }));
 }
 
 if ($a === 'setopen') {
     out(with_room($dir, $code, function ($R) use ($token, $in) {
         $me = me_of($R, $token); if ($me < 0 || $R['players'][$me]['pid'] !== $R['hostPid']) return ['error' => 'auth'];
-        $R['open'] = !empty($in['open']); if (isset($in['lives'])) $R['lives'] = max(1, min(5, (int)$in['lives']));
+        $R['open'] = !empty($in['open']); if (isset($in['lives'])) $R['lives'] = max(1, min(5, (int)$in['lives'])); if (isset($in['powers'])) $R['powers'] = !empty($in['powers']);
         return ['__save' => $R] + lobby_out($R, $me);
     }));
 }

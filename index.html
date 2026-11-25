@@ -723,6 +723,7 @@ details.rulesbox .rules{margin-top:8px}
 .lobby a.ghost{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .lobbywait{text-align:center;font-weight:700;color:var(--gold);margin:18px 0;animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.45}}
+.hostlost.latewait{background:#fffaf0;color:#2a0a10;border:2px solid var(--gold);border-radius:14px;width:min(520px,calc(100% - 24px))}
 .hostlost{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:70;background:#7a1210;color:#fff;font-weight:700;border-radius:999px;padding:8px 16px;box-shadow:0 4px 18px rgba(0,0,0,.5);max-width:calc(100vw - 32px);text-align:center}
 .connecting{min-height:60vh;display:grid;place-content:center;gap:16px;text-align:center}
 .chatbtn{flex:none;position:relative;width:40px;height:40px;border-radius:50%;border:2px solid var(--gold);background:rgba(0,0,0,.4);font-size:18px;display:grid;place-items:center;padding:0;cursor:pointer}
@@ -1896,7 +1897,7 @@ function CT(){ return CAT_T[LANG]||CAT_T.pt; }
 function catTargets(){ return alive().filter(p=>!p.isHuman&&p.hand.length); }
 function catUnlocked(){ return myLevel()>=3||!!(Rank.me&&Rank.me.cat>0)||(S.inv&&S.inv.cat>0); }
 function catUsable(){ return catUnlocked() && S.inv.cat>0 && S.n!==1 && !S.tut && byId('you')&&byId('you').alive && catTargets().length>0 && !S.catShow; }
-function catBtnHTML(){ if(!catUnlocked()||S.tut) return ''; return `<button class="catbtn" id="catbtn" ${catUsable()?'':'disabled'} aria-label="${CT().btn}" title="${CT().btn}">${crystalSVG()}${S.inv.cat>0?`<span class="cnt">${S.inv.cat}</span>`:''}</button>`; }
+function catBtnHTML(){ if(!catUnlocked()||S.tut||S.noPow) return ''; return `<button class="catbtn" id="catbtn" ${catUsable()?'':'disabled'} aria-label="${CT().btn}" title="${CT().btn}">${crystalSVG()}${S.inv.cat>0?`<span class="cnt">${S.inv.cat}</span>`:''}</button>`; }
 function catVeilHTML(){
   if(!S.catShow) return '';
   const p=byId(S.catShow.pid), list=S.online&&!S.online.host?(S.catShow.cards||[]):p.hand.map(h=>h.card), cards=list.length?list.map(c=>cardHTML(c,{nomani:false})).join(''):'<span class="catwait">…</span>';
@@ -1956,7 +1957,7 @@ function DT(){ return DARK_T[LANG]||DARK_T.pt; }
 function seesAll(p){ return p.pro&&!S.dark; }
 function darkUnlocked(){ return myLevel()>=4||!!(Rank.me&&Rank.me.dark>0)||(S.inv&&S.inv.dark>0); }
 function darkUsable(){ const y=byId('you'); return darkUnlocked() && S.inv.dark>0 && !S.dark && S.n>=1 && !S.tut && S.bidding && y&&y.alive&&y.bet==null && !S.catShow && !S.catPick && !S.darkFx; }
-function darkBtnHTML(){ if(!darkUnlocked()||S.tut) return ''; return `<button class="darkbtn" id="darkbtn" ${darkUsable()?'':'disabled'} aria-label="${DT().btn}" title="${DT().btn}">${YY_SVG}${S.inv.dark>0?`<span class="cnt">${S.inv.dark}</span>`:''}</button>`; }
+function darkBtnHTML(){ if(!darkUnlocked()||S.tut||S.noPow) return ''; return `<button class="darkbtn" id="darkbtn" ${darkUsable()?'':'disabled'} aria-label="${DT().btn}" title="${DT().btn}">${YY_SVG}${S.inv.dark>0?`<span class="cnt">${S.inv.dark}</span>`:''}</button>`; }
 function darkVeilHTML(){
   if(!S.darkFx) return '';
   return `<div class="darkveil${S.darkFx.gone?' gone':''}" role="dialog" aria-label="Dark Side"><span class="smk" style="width:60vw;height:60vw;left:-10vw;top:10vh"></span><span class="smk" style="width:70vw;height:70vw;right:-20vw;bottom:5vh;animation-delay:-2s"></span><div class="darkbox">${S.darkFx.by?`<p class="dkby">${T().bossDark(byId(S.darkFx.by).short)}</p>`:''}<div class="eyes"><i></i><i></i></div><div class="yyw">${YY_SVG}</div><h4>DARK SIDE</h4><p>${S.viraShown?DT().sub:DT().sub6}</p></div></div>`;
@@ -2173,7 +2174,7 @@ function botChoose(p){
 function startGame(opts){
   Snd.init();
   darkStop(true); S.token++; const tok=S.token;
-  if(!opts){ S.online=null; clearInterval(S.onIv); }
+  if(!opts){ S.online=null; clearInterval(S.onIv); } S.noPow=false;
   ACE=ACE.trim();
   const human={id:'you',short:'Você',isHuman:true};
   let bots=opts?[...opts.remotes,...opts.bots.map(b=>({...b}))]:BAND.filter(b=>S.picked.has(b.id)&&!charLocked(b)).map(b=>({...b}));
@@ -2238,7 +2239,7 @@ async function runGame(tok){
       Music.duck(2600); Snd.zap();
       await askModalO({type:'duel'}); S.modal=null;
     }
-    if(S.online&&S.online.host) S.online.snap=makeSnap();
+    if(S.online&&S.online.host){ hostAddLate(); S.online.snap=makeSnap(); }
     S.handNo++;
     if(!S.players[S.dealer].alive) S.dealer=nextAliveIdx(S.dealer);
     S.players.forEach(p=>{ p.hand=[]; p.bet=null; p.made=0; });
@@ -2328,7 +2329,7 @@ async function runGame(tok){
     if(S.online&&S.online.host){ const sn=makeSnap(); sn.n=nextN; sn.dir=S.dir; sn.dealer=nextAliveIdx(S.dealer); S.online.snap=sn; hostDirty(); }
 
     if(S.online){
-      for(const r of results.filter(r=>r.out&&r.p.remote&&!r.p.alive&&!r.p.kicked)){
+      for(const r of results.filter(r=>!S.noPow&&r.out&&r.p.remote&&!r.p.alive&&!r.p.kicked)){
         const p=r.p; setMsg(()=>OT().waitDrink(p.short)); render();
         const c=await remoteAsk(p,{type:'out',beerFree:!p.beerUsed},tok);
         if(['beer','sbeer','jack'].includes(c)){
@@ -2343,7 +2344,7 @@ async function runGame(tok){
     if(byId('you').kicked) S.reported=true; // ficou parado: sai sem pontuar
     if(!byId('you').alive && S.place==null) S.place=alive().length+1;
     const youR=results.find(r=>r.p.isHuman);
-    const canDrink=!S.tut&&!byId('you').kicked&&(!S.beerUsed||S.inv.beer>0||S.inv.jack>0);
+    const canDrink=!S.tut&&!S.noPow&&!byId('you').kicked&&(!S.beerUsed||S.inv.beer>0||S.inv.jack>0);
     if(youR && youR.out && !byId('you').alive && canDrink && !S.fast){
       // eliminado pela primeira vez: oferece a cerveja
       Snd.elim();
@@ -2391,9 +2392,9 @@ async function runGame(tok){
 // O celular de quem cria a sala (anfitrião) roda a partida; cada jogador recebe só o que pode ver.
 const ROOM_URL='room.php';
 const ON_T={
-  pt:{boxT:'🌐 Jogar online',boxSub:'Jogue com amigos e fãs, cada um no seu celular.',create:'Criar sala',join:'Entrar',codePh:'Código',lobbyT:'Sala',share:'Mande o código ou o link pros amigos:',copy:'Copiar link',copied:'Link copiado!',wa:'Mandar no WhatsApp',waText:(c,u)=>`Bora jogar Ace of Stars comigo? Sala ${c}: ${u}`,players:n=>`Na mesa (${n}/8)`,hostTag:'anfitrião',you:'você',waitHost:'Esperando o anfitrião começar…',needTwo:'Precisa de pelo menos 2 pessoas pra começar.',start:'Começar partida',leave:'Sair da sala',bots:'Completar a mesa com a banda',botsSub:n=>n?`Entram também: ${n}`:'Escolha os personagens em "Quem senta na mesa" antes de criar a sala.',errNoroom:'Sala não encontrada. Confira o código.',errStarted:'Essa partida já começou.',errFull:'A sala está cheia.',errNet:'Sem conexão. Tente de novo.',closed:'O anfitrião fechou a sala.',hostLost:'A conexão do anfitrião caiu… esperando ele voltar.',waitRemote:n=>`Esperando ${n}…`,waitDrink:n=>`${n} está decidindo se toma uma…`,onlineTag:'Online',backLobby:'Voltar pra sala',again:'Jogar de novo na mesma sala',hostWarn:'Você é o anfitrião: mantenha o jogo aberto até o fim, senão a partida para pra todo mundo.',turnS:s=>`⏱ ${s}s`,kickedMsg:n=>`${n} ficou 2 minutos sem jogar e saiu da mesa.`,kickedT:'Você foi eliminado',kickedSub:'Você ficou 2 minutos sem jogar. Essa partida não conta pontos pra você.',nameT:'Qual é o seu nome?',nameSub:'É assim que os outros jogadores vão te ver na mesa.',nameGo:'Entrar',newHost:'O anfitrião saiu. Agora a mesa roda no seu celular: deixe o jogo aberto!',spied:n=>`🔮 ${n} usou o Mystical Cat na sua mão!`,quick:'⚡ Achar mesa',quickSub:'Junta você com quem está procurando jogo. Se ninguém aparecer em 30 segundos, a banda completa a mesa.',onlineN:n=>`🟢 ${n} ${n===1?'pessoa online':'pessoas online'} agora`,openT:'Mesas abertas',openEmpty:'Nenhuma mesa aberta agora. Que tal o ⚡ Achar mesa?',tableOf:n=>`Mesa de ${n}`,sit:'Sentar',startsIn:s=>`começa em ${s}s`,nowT:'Online agora',nowEmpty:'Ninguém mais online agora. Chame os amigos com o link!',invite:'Convidar',invited:'Convidado ✓',busy:'jogando',noInv:'não aceita convites',acceptInv:'Aceitar convites',acceptInvSub:'Outros jogadores podem te chamar pra mesa deles.',invT:n=>`${n} te chamou pra uma mesa!`,invYes:'Bora!',invNo:'Agora não',invPauseSub:'Seu jogo contra a máquina ficou pausado. Se você aceitar, ele termina aqui e você vai pra mesa online.',invStay:'Continuar meu jogo',invGo:'Ir jogar online',openRoom:'Mesa aberta',openRoomSub:'Aparece no saguão pra qualquer um sentar.',quickWait:s=>`⚡ Mesa rápida: a partida começa em ${s}s. Quem chegar até lá entra!`,quickFill:'A banda completa as cadeiras vazias.',inviteWait:'Já convidou essa pessoa há pouco. Espere um pouquinho.',inviteOff:'Essa pessoa saiu ou não aceita convites agora.',inviteBusy:'Convite enviado! Quem está no meio de uma partida vê o convite quando voltar pro menu.',invBanner:n=>`📨 ${n} te chamou pra jogar online. O convite abre quando você voltar pro menu.`,chatT:'Chat da mesa',chatPh:'Escreva uma mensagem…',chatSend:'Enviar',chatEmpty:'Ninguém falou nada ainda. Manda um oi!',chatQuick:['🤘','Bora!','Zap! ⚡','Kkkkk','Tô de olho 👀','Boa! 👏','GG'],lives:'Vidas',winT:'Você ganhou a partida online!',winSub:'Ganhou de todo mundo na mesa. Pode cobrar a rodada!'},
-  en:{boxT:'🌐 Play online',boxSub:'Play with friends and fans, each on their own phone.',create:'Create room',join:'Join',codePh:'Code',lobbyT:'Room',share:'Send the code or the link to your friends:',copy:'Copy link',copied:'Link copied!',wa:'Send on WhatsApp',waText:(c,u)=>`Let’s play Ace of Stars? Room ${c}: ${u}`,players:n=>`At the table (${n}/8)`,hostTag:'host',you:'you',waitHost:'Waiting for the host to start…',needTwo:'You need at least 2 people to start.',start:'Start game',leave:'Leave room',bots:'Fill the table with the band',botsSub:n=>n?`Also joining: ${n}`:'Pick characters in "Who sits at the table" before creating the room.',errNoroom:'Room not found. Check the code.',errStarted:'That game has already started.',errFull:'The room is full.',errNet:'No connection. Try again.',closed:'The host closed the room.',hostLost:'The host lost connection… waiting for them.',waitRemote:n=>`Waiting for ${n}…`,waitDrink:n=>`${n} is deciding whether to have a drink…`,onlineTag:'Online',backLobby:'Back to the room',again:'Play again in the same room',hostWarn:'You are the host: keep the game open until the end, or the game stops for everyone.',turnS:s=>`⏱ ${s}s`,kickedMsg:n=>`${n} didn’t play for 2 minutes and left the table.`,kickedT:'You were eliminated',kickedSub:'You didn’t play for 2 minutes. This game doesn’t count points for you.',nameT:'What’s your name?',nameSub:'This is how the other players will see you at the table.',nameGo:'Join',newHost:'The host left. The table now runs on your phone: keep the game open!',spied:n=>`🔮 ${n} used the Mystical Cat on your hand!`,quick:'⚡ Find a table',quickSub:'Matches you with other people looking for a game. If nobody shows up in 30 seconds, the band fills the table.',onlineN:n=>`🟢 ${n} ${n===1?'person':'people'} online now`,openT:'Open tables',openEmpty:'No open tables right now. Try ⚡ Find a table!',tableOf:n=>`${n}’s table`,sit:'Sit',startsIn:s=>`starts in ${s}s`,nowT:'Online now',nowEmpty:'Nobody else is online right now. Invite your friends with the link!',invite:'Invite',invited:'Invited ✓',busy:'playing',noInv:'not taking invites',acceptInv:'Accept invites',acceptInvSub:'Other players can call you to their table.',invT:n=>`${n} invited you to a table!`,invYes:'Let’s go!',invNo:'Not now',invPauseSub:'Your game against the computer is paused. If you accept, it ends here and you go to the online table.',invStay:'Keep playing my game',invGo:'Go play online',openRoom:'Open table',openRoomSub:'Shows up in the lobby so anyone can sit.',quickWait:s=>`⚡ Quick table: the game starts in ${s}s. Anyone who arrives gets in!`,quickFill:'The band fills the empty seats.',inviteWait:'You invited this person a moment ago. Wait a little.',inviteOff:'This person left or isn’t taking invites now.',inviteBusy:'Invite sent! Someone in the middle of a game sees it when they go back to the menu.',invBanner:n=>`📨 ${n} invited you to play online. The invite opens when you go back to the menu.`,chatT:'Table chat',chatPh:'Write a message…',chatSend:'Send',chatEmpty:'Nobody has said anything yet. Say hi!',chatQuick:['🤘','Let’s go!','Zap! ⚡','Lol','Watching you 👀','Nice! 👏','GG'],lives:'Lives',winT:'You won the online game!',winSub:'You beat everyone at the table. Drinks are on them!'},
-  es:{boxT:'🌐 Jugar online',boxSub:'Juega con amigos y fans, cada uno en su celular.',create:'Crear sala',join:'Entrar',codePh:'Código',lobbyT:'Sala',share:'Manda el código o el link a tus amigos:',copy:'Copiar link',copied:'¡Link copiado!',wa:'Mandar por WhatsApp',waText:(c,u)=>`¿Jugamos Ace of Stars? Sala ${c}: ${u}`,players:n=>`En la mesa (${n}/8)`,hostTag:'anfitrión',you:'tú',waitHost:'Esperando que el anfitrión empiece…',needTwo:'Se necesitan al menos 2 personas para empezar.',start:'Empezar partida',leave:'Salir de la sala',bots:'Completar la mesa con la banda',botsSub:n=>n?`También entran: ${n}`:'Elige personajes en "Quién se sienta" antes de crear la sala.',errNoroom:'Sala no encontrada. Revisa el código.',errStarted:'Esa partida ya empezó.',errFull:'La sala está llena.',errNet:'Sin conexión. Inténtalo de nuevo.',closed:'El anfitrión cerró la sala.',hostLost:'Se cayó la conexión del anfitrión… esperando que vuelva.',waitRemote:n=>`Esperando a ${n}…`,waitDrink:n=>`${n} está decidiendo si se toma una…`,onlineTag:'Online',backLobby:'Volver a la sala',again:'Jugar otra vez en la misma sala',hostWarn:'Eres el anfitrión: mantén el juego abierto hasta el final, o la partida se detiene para todos.',turnS:s=>`⏱ ${s}s`,kickedMsg:n=>`${n} pasó 2 minutos sin jugar y salió de la mesa.`,kickedT:'Te eliminaron',kickedSub:'Pasaste 2 minutos sin jugar. Esta partida no te suma puntos.',nameT:'¿Cómo te llamas?',nameSub:'Así te verán los otros jugadores en la mesa.',nameGo:'Entrar',newHost:'El anfitrión se fue. Ahora la mesa corre en tu celular: ¡deja el juego abierto!',spied:n=>`🔮 ¡${n} usó el Mystical Cat en tu mano!`,quick:'⚡ Buscar mesa',quickSub:'Te junta con quien está buscando partida. Si nadie aparece en 30 segundos, la banda completa la mesa.',onlineN:n=>`🟢 ${n} ${n===1?'persona':'personas'} en línea`,openT:'Mesas abiertas',openEmpty:'No hay mesas abiertas ahora. ¡Prueba ⚡ Buscar mesa!',tableOf:n=>`Mesa de ${n}`,sit:'Sentarse',startsIn:s=>`empieza en ${s}s`,nowT:'En línea ahora',nowEmpty:'Nadie más está en línea. ¡Invita a tus amigos con el link!',invite:'Invitar',invited:'Invitado ✓',busy:'jugando',noInv:'no acepta invitaciones',acceptInv:'Aceptar invitaciones',acceptInvSub:'Otros jugadores pueden llamarte a su mesa.',invT:n=>`¡${n} te invitó a una mesa!`,invYes:'¡Vamos!',invNo:'Ahora no',invPauseSub:'Tu juego contra la máquina quedó en pausa. Si aceptas, termina aquí y vas a la mesa online.',invStay:'Seguir mi juego',invGo:'Ir a jugar online',openRoom:'Mesa abierta',openRoomSub:'Aparece en el lobby para que cualquiera se siente.',quickWait:s=>`⚡ Mesa rápida: la partida empieza en ${s}s. ¡Quien llegue entra!`,quickFill:'La banda completa los asientos vacíos.',inviteWait:'Invitaste a esta persona hace poco. Espera un poquito.',inviteOff:'Esta persona se fue o no acepta invitaciones ahora.',inviteBusy:'¡Invitación enviada! Quien está en medio de una partida la ve cuando vuelve al menú.',invBanner:n=>`📨 ${n} te invitó a jugar online. La invitación se abre cuando vuelvas al menú.`,chatT:'Chat de la mesa',chatPh:'Escribe un mensaje…',chatSend:'Enviar',chatEmpty:'Nadie ha dicho nada todavía. ¡Saluda!',chatQuick:['🤘','¡Vamos!','¡Zap! ⚡','Jajaja','Te estoy mirando 👀','¡Bien! 👏','GG'],lives:'Vidas',winT:'¡Ganaste la partida online!',winSub:'Le ganaste a toda la mesa. ¡Que paguen la ronda!'}
+  pt:{boxT:'🌐 Jogar online',boxSub:'Jogue com amigos e fãs, cada um no seu celular.',create:'Criar sala',join:'Entrar',codePh:'Código',lobbyT:'Sala',share:'Mande o código ou o link pros amigos:',copy:'Copiar link',copied:'Link copiado!',wa:'Mandar no WhatsApp',waText:(c,u)=>`Bora jogar Ace of Stars comigo? Sala ${c}: ${u}`,players:n=>`Na mesa (${n}/8)`,hostTag:'anfitrião',you:'você',waitHost:'Esperando o anfitrião começar…',needTwo:'Precisa de pelo menos 2 pessoas pra começar.',start:'Começar partida',leave:'Sair da sala',bots:'Completar a mesa com a banda',botsSub:n=>n?`Entram também: ${n}`:'Escolha os personagens em "Quem senta na mesa" antes de criar a sala.',errNoroom:'Sala não encontrada. Confira o código.',errStarted:'Essa partida já começou.',errFull:'A sala está cheia.',errNet:'Sem conexão. Tente de novo.',closed:'O anfitrião fechou a sala.',hostLost:'A conexão do anfitrião caiu… esperando ele voltar.',waitRemote:n=>`Esperando ${n}…`,waitDrink:n=>`${n} está decidindo se toma uma…`,onlineTag:'Online',backLobby:'Voltar pra sala',again:'Jogar de novo na mesma sala',powT:'Poderes liberados',powSub:'Cerveja, Jack, Mystical Cat e Dark Side. Desligue pra um jogo limpo.',powOffNote:'🚫 Mesa limpa: sem poderes nesta partida.',lateWait:'Essa mesa já está rolando. Você entra na próxima mão, com metade das vidas.',lateIn:n=>`${n} entrou na mesa!`,playingTag:'em andamento',hostWarn:'Você é o anfitrião: mantenha o jogo aberto até o fim, senão a partida para pra todo mundo.',turnS:s=>`⏱ ${s}s`,kickedMsg:n=>`${n} ficou 2 minutos sem jogar e saiu da mesa.`,kickedT:'Você foi eliminado',kickedSub:'Você ficou 2 minutos sem jogar. Essa partida não conta pontos pra você.',nameT:'Qual é o seu nome?',nameSub:'É assim que os outros jogadores vão te ver na mesa.',nameGo:'Entrar',newHost:'O anfitrião saiu. Agora a mesa roda no seu celular: deixe o jogo aberto!',spied:n=>`🔮 ${n} usou o Mystical Cat na sua mão!`,quick:'⚡ Achar mesa',quickSub:'Junta você com quem está procurando jogo. Se ninguém aparecer em 30 segundos, a banda completa a mesa.',onlineN:n=>`🟢 ${n} ${n===1?'pessoa online':'pessoas online'} agora`,openT:'Mesas abertas',openEmpty:'Nenhuma mesa aberta agora. Que tal o ⚡ Achar mesa?',tableOf:n=>`Mesa de ${n}`,sit:'Sentar',startsIn:s=>`começa em ${s}s`,nowT:'Online agora',nowEmpty:'Ninguém mais online agora. Chame os amigos com o link!',invite:'Convidar',invited:'Convidado ✓',busy:'jogando',noInv:'não aceita convites',acceptInv:'Aceitar convites',acceptInvSub:'Outros jogadores podem te chamar pra mesa deles.',invT:n=>`${n} te chamou pra uma mesa!`,invYes:'Bora!',invNo:'Agora não',invPauseSub:'Seu jogo contra a máquina ficou pausado. Se você aceitar, ele termina aqui e você vai pra mesa online.',invStay:'Continuar meu jogo',invGo:'Ir jogar online',openRoom:'Mesa aberta',openRoomSub:'Aparece no saguão pra qualquer um sentar.',quickWait:s=>`⚡ Mesa rápida: a partida começa em ${s}s. Quem chegar até lá entra!`,quickFill:'A banda completa as cadeiras vazias.',inviteWait:'Já convidou essa pessoa há pouco. Espere um pouquinho.',inviteOff:'Essa pessoa saiu ou não aceita convites agora.',inviteBusy:'Convite enviado! Quem está no meio de uma partida vê o convite quando voltar pro menu.',invBanner:n=>`📨 ${n} te chamou pra jogar online. O convite abre quando você voltar pro menu.`,chatT:'Chat da mesa',chatPh:'Escreva uma mensagem…',chatSend:'Enviar',chatEmpty:'Ninguém falou nada ainda. Manda um oi!',chatQuick:['🤘','Bora!','Zap! ⚡','Kkkkk','Tô de olho 👀','Boa! 👏','GG'],lives:'Vidas',winT:'Você ganhou a partida online!',winSub:'Ganhou de todo mundo na mesa. Pode cobrar a rodada!'},
+  en:{boxT:'🌐 Play online',boxSub:'Play with friends and fans, each on their own phone.',create:'Create room',join:'Join',codePh:'Code',lobbyT:'Room',share:'Send the code or the link to your friends:',copy:'Copy link',copied:'Link copied!',wa:'Send on WhatsApp',waText:(c,u)=>`Let’s play Ace of Stars? Room ${c}: ${u}`,players:n=>`At the table (${n}/8)`,hostTag:'host',you:'you',waitHost:'Waiting for the host to start…',needTwo:'You need at least 2 people to start.',start:'Start game',leave:'Leave room',bots:'Fill the table with the band',botsSub:n=>n?`Also joining: ${n}`:'Pick characters in "Who sits at the table" before creating the room.',errNoroom:'Room not found. Check the code.',errStarted:'That game has already started.',errFull:'The room is full.',errNet:'No connection. Try again.',closed:'The host closed the room.',hostLost:'The host lost connection… waiting for them.',waitRemote:n=>`Waiting for ${n}…`,waitDrink:n=>`${n} is deciding whether to have a drink…`,onlineTag:'Online',backLobby:'Back to the room',again:'Play again in the same room',powT:'Powers allowed',powSub:'Beer, Jack, Mystical Cat and Dark Side. Turn off for a clean game.',powOffNote:'🚫 Clean table: no powers this game.',lateWait:'This table is already playing. You join on the next hand, with half the lives.',lateIn:n=>`${n} joined the table!`,playingTag:'in progress',hostWarn:'You are the host: keep the game open until the end, or the game stops for everyone.',turnS:s=>`⏱ ${s}s`,kickedMsg:n=>`${n} didn’t play for 2 minutes and left the table.`,kickedT:'You were eliminated',kickedSub:'You didn’t play for 2 minutes. This game doesn’t count points for you.',nameT:'What’s your name?',nameSub:'This is how the other players will see you at the table.',nameGo:'Join',newHost:'The host left. The table now runs on your phone: keep the game open!',spied:n=>`🔮 ${n} used the Mystical Cat on your hand!`,quick:'⚡ Find a table',quickSub:'Matches you with other people looking for a game. If nobody shows up in 30 seconds, the band fills the table.',onlineN:n=>`🟢 ${n} ${n===1?'person':'people'} online now`,openT:'Open tables',openEmpty:'No open tables right now. Try ⚡ Find a table!',tableOf:n=>`${n}’s table`,sit:'Sit',startsIn:s=>`starts in ${s}s`,nowT:'Online now',nowEmpty:'Nobody else is online right now. Invite your friends with the link!',invite:'Invite',invited:'Invited ✓',busy:'playing',noInv:'not taking invites',acceptInv:'Accept invites',acceptInvSub:'Other players can call you to their table.',invT:n=>`${n} invited you to a table!`,invYes:'Let’s go!',invNo:'Not now',invPauseSub:'Your game against the computer is paused. If you accept, it ends here and you go to the online table.',invStay:'Keep playing my game',invGo:'Go play online',openRoom:'Open table',openRoomSub:'Shows up in the lobby so anyone can sit.',quickWait:s=>`⚡ Quick table: the game starts in ${s}s. Anyone who arrives gets in!`,quickFill:'The band fills the empty seats.',inviteWait:'You invited this person a moment ago. Wait a little.',inviteOff:'This person left or isn’t taking invites now.',inviteBusy:'Invite sent! Someone in the middle of a game sees it when they go back to the menu.',invBanner:n=>`📨 ${n} invited you to play online. The invite opens when you go back to the menu.`,chatT:'Table chat',chatPh:'Write a message…',chatSend:'Send',chatEmpty:'Nobody has said anything yet. Say hi!',chatQuick:['🤘','Let’s go!','Zap! ⚡','Lol','Watching you 👀','Nice! 👏','GG'],lives:'Lives',winT:'You won the online game!',winSub:'You beat everyone at the table. Drinks are on them!'},
+  es:{boxT:'🌐 Jugar online',boxSub:'Juega con amigos y fans, cada uno en su celular.',create:'Crear sala',join:'Entrar',codePh:'Código',lobbyT:'Sala',share:'Manda el código o el link a tus amigos:',copy:'Copiar link',copied:'¡Link copiado!',wa:'Mandar por WhatsApp',waText:(c,u)=>`¿Jugamos Ace of Stars? Sala ${c}: ${u}`,players:n=>`En la mesa (${n}/8)`,hostTag:'anfitrión',you:'tú',waitHost:'Esperando que el anfitrión empiece…',needTwo:'Se necesitan al menos 2 personas para empezar.',start:'Empezar partida',leave:'Salir de la sala',bots:'Completar la mesa con la banda',botsSub:n=>n?`También entran: ${n}`:'Elige personajes en "Quién se sienta" antes de crear la sala.',errNoroom:'Sala no encontrada. Revisa el código.',errStarted:'Esa partida ya empezó.',errFull:'La sala está llena.',errNet:'Sin conexión. Inténtalo de nuevo.',closed:'El anfitrión cerró la sala.',hostLost:'Se cayó la conexión del anfitrión… esperando que vuelva.',waitRemote:n=>`Esperando a ${n}…`,waitDrink:n=>`${n} está decidiendo si se toma una…`,onlineTag:'Online',backLobby:'Volver a la sala',again:'Jugar otra vez en la misma sala',powT:'Poderes permitidos',powSub:'Cerveza, Jack, Mystical Cat y Dark Side. Apágalo para un juego limpio.',powOffNote:'🚫 Mesa limpia: sin poderes en esta partida.',lateWait:'Esta mesa ya está jugando. Entras en la próxima mano, con la mitad de las vidas.',lateIn:n=>`${n} entró a la mesa!`,playingTag:'en curso',hostWarn:'Eres el anfitrión: mantén el juego abierto hasta el final, o la partida se detiene para todos.',turnS:s=>`⏱ ${s}s`,kickedMsg:n=>`${n} pasó 2 minutos sin jugar y salió de la mesa.`,kickedT:'Te eliminaron',kickedSub:'Pasaste 2 minutos sin jugar. Esta partida no te suma puntos.',nameT:'¿Cómo te llamas?',nameSub:'Así te verán los otros jugadores en la mesa.',nameGo:'Entrar',newHost:'El anfitrión se fue. Ahora la mesa corre en tu celular: ¡deja el juego abierto!',spied:n=>`🔮 ¡${n} usó el Mystical Cat en tu mano!`,quick:'⚡ Buscar mesa',quickSub:'Te junta con quien está buscando partida. Si nadie aparece en 30 segundos, la banda completa la mesa.',onlineN:n=>`🟢 ${n} ${n===1?'persona':'personas'} en línea`,openT:'Mesas abiertas',openEmpty:'No hay mesas abiertas ahora. ¡Prueba ⚡ Buscar mesa!',tableOf:n=>`Mesa de ${n}`,sit:'Sentarse',startsIn:s=>`empieza en ${s}s`,nowT:'En línea ahora',nowEmpty:'Nadie más está en línea. ¡Invita a tus amigos con el link!',invite:'Invitar',invited:'Invitado ✓',busy:'jugando',noInv:'no acepta invitaciones',acceptInv:'Aceptar invitaciones',acceptInvSub:'Otros jugadores pueden llamarte a su mesa.',invT:n=>`¡${n} te invitó a una mesa!`,invYes:'¡Vamos!',invNo:'Ahora no',invPauseSub:'Tu juego contra la máquina quedó en pausa. Si aceptas, termina aquí y vas a la mesa online.',invStay:'Seguir mi juego',invGo:'Ir a jugar online',openRoom:'Mesa abierta',openRoomSub:'Aparece en el lobby para que cualquiera se siente.',quickWait:s=>`⚡ Mesa rápida: la partida empieza en ${s}s. ¡Quien llegue entra!`,quickFill:'La banda completa los asientos vacíos.',inviteWait:'Invitaste a esta persona hace poco. Espera un poquito.',inviteOff:'Esta persona se fue o no acepta invitaciones ahora.',inviteBusy:'¡Invitación enviada! Quien está en medio de una partida la ve cuando vuelve al menú.',invBanner:n=>`📨 ${n} te invitó a jugar online. La invitación se abre cuando vuelvas al menú.`,chatT:'Chat de la mesa',chatPh:'Escribe un mensaje…',chatSend:'Enviar',chatEmpty:'Nadie ha dicho nada todavía. ¡Saluda!',chatQuick:['🤘','¡Vamos!','¡Zap! ⚡','Jajaja','Te estoy mirando 👀','¡Bien! 👏','GG'],lives:'Vidas',winT:'¡Ganaste la partida online!',winSub:'Le ganaste a toda la mesa. ¡Que paguen la ronda!'}
 };
 function OT(){ return ON_T[LANG]||ON_T.pt; }
 const Online={
@@ -2431,7 +2432,7 @@ async function roomJoin(code){
   S.room={busy:true,joinCode:code}; Chat.reset(); render();
   try{ const d=await Online.post({a:'join',code,...Online.me()});
     const isHost=!!d.hostPid&&d.hostPid===d.pid;
-    S.room={code:d.code,token:d.token,pid:d.pid,host:isHost,hostPid:d.hostPid,players:[],status:d.status||'lobby'}; saveRoom();
+    S.room={code:d.code,token:d.token,pid:d.pid,host:isHost,hostPid:d.hostPid,players:[],status:d.status||'lobby',late:!!d.late}; saveRoom();
     if(isHost&&d.status==='playing'){ S.phase='lobby'; Online.post({a:'reopen',code:d.code,token:d.token}).catch(()=>{}); lobbyLoop(); render(); return; }
     if(d.status==='playing') clientStart(); else { S.phase='lobby'; lobbyLoop(); }
   }catch(e){ S.room={err:Online.errText(e),joinCode:code}; }
@@ -2445,7 +2446,7 @@ async function roomLeave(){
 async function lobbyLoop(){
   const R=S.room; if(!R) return;
   while(S.room===R&&S.phase==='lobby'){
-    try{ const d=await Online.post({a:'lobby',code:R.code,token:R.token,cs:Chat.last}); Chat.take(d.chat); R.players=d.players.filter(p=>!p.left); R.status=d.status; R.err=null; R.hostPid=d.hostPid; R.open=d.open; R.quick=d.quick; R.startIn=d.startIn; if(d.hostPid&&R.host!==(d.hostPid===R.pid)){ R.host=d.hostPid===R.pid; saveRoom(); }
+    try{ const d=await Online.post({a:'lobby',code:R.code,token:R.token,cs:Chat.last}); Chat.take(d.chat); R.players=d.players.filter(p=>!p.left); R.status=d.status; R.err=null; R.hostPid=d.hostPid; R.open=d.open; if(!R.host) R.powers=d.powers; R.quick=d.quick; R.startIn=d.startIn; if(d.hostPid&&R.host!==(d.hostPid===R.pid)){ R.host=d.hostPid===R.pid; saveRoom(); }
       if(R.host&&R.quick&&d.status==='lobby'&&d.startIn!=null&&d.startIn<=0){ hostStart(); return; }
       if(d.status==='closed'){ S.room={err:OT().closed}; saveRoom(); S.phase='setup'; render(); return; }
       if(!R.host&&d.status==='playing'){ clientStart(); return; }
@@ -2472,9 +2473,10 @@ function lobbyHTML(){
     ${hallNowHTML(true)}
     ${R.host&&!R.quick?`<div class="item lbots"><span><b>${o.bots}</b><small>${o.botsSub(bots.map(b=>b.short).join(', '))}</small></span><button class="toggle" id="roombots" aria-pressed="${!!R.bots}" ${bots.length?'':'disabled'}></button></div>
       <div class="item lbots"><span><b>${o.lives}</b></span><div class="row">${[1,2,3,4,5].map(n=>`<button class="pchip" data-lives="${n}" aria-pressed="${S.startLives===n}">${n}</button>`).join('')}</div></div>
+      <div class="item lbots"><span><b>⚡ ${o.powT}</b><small>${o.powSub}</small></span><button class="toggle" id="roompow" aria-pressed="${R.powers!==false}"></button></div>
       <p class="hint">${o.hostWarn}</p>
       <button class="cta" id="roomstart" ${(R.players||[]).length>=2?'':'disabled'}>${o.start}</button>${(R.players||[]).length<2?`<p class="hint needtwo">${o.needTwo}</p>`:''}`
-      :R.quick?'':`<p class="lobbywait">${o.waitHost}</p>`}
+      :R.quick?'':`${R.powers===false?`<p class="hint">${o.powOffNote}</p>`:''}<p class="lobbywait">${o.waitHost}</p>`}
     ${R.err?`<p class="warn">${R.err}</p>`:''}
     <div class="row"><button class="ghost" id="roomleave">${o.leave}</button></div>
   </section>`;
@@ -2555,7 +2557,7 @@ function dmToastHTML(){
 }
 function hallRoomsHTML(){
   const o=OT(); if(!Hall.rooms.length) return `<h3 class="hallh">${o.openT}</h3><p class="hint">${o.openEmpty}</p>`;
-  return `<h3 class="hallh">${o.openT}</h3><ul class="hall">${Hall.rooms.map(r=>`<li><span class="mini">${avatarHTML({av:r.av,short:r.host})}</span><span class="hn"><b>${esc(o.tableOf(r.host))}</b><small>${r.n}/8${r.quick&&r.startIn!=null?' · '+o.startsIn(r.startIn):''}</small></span><button class="cta sm" data-sit="${esc(r.code)}">${o.sit}</button></li>`).join('')}</ul>`;
+  return `<h3 class="hallh">${o.openT}</h3><ul class="hall">${Hall.rooms.map(r=>`<li><span class="mini">${avatarHTML({av:r.av,short:r.host})}</span><span class="hn"><b>${esc(o.tableOf(r.host))}</b><small>${r.n}/8${r.playing?' · '+o.playingTag:r.quick&&r.startIn!=null?' · '+o.startsIn(r.startIn):''}</small></span><button class="cta sm" data-sit="${esc(r.code)}">${o.sit}</button></li>`).join('')}</ul>`;
 }
 function hallNowHTML(inRoom){
   const o=OT(), mine=S.room&&S.room.players?S.room.players.map(p=>p.name):[];
@@ -2629,14 +2631,31 @@ async function hostStart(){
   let bots=R.bots?roomBots().slice(0,Math.max(0,10-R.players.length)):[];
   if(R.quick){ const pool=BAND.filter(b=>b.group==='band').sort(()=>Math.random()-.5); bots=pool.slice(0,Math.max(0,4-R.players.length)); if(!S.startLives) S.startLives=3; }
   S.online={host:true,code:R.code,token:R.token,pid:R.pid,ver:0};
-  startGame({remotes,bots});
+  startGame({remotes,bots}); S.noPow=R.powers===false; if(S.noPow) setMsg(()=>OT().powOffNote);
   clearInterval(S.onIv); S.onIv=setInterval(hostTick,700);
+}
+// quem entra com a mesa rolando senta na próxima mão, com metade das vidas
+function latePending(){
+  if(!S.online||!S.online.host) return [];
+  const have=new Set(S.players.map(p=>p.rid).filter(Boolean)); have.add(S.online.pid);
+  return (S.online.roster||[]).filter(r=>!r.left&&!have.has(r.pid));
+}
+function hostAddLate(){
+  if(S.duelDone) return;
+  const add=latePending().slice(0,Math.max(0,10-S.players.length)); if(!add.length) return;
+  const top=Math.max(1,...alive().map(p=>p.lives));
+  const lives=Math.min(top,Math.max(1,Math.ceil(S.startLives/2)));
+  add.forEach(r=>{ S.players.push({id:'r_'+r.pid,rid:r.pid,short:r.name,name:r.name,av:r.av,remote:true,style:'human',bias:0,noise:.3,lives,alive:true,hand:[],bet:null,made:0,place:null,beerUsed:false,lastAct:Date.now()}); });
+  const N=S.players.length, v=S.players.findIndex(p=>p.isHuman);
+  S.players.forEach((p,k)=>{ const a=(90+((k-v+N)%N)*360/N)*Math.PI/180; p.cx=+Math.cos(a).toFixed(4); p.cy=+Math.sin(a).toFixed(4); });
+  const names=add.map(r=>r.name).join(', '); setMsg(()=>OT().lateIn(names)); Snd.bell&&Snd.bell(1318,0,.08,.6);
 }
 let pushT=null;
 function hostDirty(){ if(!S.online||!S.online.host||pushT) return; pushT=setTimeout(hostPush,150); }
 async function hostPush(){
   pushT=null; if(!S.online||!S.online.host) return;
   const views={}; S.players.filter(p=>p.remote).forEach(p=>views[p.rid]=buildView(p));
+  latePending().forEach(r=>{ const v=buildView({id:'spec_'+r.pid,rid:r.pid}); v.req=null; v.modal=null; v.watching=true; views[r.pid]=v; });
   const sig=JSON.stringify(views,(k,v)=>k==='turnLeft'?undefined:v)+(S.online.final?'F':'')+(S.online.snap!==S.online.snapSent?'S':'');
   if(sig===S.online.lastSig&&Date.now()-(S.online.lastPush||0)<8000) return;
   S.online.lastSig=sig; S.online.lastPush=Date.now();
@@ -2649,7 +2668,7 @@ async function hostTick(){
   let d; try{ d=await Online.post({a:'take',code:S.online.code,token:S.online.token,cs:Chat.last}); }catch(e){ if(e==='auth'&&S.room){ S.room.host=false; saveRoom(); clearInterval(S.onIv); clientStart(); } return; }
   Chat.take(d.chat);
   (d.actions||[]).forEach(a=>hostAct(a.pid,a.act||{}));
-  S.online.seen=d.seen||{};
+  S.online.seen=d.seen||{}; S.online.roster=d.roster||S.online.roster;
   // quem demora ou caiu: o jogo joga por ele
   const q=S.remoteReq;
   if(q){ const p=byId(q.pid), s=S.online.seen[p.rid]||{}, late=Date.now()-q.t>(q.type==='out'?25000:30000), gone=s.left||s.ago>25;
@@ -2680,6 +2699,7 @@ function hostAct(rid,a){
   if(a.type==='bet'&&mine&&q.type==='bet'){ const v=a.v|0; if(v>=0&&v<=S.n&&v!==q.forbidden) remoteResolve(v); }
   else if(a.type==='play'&&mine&&q.type==='play'){ const i=a.i|0; if(i>=0&&i<p.hand.length) remoteResolve(i); }
   else if(a.type==='out'&&mine&&q.type==='out'){ remoteResolve(['beer','sbeer','jack'].includes(a.v)?a.v:'no'); }
+  else if(S.noPow&&(a.type==='dark'||a.type==='cat')){}
   else if(a.type==='dark'){ if(S.bidding&&!S.dark&&!S.darkFx&&p.alive&&p.bet==null&&S.n>=1) darkInvoke(p); }
   else if(a.type==='cat'){ const tid=a.target==='host'?'you':a.target, t=byId(tid); if(t&&t!==p&&t.alive&&S.n!==1){ S.peeks=S.peeks||{}; S.peeks[p.id]={pid:tid,cards:t.hand.map(h=>h.card),k:Date.now()};
     if(t.isHuman) spiedFx(p.id,p.short); else if(t.remote){ S.spied=S.spied||{}; S.spied[t.id]={by:p.id,name:p.short,k:Date.now()}; } hostDirty(); } }
@@ -2698,7 +2718,7 @@ function buildView(p){
   else if(m&&m.type==='duel') modal={type:'duel',k:m.k};
   else if(m&&m.type==='beer') modal={type:'beer',k:m.k,jack:m.jack,who:idm(m.who||'you')};
   else if(m&&m.type==='over') modal={type:'over',k:m.k,winners:m.winners.map(w=>idm(w.id))};
-  return {players,startLives:S.startLives,n:S.n,handNo:S.handNo,dealer:S.dealer,betSum:S.betSum,bidding:!!S.bidding,
+  return {noPow:!!S.noPow,players,startLives:S.startLives,n:S.n,handNo:S.handNo,dealer:S.dealer,betSum:S.betSum,bidding:!!S.bidding,
     vira:S.vira?(S.viraShown?S.vira:{id:'?',r:0,s:'c'}):null,mr:S.viraShown?S.mr:null,viraShown:S.viraShown,
     trick:(S.trick||[]).map(x=>({pid:idm(x.pid),card:x.card,rot:x.rot,k:x.k})),trickWinner:S.trickWinner,collect:S.collect,
     splash:S.splash?{type:S.splash.type,k:S.splash.k}:null,turn:idm(S.turn),msg:(()=>{ try{ return S.msg?S.msg():null; }catch(e){ return null; } })(),bubbles:bub,
@@ -2714,7 +2734,7 @@ async function hostReopen(){
 }
 // retrato do começo da mão: se o anfitrião sair, outro jogador continua daqui
 function makeSnap(){
-  return {hostRid:S.online.pid,handNo:S.handNo,n:S.n,dir:S.dir,dealer:S.dealer,startLives:S.startLives,duelDone:!!S.duelDone,
+  return {noPow:!!S.noPow,hostRid:S.online.pid,handNo:S.handNo,n:S.n,dir:S.dir,dealer:S.dealer,startLives:S.startLives,duelDone:!!S.duelDone,
     players:S.players.map(p=>({rid:p.isHuman?S.online.pid:p.rid||null,remote:!!(p.remote||p.isHuman),short:p.isHuman?(ACE||'Host').trim():p.short,
       av:p.isHuman?(ME?encodeAce(ME):''):(p.av||''),botId:(!p.remote&&!p.isHuman)?p.id:null,lives:p.lives,alive:p.alive,place:p.isHuman?S.place:p.place,beerUsed:p.isHuman?!!S.beerUsed:!!p.beerUsed}))};
 }
@@ -2737,7 +2757,7 @@ function hostResume(snap){
   S.players.forEach((p,k)=>{ const a=(90+((k-v+N)%N)*360/N)*Math.PI/180; p.cx=+Math.cos(a).toFixed(4); p.cy=+Math.sin(a).toFixed(4); });
   S.players.forEach(p=>{ p.lastAct=Date.now(); if(p.isHuman){ p.bias=0; p.noise=.3; } }); S.turnDL=null;
   Object.assign(S,{remoteReq:null,peeks:{},spied:{},dark:false,darkFx:null,catPick:false,catShow:null,scanFx:null,modal:null,menu:false,leaving:false,betReq:null,playReq:null,bubbles:{},trick:[],playedAll:[],msg:null,
-    n:snap.n,dir:snap.dir,dealer:snap.dealer,handNo:snap.handNo,startLives:snap.startLives,duelDone:snap.duelDone,fast:false,tut:false,
+    noPow:!!snap.noPow,n:snap.n,dir:snap.dir,dealer:snap.dealer,handNo:snap.handNo,startLives:snap.startLives,duelDone:snap.duelDone,fast:false,tut:false,
     place:mine?mine.place:S.place,modalK:Date.now(),reqK:Date.now(),phase:'table'});
   clearInterval(S.onIv); S.onIv=setInterval(hostTick,700);
   setMsg(()=>OT().newHost); render();
@@ -2758,7 +2778,7 @@ function clientStart(){
   S.online={host:false,code:R.code,token:R.token,pid:R.pid,ver:-1};
   Object.assign(S,{phase:'table',players:[],trick:[],playedAll:[],bubbles:{},msg:null,modal:null,betReq:null,playReq:null,dark:false,darkFx:null,catPick:false,catShow:null,
     inv:{beer:Rank.me?Rank.me.beer:0,jack:Rank.me?Rank.me.jack:0,cat:Rank.me?(Rank.me.cat|0):0,dark:Rank.me?(Rank.me.dark|0):0},beerUsed:false,beerTaken:false,
-    st:{hands:0,nailed:0,mz:0},place:null,reported:false,ptsBefore:null,picksGot:null,outShown:false,kickedShown:false,turnDL:null,lastPts:null,catWon:false,darkWon:false,tut:false,fast:false,menu:false,leaving:false,handNo:0,n:1,betSum:0,closedK:{},drinks:0});
+    st:{hands:0,nailed:0,mz:0},place:null,reported:false,ptsBefore:null,picksGot:null,outShown:false,kickedShown:false,turnDL:null,lastPts:null,catWon:false,darkWon:false,tut:false,fast:false,menu:false,leaving:false,handNo:0,n:1,betSum:0,closedK:{},drinks:0,watching:!!R.late,noPow:false});
   render(); clientLoop();
 }
 async function clientLoop(){
@@ -2777,7 +2797,7 @@ async function clientLoop(){
 function sendAct(act){ if(!S.online) return; Online.post({a:'act',code:S.online.code,token:S.online.token,act}).catch(()=>{}); }
 function applyView(v){
   const prevTrick=(S.trick||[]).length, prevHand=S.handNo, prevBets=(S.players||[]).map(p=>p.bet);
-  S.players=v.players; S.startLives=v.startLives; S.n=v.n; S.handNo=v.handNo; S.dealer=v.dealer; S.betSum=v.betSum; S.bidding=v.bidding;
+  S.players=v.players; S.noPow=!!v.noPow; S.watching=!!v.watching; S.startLives=v.startLives; S.n=v.n; S.handNo=v.handNo; S.dealer=v.dealer; S.betSum=v.betSum; S.bidding=v.bidding;
   S.vira=v.vira; S.mr=v.mr; S.viraShown=v.viraShown; S.trickWinner=v.trickWinner; S.collect=v.collect; S.turn=v.turn; S.playedAll=[];
   const old={}; (S.trick||[]).forEach(x=>old[x.k]=1);
   S.trick=(v.trick||[]).map(x=>({...x,fresh:!old[x.k]}));
@@ -3792,7 +3812,7 @@ function coachHTML(){
   return `<div class="coach${S.coach.btn?' sheetmode':''}${top?' top':''}${S.coach.fresh?' anim':''}" role="status" aria-live="polite"><small>★ ${t.tutLabel}</small><p>${txt}</p>${coachVis(S.coach.key)}${S.coach.btn?`<button class="cta" id="coachok">${t.tutNext}</button>`:''}</div>`;
 }
 function tableHTML(){
-  const you=byId('you'), t=T();
+  const you=byId('you')||{id:'you',hand:[],lives:0,alive:false,bet:null,made:0}, t=T();
   const mode=S.dark?DT().mode:(t.mode[S.n]||t.mode.n);
   const vira=!S.vira||!S.players.some(p=>p.hand.length)&&S.trick.length===0&&S.playedAll.length===0&&S.betSum===0&&!S.viraShown
     ? '' : '';
@@ -3826,7 +3846,7 @@ function tableHTML(){
   } else if(canPlay){
     actions=`<div class="prompt">${t.pickCard}</div>${S.dark?`<p class="hint">${DT().playHint}</p>`:S.n===3&&you.hand.some(h=>h.vis!=='own')?`<p class="hint">${t.blindHint}</p>`:''}`;
   } else if(!you.alive){
-    actions=`<p class="hint">${t.outWatch}</p>`;
+    actions=`<p class="hint">${S.watching?OT().lateWait:t.outWatch}</p>`;
   }
 
   return `
@@ -4023,7 +4043,7 @@ function render(){
   document.documentElement.lang={pt:'pt-BR',en:'en',es:'es'}[LANG];
   const app=document.getElementById('app'), game=S.phase==='table';
   if(!game) Music.clearSolo();
-  if(game&&!byId('you')){ app.className=''; app.innerHTML=`<div class="connecting"><p class="lobbywait">${OT().waitHost}</p><button class="ghost" id="roomleave">${OT().leave}</button></div>`; return; }
+  if(game&&!byId('you')&&!(S.watching&&S.players.length)){ app.className=''; app.innerHTML=`<div class="connecting"><p class="lobbywait">${S.watching?OT().lateWait:OT().waitHost}</p><button class="ghost" id="roomleave">${OT().leave}</button></div>`; return; }
   const SCR='.sheet,.scroll,.tbl'; const keepSc=[...app.querySelectorAll(SCR)].map(e=>[e.getAttribute('aria-label')||e.className,e.scrollTop]);
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
@@ -4158,6 +4178,7 @@ document.addEventListener('click',e=>{
   if(t.id==='roomjoin'){ const i=document.getElementById('roomcode'); roomJoin(i&&i.value); return; }
   if(t.id==='roomleave'){ roomLeave(); return; }
   if(t.id==='roomstart'){ hostStart(); return; }
+  if(t.id==='roompow'&&S.room&&S.room.host){ S.room.powers=S.room.powers===false; Online.post({a:'setopen',code:S.room.code,token:S.room.token,open:!!S.room.open,lives:S.startLives,powers:S.room.powers!==false}).catch(()=>{}); render(); return; }
   if(t.id==='roombots'&&S.room){ S.room.bots=!S.room.bots; render(); return; }
   if(t.id==='copylink'&&S.room){ const u=Online.link(S.room.code); try{ navigator.clipboard.writeText(u).then(()=>{ S.room.copied=true; render(); setTimeout(()=>{ if(S.room){ S.room.copied=false; render(); } },2000); }).catch(()=>{}); }catch(e){} return; }
   if((S.catPick||S.catShow||S.darkFx)&&(t.dataset.bet!=null||t.dataset.play!=null)) return;

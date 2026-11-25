@@ -2797,7 +2797,7 @@ function tableMult(){
 function placePoints(place){ const N=S.players.length; return Math.round(10*(N-place)/Math.max(1,N-1)*tableMult()); }
 function finishFor(place){
   if(S.tut||S.reported||!place) return;
-  S.reported=true; S.place=place; S.ptsBefore=null; const before=myPts();
+  S.reported=true; S.place=place; S.ptsBefore=null; const before=myPts(); try{ localStorage.setItem('fodinha-games',String(+(localStorage.getItem('fodinha-games')||0)+1)); }catch(e){}
   const pts=Math.round(placePoints(place)*(S.beerTaken?.5:1)*(S.online?1.3:1)); S.lastPts=pts;
   Rank.submit({av:ME?encodeAce(ME):'',name:(ACE||T().you).trim(),pts,win:place===1,nailed:S.st.nailed,hands:S.st.hands,mz:S.st.mz,place,n:S.players.length}).then(d=>{
     if(!d||S.tut) return;
@@ -3267,7 +3267,8 @@ function bonusSheetHTML(){
     <h2>${m.bonusT}</h2><p>${m.boxSub}</p><div class="mlist">${cards}</div></div></div>`;
 }
 function miniMaybeInvite(){
-  if(S.tut) return; const d=miniDisc(), g=MINI_LIST.map(x=>x[0]).find(x=>!d.includes(x)); if(!g) return;
+  if(S.tut) return; let n=0; try{ n=+(localStorage.getItem('fodinha-games')||0); }catch(e){} const sv=Rank.data&&Rank.data.all&&Rank.data.all.me; n=Math.max(n,sv?sv.games|0:0); if(n<3) return;
+  const d=miniDisc(), g=MINI_LIST.map(x=>x[0]).find(x=>!d.includes(x)); if(!g) return;
   if(d.length&&Math.random()>.4) return;
   setTimeout(()=>{ if(S.miniInvite||Mini.el) return; S.miniInvite={g}; render(); Snd.fanfare&&Snd.fanfare(); },2600);
 }

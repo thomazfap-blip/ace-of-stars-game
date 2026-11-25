@@ -796,6 +796,8 @@ details.rulesbox .rules{margin-top:8px}
 .mav{display:block;width:40px;height:40px;border-radius:8px;overflow:hidden;position:relative;flex:none}.mav.big{width:62px;height:62px;overflow:visible}.mav.big .avatar{border-radius:10px;overflow:hidden;box-shadow:0 0 0 2px #fff}.mav i{position:absolute;right:-10px;bottom:-10px;font-style:normal;font-size:24px}
 .mtxt{flex:1;min-width:0}.mtxt b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;color:var(--gold);letter-spacing:.03em;line-height:1}.mtxt small{font-size:12px}
 .mlist{display:grid;gap:8px}
+.mfree{font-size:13px;font-weight:700;color:var(--muted);text-align:left!important}.mfree.on{color:#9ee07a}
+.minibox .ghost.mgo.paid{flex-basis:auto;opacity:1;font-size:14px!important;padding:8px 10px!important;border-color:var(--gold);color:var(--gold)}.minibox .mgo:disabled{opacity:.4}
 .bonusbtn{display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;text-align:left;background:linear-gradient(135deg,rgba(245,201,79,.22),rgba(214,38,43,.25));border:1.5px solid var(--gold);border-radius:14px;padding:10px 12px;color:var(--ink);position:relative}
 .bonusbtn .bz{font-size:26px;line-height:1}.bonusbtn .bt{flex:1;min-width:0}.bonusbtn b{display:block;font-family:var(--f-display);font-weight:400;font-size:24px;color:var(--gold);letter-spacing:.03em;line-height:1}.bonusbtn small{font-size:12px}
 .bonusbtn i{font-style:normal;color:var(--gold);font-size:22px}.bonusbtn em{font-style:normal;background:#d6262b;color:#fff;font-weight:800;font-size:12px;border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;padding:0 6px}
@@ -3213,33 +3215,33 @@ function turnHTML(){
 }
 // ---------- Desafios da banda: mini-jogos contra os especiais ----------
 const MINI_T={
-  pt:{short:{kart:'Kart',fish:'Pescaria',surf:'Surfe',yoga:'Yoga',tennis:'Tênis'},vs:'contra',boxT:'🏁 Desafios da banda',bonusT:'⚡ Desafios bônus',found:(n,t)=>`${n} de ${t} descobertos`,today:k=>k?`${k} pra jogar hoje`:'amanhã tem mais',secret:'Desafio secreto',secretSub:'Continue jogando Fodinha pra descobrir.',invT:'⚡ Novo desafio bônus!',invP:(n,g)=>`${n} te desafiou: ${g}!`,invSub:'Ganhe e leve um poder pro seu estoque.',accept:'Aceitar!',later:'Agora não',saved:'Fica guardado em ⚡ Desafios bônus, no seu Perfil. Uma tentativa por dia.',ok:'Beleza',boxSub:'Ganhe dos especiais nos mini-jogos e leve poderes pro seu estoque, desde o primeiro dia. Uma tentativa por dia em cada um.',go:'Jogar',done:'Amanhã tem mais ✓',
+  pt:{short:{kart:'Kart',fish:'Pescaria',surf:'Surfe',yoga:'Yoga',tennis:'Tênis'},vs:'contra',freeNow:'🎁 Você tem 1 jogo grátis hoje, em qualquer desafio.',freeGone:c=>`Jogo grátis de hoje já usado. Volta amanhã ou jogue de novo por ${c} pontos.`,goPay:c=>`${c} pts`,freeOne:'🎁 Seu jogo grátis de hoje.',costOne:c=>`Você já usou o jogo grátis de hoje. Jogar de novo custa ${c} pontos do ranking.`,noPts:c=>`Você já usou o jogo grátis de hoje. Pra jogar de novo precisa de ${c} pontos sobrando sem cair de nível.`,payStart:c=>`Jogar (−${c} pts)`,boxT:'🏁 Desafios da banda',bonusT:'⚡ Desafios bônus',found:(n,t)=>`${n} de ${t} descobertos`,today:k=>k?'1 jogo grátis hoje':'grátis de novo amanhã',secret:'Desafio secreto',secretSub:'Continue jogando Fodinha pra descobrir.',invT:'⚡ Novo desafio bônus!',invP:(n,g)=>`${n} te desafiou: ${g}!`,invSub:'Ganhe e leve um poder pro seu estoque.',accept:'Aceitar!',later:'Agora não',saved:'Fica guardado em ⚡ Desafios bônus, no seu Perfil. Você tem 1 jogo grátis por dia.',ok:'Beleza',boxSub:'Ganhe dos especiais nos mini-jogos e leve poderes pro seu estoque.',go:'Jogar',done:'Amanhã tem mais ✓',
     g:{kart:{t:'Kart com o Luiz Piloto',s:'Chegue na frente dele.',p:'Toque no lado <b>esquerdo</b> ou <b>direito</b> da tela pra trocar de pista. Pegue as ⭐ pra turbinar e desvie dos cones, pneus e óleo.'},
        fish:{t:'Pescaria com o Thomaz Pescador',s:'Pesque mais quilos em 30 segundos.',p:'Quando a boia <b>afundar</b> e aparecer o <b>!</b>, toque rápido pra fisgar. Quanto mais rápido, maior o peixe. Se tocar antes da hora ou numa beliscada, o peixe foge.'},
        surf:{t:'Surfe com o Julio Surfista',s:'Faça mais pontos nas ondas.',p:'Toque pra <b>pular</b> as pedras. No ar, toque de novo pra dar uma <b>manobra</b> (vale muito ponto), mas se não der tempo de completar antes de cair, você toma vaca.'},
        yoga:{t:'Yoga com a Bia da Ioga',s:'Fique mais tempo em equilíbrio.',p:'<b>Segure</b> o lado esquerdo ou direito da tela pra corrigir o corpo e manter o ponteiro no <b>verde</b>. Quanto mais no centro, mais ponto. Se pender demais, você cai.'},
        tennis:{t:'Tênis com o Chris Tenista',s:'Feche 5 pontos antes dele.',p:'<b>Arraste o dedo</b> pra mexer a raquete. Rebater com a ponta da raquete manda a bola em diagonal. A bola acelera a cada troca.'}},
-    prizes:'Se ganhar, leva um destes:',once:'1 tentativa por dia.',start:'Começar!',back:'Voltar',offline:'Sem conexão: vale só pela diversão, sem prêmio.',tried:'Você já jogou esse hoje. Volta amanhã!',go3:'JÁ!',
+    prizes:'Se ganhar, leva um destes:',once:'1 tentativa por dia.',start:'Começar!',back:'Voltar',offline:'Sem conexão: vale só pela diversão, sem prêmio.',tried:'Você já usou o jogo grátis de hoje. Volta amanhã!',go3:'JÁ!',
     win:n=>`Você ganhou do ${n}!`,lose:n=>`${n} ganhou!`,loseSub:'Tenta de novo amanhã.',prizeT:'Seu prêmio',full:'Seu estoque já está cheio de tudo! Use uns poderes e volte amanhã.',names:{beer:'Cerveja',jack:'Jack and Coke',cat:'Mystical Cat',dark:'Dark Side'},toStock:'Foi pro seu estoque.',practice:'Partida de treino: sem prêmio.',err:'Não deu pra registrar o resultado. Tenta de novo amanhã.',
     say:{start:'Bora, Ace!',spin:'Rodei! 😵',lead:'Tchau! 🏎️',fish:'Esse é dos bons! 🎣',wave:'Que onda! 🤙',calm:'Respira… 🧘',ace:'Ace! 🎾'},pos:n=>n+'º',finish:'Chegada',kg:'kg',pts:'pts',
     fx:{early:'Assustou! 🐟💨',miss:'Escapou!',perfect:'Fisgada perfeita!',wipe:'Vaca! 🌊',trick:'Manobra!',fall:'Caiu!',zone:'Perfeito!',you:'Ponto seu!',op:'Ponto dele!'}},
-  en:{short:{kart:'Kart',fish:'Fishing',surf:'Surfing',yoga:'Yoga',tennis:'Tennis'},vs:'vs.',boxT:'🏁 Band challenges',bonusT:'⚡ Bonus challenges',found:(n,t)=>`${n} of ${t} found`,today:k=>k?`${k} to play today`:'more tomorrow',secret:'Secret challenge',secretSub:'Keep playing Fodinha to find it.',invT:'⚡ New bonus challenge!',invP:(n,g)=>`${n} challenged you: ${g}!`,invSub:'Win and take a power to your stock.',accept:'Accept!',later:'Not now',saved:'It stays in ⚡ Bonus challenges, on your Profile. One try per day.',ok:'OK',boxSub:'Beat the special characters at mini-games and take powers to your stock, from day one. One try per day in each.',go:'Play',done:'More tomorrow ✓',
+  en:{short:{kart:'Kart',fish:'Fishing',surf:'Surfing',yoga:'Yoga',tennis:'Tennis'},vs:'vs.',freeNow:'🎁 You have 1 free game today, in any challenge.',freeGone:c=>`Today's free game is used. Come back tomorrow or play again for ${c} points.`,goPay:c=>`${c} pts`,freeOne:'🎁 Your free game for today.',costOne:c=>`You already used today's free game. Playing again costs ${c} leaderboard points.`,noPts:c=>`You already used today's free game. To play again you need ${c} spare points without dropping a level.`,payStart:c=>`Play (−${c} pts)`,boxT:'🏁 Band challenges',bonusT:'⚡ Bonus challenges',found:(n,t)=>`${n} of ${t} found`,today:k=>k?'1 free game today':'free again tomorrow',secret:'Secret challenge',secretSub:'Keep playing Fodinha to find it.',invT:'⚡ New bonus challenge!',invP:(n,g)=>`${n} challenged you: ${g}!`,invSub:'Win and take a power to your stock.',accept:'Accept!',later:'Not now',saved:'It stays in ⚡ Bonus challenges, on your Profile. You get 1 free game per day.',ok:'OK',boxSub:'Beat the special characters at mini-games and take powers to your stock.',go:'Play',done:'More tomorrow ✓',
     g:{kart:{t:'Kart vs. Racer Luiz',s:'Get there first.',p:'Tap the <b>left</b> or <b>right</b> side of the screen to switch lanes. Grab the ⭐ for a boost and dodge the cones, tires and oil.'},
        fish:{t:'Fishing vs. Fisherman Thomaz',s:'Catch more kilos in 30 seconds.',p:'When the float <b>sinks</b> and the <b>!</b> shows up, tap fast to hook. The faster, the bigger the fish. Tap too early or on a nibble and the fish gets away.'},
        surf:{t:'Surfing vs. Surfer Julio',s:'Score more on the waves.',p:'Tap to <b>jump</b> the rocks. In the air, tap again for a <b>trick</b> (big points), but if it isn\'t done before you land, you wipe out.'},
        yoga:{t:'Yoga vs. Yogi Bia',s:'Stay balanced longer.',p:'<b>Hold</b> the left or right side of the screen to correct your body and keep the needle in the <b>green</b>. The closer to the center, the more points. Lean too far and you fall.'},
        tennis:{t:'Tennis vs. Tennis Pro Chris',s:'Win 5 points before him.',p:'<b>Drag your finger</b> to move the racket. Hitting with the tip sends the ball diagonally. The ball speeds up with every rally.'}},
-    prizes:'Win and you get one of these:',once:'1 try per day.',start:'Start!',back:'Back',offline:'No connection: just for fun, no prize.',tried:'You already played this one today. Come back tomorrow!',go3:'GO!',
+    prizes:'Win and you get one of these:',once:'1 try per day.',start:'Start!',back:'Back',offline:'No connection: just for fun, no prize.',tried:"You already used today's free game. Come back tomorrow!",go3:'GO!',
     win:n=>`You beat ${n}!`,lose:n=>`${n} won!`,loseSub:'Try again tomorrow.',prizeT:'Your prize',full:'Your stock is already full of everything! Use some powers and come back tomorrow.',names:{beer:'Beer',jack:'Jack and Coke',cat:'Mystical Cat',dark:'Dark Side'},toStock:'It went to your stock.',practice:'Practice game: no prize.',err:"Couldn't save the result. Try again tomorrow.",
     say:{start:"Let's go, Ace!",spin:'I spun! 😵',lead:'Bye! 🏎️',fish:'What a catch! 🎣',wave:'Sick wave! 🤙',calm:'Breathe… 🧘',ace:'Ace! 🎾'},pos:n=>['','1st','2nd'][n],finish:'Finish',kg:'kg',pts:'pts',
     fx:{early:'Scared it! 🐟💨',miss:'Got away!',perfect:'Perfect hook!',wipe:'Wipeout! 🌊',trick:'Trick!',fall:'Fell!',zone:'Perfect!',you:'Your point!',op:'His point!'}},
-  es:{short:{kart:'Kart',fish:'Pesca',surf:'Surf',yoga:'Yoga',tennis:'Tenis'},vs:'contra',boxT:'🏁 Desafíos de la banda',bonusT:'⚡ Desafíos bonus',found:(n,t)=>`${n} de ${t} descubiertos`,today:k=>k?`${k} para jugar hoy`:'mañana hay más',secret:'Desafío secreto',secretSub:'Sigue jugando Fodinha para descubrirlo.',invT:'⚡ ¡Nuevo desafío bonus!',invP:(n,g)=>`¡${n} te desafió: ${g}!`,invSub:'Gana y llévate un poder a tu inventario.',accept:'¡Aceptar!',later:'Ahora no',saved:'Queda guardado en ⚡ Desafíos bonus, en tu Perfil. Un intento por día.',ok:'Listo',boxSub:'Gánales a los especiales en los minijuegos y lleva poderes a tu inventario, desde el primer día. Un intento por día en cada uno.',go:'Jugar',done:'Mañana hay más ✓',
+  es:{short:{kart:'Kart',fish:'Pesca',surf:'Surf',yoga:'Yoga',tennis:'Tenis'},vs:'contra',freeNow:'🎁 Tienes 1 juego gratis hoy, en cualquier desafío.',freeGone:c=>`Ya usaste el juego gratis de hoy. Vuelve mañana o juega otra vez por ${c} puntos.`,goPay:c=>`${c} pts`,freeOne:'🎁 Tu juego gratis de hoy.',costOne:c=>`Ya usaste el juego gratis de hoy. Jugar otra vez cuesta ${c} puntos del ranking.`,noPts:c=>`Ya usaste el juego gratis de hoy. Para jugar otra vez necesitas ${c} puntos de sobra sin bajar de nivel.`,payStart:c=>`Jugar (−${c} pts)`,boxT:'🏁 Desafíos de la banda',bonusT:'⚡ Desafíos bonus',found:(n,t)=>`${n} de ${t} descubiertos`,today:k=>k?'1 juego gratis hoy':'gratis otra vez mañana',secret:'Desafío secreto',secretSub:'Sigue jugando Fodinha para descubrirlo.',invT:'⚡ ¡Nuevo desafío bonus!',invP:(n,g)=>`¡${n} te desafió: ${g}!`,invSub:'Gana y llévate un poder a tu inventario.',accept:'¡Aceptar!',later:'Ahora no',saved:'Queda guardado en ⚡ Desafíos bonus, en tu Perfil. Tienes 1 juego gratis por día.',ok:'Listo',boxSub:'Gánales a los especiales en los minijuegos y lleva poderes a tu inventario.',go:'Jugar',done:'Mañana hay más ✓',
     g:{kart:{t:'Kart con Luiz Piloto',s:'Llega primero.',p:'Toca el lado <b>izquierdo</b> o <b>derecho</b> de la pantalla para cambiar de carril. Agarra las ⭐ para turbo y esquiva los conos, neumáticos y aceite.'},
        fish:{t:'Pesca con Thomaz Pescador',s:'Pesca más kilos en 30 segundos.',p:'Cuando la boya se <b>hunda</b> y aparezca el <b>!</b>, toca rápido para enganchar. Cuanto más rápido, más grande el pez. Si tocas antes o en un mordisqueo, el pez se escapa.'},
        surf:{t:'Surf con Julio Surfista',s:'Haz más puntos en las olas.',p:'Toca para <b>saltar</b> las rocas. En el aire, toca otra vez para una <b>maniobra</b> (vale mucho), pero si no la terminas antes de caer, te revuelca la ola.'},
        yoga:{t:'Yoga con Bia del Yoga',s:'Mantén el equilibrio más tiempo.',p:'<b>Mantén</b> el lado izquierdo o derecho de la pantalla para corregir el cuerpo y dejar la aguja en el <b>verde</b>. Cuanto más al centro, más puntos. Si te inclinas demasiado, te caes.'},
        tennis:{t:'Tenis con Chris Tenista',s:'Gana 5 puntos antes que él.',p:'<b>Arrastra el dedo</b> para mover la raqueta. Pegarle con la punta manda la pelota en diagonal. La pelota acelera en cada intercambio.'}},
-    prizes:'Si ganas, te llevas uno de estos:',once:'1 intento por día.',start:'¡Empezar!',back:'Volver',offline:'Sin conexión: solo por diversión, sin premio.',tried:'Ya jugaste este hoy. ¡Vuelve mañana!',go3:'¡YA!',
+    prizes:'Si ganas, te llevas uno de estos:',once:'1 intento por día.',start:'¡Empezar!',back:'Volver',offline:'Sin conexión: solo por diversión, sin premio.',tried:'Ya usaste el juego gratis de hoy. ¡Vuelve mañana!',go3:'¡YA!',
     win:n=>`¡Le ganaste a ${n}!`,lose:n=>`¡${n} ganó!`,loseSub:'Inténtalo de nuevo mañana.',prizeT:'Tu premio',full:'¡Tu inventario ya está lleno de todo! Usa unos poderes y vuelve mañana.',names:{beer:'Cerveza',jack:'Jack and Coke',cat:'Mystical Cat',dark:'Dark Side'},toStock:'Fue a tu inventario.',practice:'Partida de práctica: sin premio.',err:'No se pudo guardar el resultado. Inténtalo mañana.',
     say:{start:'¡Vamos, Ace!',spin:'¡Giré! 😵',lead:'¡Chau! 🏎️',fish:'¡Qué pescado! 🎣',wave:'¡Qué ola! 🤙',calm:'Respira… 🧘',ace:'¡Ace! 🎾'},pos:n=>n+'º',finish:'Meta',kg:'kg',pts:'pts',
     fx:{early:'¡Lo asustaste! 🐟💨',miss:'¡Se escapó!',perfect:'¡Enganche perfecto!',wipe:'¡Revolcón! 🌊',trick:'¡Maniobra!',fall:'¡Te caíste!',zone:'¡Perfecto!',you:'¡Punto tuyo!',op:'¡Punto de él!'}},
@@ -3247,10 +3249,12 @@ const MINI_T={
 const MT=()=>MINI_T[LANG]||MINI_T.pt;
 const MINI_LIST=[['kart','sp_luiz','🏁'],['fish','sp_thomaz','🎣'],['surf','sp_julio','🏄'],['yoga','sp_bia','🧘'],['tennis','sp_chris','🎾']];
 const miniOpp=g=>BAND.find(b=>b.id===MINI_LIST.find(x=>x[0]===g)[1]);
-function miniTried(g){ return !!(Rank.me&&!Rank.me.tester&&Rank.me.mini&&Rank.me.mini[g]); }
+function miniFree(){ return !Rank.me||!!Rank.me.tester||Rank.me.miniFree!==false; }
+function miniCanPay(){ return !!(Rank.me&&Rank.me.miniPay); }
+function miniCost(){ return (Rank.me&&Rank.me.miniCost)||50; }
 function miniDisc(){ let l=[]; try{ l=JSON.parse(localStorage.getItem('fodinha-disc')||'[]'); }catch(e){} const r=(Rank.me&&Rank.me.disc)||[]; return MINI_LIST.map(x=>x[0]).filter(g=>l.includes(g)||r.includes(g)); }
 function miniDiscover(g){ const l=miniDisc(); if(!l.includes(g)) l.push(g); try{ localStorage.setItem('fodinha-disc',JSON.stringify(l)); }catch(e){} if(Rank.me){ Rank.me.disc=l.slice(); } Rank.post({a:'discover',game:g}).catch(()=>{}); }
-function miniToday(){ return miniDisc().filter(g=>!miniTried(g)).length; }
+function miniToday(){ return miniFree()?1:0; }
 function bonusBtnHTML(){
   const d=miniDisc(); if(!d.length) return '';
   const m=MT(), k=miniToday();
@@ -3260,11 +3264,11 @@ function bonusSheetHTML(){
   if(!S.bonusOpen) return '';
   const m=MT(), d=miniDisc();
   const cards=MINI_LIST.map(([g,id,ic])=>{ if(!d.includes(g)) return `<div class="mcard secret"><span class="mav big"><span class="q">?</span></span><div class="mtxt"><b>${m.secret}</b><small>${m.secretSub}</small></div></div>`;
-    const tried=miniTried(g), b=BAND.find(x=>x.id===id);
-    return `<div class="mcard${tried?' tried':''}"><span class="mav big">${avatarHTML(b)}<i>${ic}</i></span><div class="mtxt"><b>${m.short[g]}</b><small class="mvs">${m.vs} ${(T().spNames||{})[id]||b.name}</small><small>${tried?m.done:m.g[g].s}</small></div>
-    ${tried?'':`<button class="cta mgo" data-mini="${g}">${m.go}</button>`}</div>`; }).join('');
+    const free=miniFree(), pay=miniCanPay(), b=BAND.find(x=>x.id===id);
+    return `<div class="mcard"><span class="mav big">${avatarHTML(b)}<i>${ic}</i></span><div class="mtxt"><b>${m.short[g]}</b><small class="mvs">${m.vs} ${(T().spNames||{})[id]||b.name}</small><small>${m.g[g].s}</small></div>
+    <button class="${free?'cta':'ghost'} mgo${free?'':' paid'}" data-mini="${g}" ${free||pay?'':'disabled'}>${free?m.go:m.goPay(miniCost())}</button></div>`; }).join('');
   return `<div class="overlay rankov"><div class="sheet minibox" role="dialog" aria-label="${m.bonusT}"><button class="iconbtn sheetx" id="bonusclose" aria-label="${T().rankClose}">✕</button>
-    <h2>${m.bonusT}</h2><p>${m.boxSub}</p><div class="mlist">${cards}</div></div></div>`;
+    <h2>${m.bonusT}</h2><p>${m.boxSub}</p><p class="mfree${miniFree()?' on':''}">${miniFree()?m.freeNow:m.freeGone(miniCost())}</p><div class="mlist">${cards}</div></div></div>`;
 }
 function miniMaybeInvite(){
   if(S.tut) return; let n=0; try{ n=+(localStorage.getItem('fodinha-games')||0); }catch(e){} const sv=Rank.data&&Rank.data.all&&Rank.data.all.me; n=Math.max(n,sv?sv.games|0:0); if(n<3) return;
@@ -3514,7 +3518,7 @@ const Mini={
   img(svg){ const i=new Image(); i.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ')); return i; },
   open(g){
     if(this.el||!MINI_GAMES[g]) return;
-    this.g=g; this.mod=MINI_GAMES[g]; this.opp=miniOpp(g); this.doneF=false; this.win=null; this.toastM=null; this.sayM=null; this.shake=0;
+    this.g=g; this.mod=MINI_GAMES[g]; this.opp=miniOpp(g); this.starting=false; this.doneF=false; this.win=null; this.toastM=null; this.sayM=null; this.shake=0;
     Snd.init(); Music.hold=true; Music.sync(); document.body.classList.add('ingame');
     const d=document.createElement('div'); d.id='kartov'; d.className='mg-'+g; d.innerHTML='<canvas id="kartcv"></canvas><div id="kartcard"></div>'; document.body.appendChild(d); this.el=d;
     this.cv=d.querySelector('canvas'); this.card=d.querySelector('#kartcard');
@@ -3539,20 +3543,22 @@ const Mini={
     const m=MT();
     if(id==='k-back') return this.close();
     if(id==='k-start'){
-      if(miniTried(this.g)){ this.cardHTML(`<h2>${m.tried}</h2><div class="row"><button class="cta" id="k-back">${m.back}</button></div>`); return; }
-      this.card.innerHTML=''; this.practice=false;
-      Rank.post({a:'ministart',game:this.g}).catch(err=>{ if(err==='tried'){ this.phase='intro'; this.cardHTML(`<h2>${m.tried}</h2><div class="row"><button class="cta" id="k-back">${m.back}</button></div>`); return; } this.practice=true; this.toast(m.offline); });
-      this.phase='count'; this.t=-3.2; this.cd=4;
+      if(this.starting) return; this.starting=true; const b=document.getElementById('k-start'); if(b) b.disabled=true;
+      this.practice=false;
+      Rank.post({a:'ministart',game:this.g,pay:!miniFree()}).then(()=>this.go(),err=>{
+        if(err==='tried'||err==='pts'){ this.starting=false; this.cardHTML(`<h2>${err==='pts'?m.noPts(miniCost()):m.tried}</h2><div class="row"><button class="cta" id="k-back">${m.back}</button></div>`); return; }
+        this.practice=true; this.go(); this.toast(m.offline); });
     }
   },
+  go(){ this.starting=false; if(!this.el) return; this.card.innerHTML=''; this.phase='count'; this.t=-3.2; this.cd=4; },
   cardHTML(h){ this.card.innerHTML=`<div class="sheet ksheet">${h}</div>`; },
   toast(t){ this.toastM={t,until:performance.now()+3500}; },
   intro(){
     const m=MT(), ic=MINI_LIST.find(x=>x[0]===this.g)[2];
     this.cardHTML(`<div class="kav"><span class="frame">${avatarHTML(this.opp)}</span><i>${ic}</i></div><h2>${m.g[this.g].t}</h2><p>${m.g[this.g].p}</p>
       <p class="kpz"><small>${m.prizes}</small><span>${['beer','jack','cat','dark'].map(k=>`<span class="kpi">${prizeIcon(k)}</span>`).join('')}</span></p>
-      <p class="konce">${Rank.me&&Rank.me.tester?'🧪 teste: sem limite':m.once}</p>
-      <div class="row"><button class="ghost" id="k-back">${m.back}</button><button class="cta" id="k-start">${m.start}</button></div>`);
+      <p class="konce">${Rank.me&&Rank.me.tester?'🧪 teste: sem limite':miniFree()?m.freeOne:miniCanPay()?m.costOne(miniCost()):m.noPts(miniCost())}</p>
+      <div class="row"><button class="ghost" id="k-back">${m.back}</button><button class="cta" id="k-start" ${miniFree()||miniCanPay()?'':'disabled'}>${miniFree()?m.start:m.payStart(miniCost())}</button></div>`);
   },
   resize(){ const W=this.W=Math.min(innerWidth,560), H=this.H=innerHeight, r=this.dpr=Math.min(2,devicePixelRatio||1);
     this.cv.width=W*r; this.cv.height=H*r; this.cv.style.width=W+'px'; this.cv.style.height=H+'px'; if(this.mod&&this.mod.court) this.mod.court(this); },

@@ -6,7 +6,7 @@
 // POST {a:'game', id, name, av, pts, ...}      -> soma uma partida
 // POST {a:'use', id, item:'beer'|'jack'|'cat'|'dark'} -> gasta um drinque ou uma bola de cristal do estoque
 // POST {a:'discover', id, game}              -> o jogador descobriu um desafio bônus (convite no fim da partida)
-// POST {a:'ministart', id, game}             -> gasta a tentativa do dia num desafio (kart...)
+// POST {a:'ministart', id, game, pay}        -> começa um desafio: 1 grátis por dia (em qualquer jogo); depois, pay=true desconta MINI_COST pontos
 // POST {a:'minidone', id, game, win}          -> fim do desafio; se ganhou, sorteia um prêmio
 // POST {a:'code', id, email, lang}             -> manda código de confirmação pro e-mail
 // POST {a:'verify', id, email, code, optin, src, name, av, lang} -> liga o aparelho à conta
@@ -24,6 +24,7 @@ const CAT_LV = 3; const CAT_WINS = 1; const CAT_MAX = 3;
 // Dark Side: libera na Lenda (ganha 1 de presente) e dá +1 a cada 3 vitórias, até 3 no estoque
 // Desafios da banda: 1 tentativa por dia em cada um; quem ganha leva um prêmio sorteado
 const MINI_GAMES = ['kart' => 25, 'fish' => 25, 'surf' => 25, 'yoga' => 25, 'tennis' => 10];               // jogo => segundos mínimos de partida
+const MINI_COST = 50;                             // pontos pra jogar de novo no mesmo dia
 const MINI_PRIZES = ['beer' => 60, 'jack' => 25, 'cat' => 12, 'dark' => 3];
 const DRINK_MAX = 3;                              // prêmio de drinque só entra se tiver menos que isso
 const DARK_LV = 4; const DARK_WINS = 3; const DARK_MAX = 3;
@@ -57,7 +58,9 @@ function norm(&$R, &$P) {
     foreach (['links', 'acc', 'inv', 'codes', 'cat', 'dark', 'mini', 'disc'] as $k) if (!isset($P[$k]) || !is_array($P[$k])) $P[$k] = [];
 }
 function day_key() { return gmdate('Y-m-d', time() - 3 * 3600); }
-function mini_today($P, $key) { $o = []; foreach (MINI_GAMES as $g => $_) { $m = $P['mini'][$key][$g] ?? null; $o[$g] = $m && ($m['d'] ?? '') === day_key(); } return $o; }
+function mini_free($P, $key) { return ($P['mini'][$key]['_free'] ?? '') !== day_key(); }
+// pode pagar se tiver os pontos e não cair de nível
+function mini_can_pay($R, $key) { $pts = $R['all'][$key]['pts'] ?? 0; return $pts - MINI_COST >= LV_PTS[level_of($pts)]; }
 function key_for($P, $id) { return $P['links'][$id] ?? $id; }
 // poderes guardados por jogador: n = no estoque, w = vitórias contando pra próxima, g = já ganhou o presente
 function pow_of($P, $pw, $key) { return $P[$pw][$key] ?? ['n' => 0, 'w' => 0, 'g' => 0]; }
@@ -116,14 +119,14 @@ function profile($R, $P, $key) {
     $acc = $P['acc'][$key] ?? null;
     // contas de teste: tudo liberado e estoque cheio (o ranking continua com os pontos reais)
     if ($acc && in_array($acc['email'], TESTERS, true)) {
-        return ['pts' => max($pts, 5000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true, 'mini' => array_map(function () { return false; }, MINI_GAMES), 'disc' => array_values($P['disc'][$key] ?? []),
+        return ['pts' => max($pts, 5000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true, 'miniFree' => true, 'miniPay' => true, 'miniCost' => MINI_COST, 'disc' => array_values($P['disc'][$key] ?? []),
                 'linked' => true, 'email' => mask_email($acc['email']), 'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
     }
     return ['pts' => $pts, 'level' => $lv, 'next' => LV_PTS[$lv + 1] ?? null,
             'beer' => max(0, earned($lv, LV_BEER) - ($used['b'] ?? 0)), 'jack' => max(0, earned($lv, LV_JACK) - ($used['j'] ?? 0)),
             'cat' => cat_of($P, $key)['n'], 'catW' => cat_of($P, $key)['w'],
             'dark' => pow_of($P, 'dark', $key)['n'], 'darkW' => pow_of($P, 'dark', $key)['w'],
-            'mini' => mini_today($P, $key), 'disc' => array_values($P['disc'][$key] ?? []),
+            'miniFree' => mini_free($P, $key), 'miniPay' => mini_can_pay($R, $key), 'miniCost' => MINI_COST, 'disc' => array_values($P['disc'][$key] ?? []),
             'linked' => (bool)$acc, 'email' => $acc ? mask_email($acc['email']) : null,
             'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
 }
@@ -257,7 +260,16 @@ if ($a === 'ministart' || $a === 'minidone') {
     $pr = profile($R, $P, $key); $tester = !empty($pr['tester']);
     $m = $P['mini'][$key][$game] ?? ['d' => '', 's' => 0, 'done' => 1];
     if ($a === 'ministart') {
-        if (!$tester && ($m['d'] ?? '') === day_key()) { flock($lock, LOCK_UN); out(['error' => 'tried', 'profile' => $pr], 409); }
+        if (!$tester) {
+            if (mini_free($P, $key)) $P['mini'][$key]['_free'] = day_key();
+            elseif (empty($in['pay'])) { flock($lock, LOCK_UN); out(['error' => 'tried', 'profile' => $pr], 409); }
+            elseif (!mini_can_pay($R, $key)) { flock($lock, LOCK_UN); out(['error' => 'pts', 'profile' => $pr], 409); }
+            else {
+                $R['all'][$key]['pts'] -= MINI_COST;
+                $wk = week_key(); if (isset($R['weeks'][$wk][$key])) $R['weeks'][$wk][$key]['pts'] = max(0, $R['weeks'][$wk][$key]['pts'] - MINI_COST);
+                jsave($rankFile, $R);
+            }
+        }
         $P['mini'][$key][$game] = ['d' => day_key(), 's' => time(), 'done' => 0];
         jsave($playFile, $P); flock($lock, LOCK_UN);
         out(['ok' => true, 'profile' => profile($R, $P, $key)]);

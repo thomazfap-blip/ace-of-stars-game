@@ -86,9 +86,9 @@ if ($a === 'hello') {
         return [$D, array_slice($list, 0, 60)];
     });
     $invites = with_json($base . '/invites.json', function ($D) use ($id) {
-        $mine = array_values(array_filter($D[$id] ?? [], fn($i) => time() - $i['t'] < 120));
+        $mine = array_values(array_filter($D[$id] ?? [], fn($i) => time() - $i['t'] < 600));
         unset($D[$id]);
-        foreach ($D as $k => $v) { $D[$k] = array_values(array_filter($v, fn($i) => time() - $i['t'] < 120)); if (!$D[$k]) unset($D[$k]); }
+        foreach ($D as $k => $v) { $D[$k] = array_values(array_filter($v, fn($i) => time() - $i['t'] < 600)); if (!$D[$k]) unset($D[$k]); }
         return [$D, $mine];
     });
     out(['online' => $online, 'invites' => $invites, 'rooms' => open_rooms($dir, $me['room']), 'count' => count($online) + 1]);

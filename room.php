@@ -202,7 +202,7 @@ if ($a === 'join') {
         $id = clean_id($in['id'] ?? '');
         foreach ($R['players'] as $i => $p) {
             if ($id !== '' && $p['id'] === $id) { // voltou pra mesma sala (reconexão)
-                $R['players'][$i]['seen'] = time(); unset($R['players'][$i]['left']);
+                $R['players'][$i]['seen'] = time(); unset($R['players'][$i]['left'], $R['players'][$i]['denied']);
                 return ['__save' => $R, 'code' => $code, 'token' => $p['token'], 'pid' => $p['pid'], 'status' => $R['status'], 'hostPid' => $R['hostPid']];
             }
         }
@@ -252,6 +252,7 @@ if ($a === 'push') {
 if ($a === 'poll') {
     out(with_room($dir, $code, function ($R) use ($token, $in) {
         $me = me_of($R, $token); if ($me < 0) return ['error' => 'auth'];
+        if (!empty($R['players'][$me]['denied'])) return ['denied' => true];
         $R['players'][$me]['seen'] = time();
         $pid = $R['players'][$me]['pid']; $host = null;
         foreach ($R['players'] as $p) if ($p['pid'] === $R['hostPid']) $host = $p;
@@ -297,6 +298,14 @@ if ($a === 'setopen') {
         $me = me_of($R, $token); if ($me < 0 || $R['players'][$me]['pid'] !== $R['hostPid']) return ['error' => 'auth'];
         $R['open'] = !empty($in['open']); if (isset($in['lives'])) $R['lives'] = max(1, min(5, (int)$in['lives'])); if (isset($in['powers'])) $R['powers'] = !empty($in['powers']);
         return ['__save' => $R] + lobby_out($R, $me);
+    }));
+}
+
+if ($a === 'deny') { // anfitrião recusa quem pediu pra entrar com a mesa rolando
+    out(with_room($dir, $code, function ($R) use ($token, $in) {
+        $me = me_of($R, $token); if ($me < 0 || $R['players'][$me]['pid'] !== $R['hostPid']) return ['error' => 'auth'];
+        foreach ($R['players'] as $i => $p) if ($p['pid'] === (string)($in['pid'] ?? '') && $p['pid'] !== $R['hostPid']) { $R['players'][$i]['left'] = true; $R['players'][$i]['denied'] = true; }
+        return ['__save' => $R, 'ok' => true];
     }));
 }
 

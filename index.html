@@ -780,6 +780,7 @@ details.rulesbox .rules{margin-top:8px}
 .navbtn em{position:absolute;top:0;left:calc(50% + 8px);min-width:18px;height:18px;border-radius:9px;background:#3bbf6a;color:#06210f;font:800 11px/18px Montserrat,sans-serif;font-style:normal;padding:0 4px}
 #app:not(.game){padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .mequick{justify-content:center}
+.hint.needtwo{margin-top:14px}
 .turnbtn{display:block;width:100%;margin:14px 0 4px}.turnsheet .turn{background:none;border:0;padding:0;box-shadow:none;margin:0}
 .nextstop{background:rgba(0,0,0,.28);border-radius:14px;padding:12px 14px;margin:10px 0;text-align:left}
 .nextstop>b{display:block;font-size:15px;margin-bottom:8px}.nextstop small{display:block;color:var(--muted);font-size:12px;margin-top:6px}
@@ -2419,7 +2420,7 @@ function lobbyHTML(){
     ${R.host&&!R.quick?`<div class="item lbots"><span><b>${o.bots}</b><small>${o.botsSub(bots.map(b=>b.short).join(', '))}</small></span><button class="toggle" id="roombots" aria-pressed="${!!R.bots}" ${bots.length?'':'disabled'}></button></div>
       <div class="item lbots"><span><b>${o.lives}</b></span><div class="row">${[1,2,3,4,5].map(n=>`<button class="pchip" data-lives="${n}" aria-pressed="${S.startLives===n}">${n}</button>`).join('')}</div></div>
       <p class="hint">${o.hostWarn}</p>
-      <button class="cta" id="roomstart" ${(R.players||[]).length>=2?'':'disabled'}>${o.start}</button>${(R.players||[]).length<2?`<p class="hint">${o.needTwo}</p>`:''}`
+      <button class="cta" id="roomstart" ${(R.players||[]).length>=2?'':'disabled'}>${o.start}</button>${(R.players||[]).length<2?`<p class="hint needtwo">${o.needTwo}</p>`:''}`
       :R.quick?'':`<p class="lobbywait">${o.waitHost}</p>`}
     ${R.err?`<p class="warn">${R.err}</p>`:''}
     <div class="row"><button class="ghost" id="roomleave">${o.leave}</button></div>

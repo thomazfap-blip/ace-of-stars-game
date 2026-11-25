@@ -1292,6 +1292,20 @@ const LOOKS={
     top:`<path d="M24 50 Q18 16 50 14 Q82 16 76 50 Q74 36 66 30 Q60 38 52 30 Q42 36 34 30 Q26 38 24 50Z" fill="#1a1310"/>
       ${curls(50,40,28,195,345,7,6,'#231a15')}`,
   },
+  // Luiz Piloto: macacão de corrida e óculos de piloto em cima dos cachos
+  luizpilot:{
+    bg:'#1d5fd6', checker:true, skin:'#dfa47e', hair:'#1a1310', back:'shoulder', stache:true, beard:'short', beardColor:'#2a1d17', mouth:'grin', brow:36,
+    outfit:s=>`<path d="M8 100 Q10 76 50 74 Q90 76 92 100Z" fill="#d6262b"/>
+      <path d="M8 100 Q10 82 24 78 L30 100Z M92 100 Q90 82 76 78 L70 100Z" fill="#fff"/>
+      <path d="M38 74 Q50 80 62 74 L60 70 Q50 75 40 70Z" fill="#111"/>
+      <path d="M50 80 V100" stroke="#111" stroke-width="2"/>
+      <rect x="56" y="84" width="14" height="9" rx="2" fill="#f5c94f"/><text x="63" y="91.5" font-size="7" text-anchor="middle" fill="#d6262b">★</text>`,
+    top:`<path d="M24 50 Q18 16 50 14 Q82 16 76 50 Q74 36 66 30 Q60 38 52 30 Q42 36 34 30 Q26 38 24 50Z" fill="#1a1310"/>
+      ${curls(50,40,28,195,345,7,6,'#231a15')}
+      <path d="M26 31 Q50 24 74 31" stroke="#3a2a20" stroke-width="3.2" fill="none"/>
+      <ellipse cx="40" cy="27" rx="8" ry="6" fill="#36d2e2" stroke="#5a4a3a" stroke-width="2.4"/><ellipse cx="60" cy="27" rx="8" ry="6" fill="#36d2e2" stroke="#5a4a3a" stroke-width="2.4"/>
+      <path d="M36 25 Q39 23 42 24 M56 25 Q59 23 62 24" stroke="#fff" stroke-width="1.6" fill="none"/>`,
+  },
   // Bia: cabelo preto com mechas roxas, estrelinha no olho, rede vermelha
   bia:{
     bg:'#c8262b', skin:'#f3cdb2', hair:'#141014', back:'long', mouth:'grin', lashes:true, lips:'#c43a3a', brow:37, browColor:'#141014',
@@ -3138,7 +3152,6 @@ function pagePlay(lives,sample,picks,tabs){
       <div class="quick tutq"><button class="chipbtn" id="tutbtn">★ ${T().tutBtn}</button></div>
     </div>
   </section>`}
-  ${miniBoxHTML()}
   <section class="box">
     <h2>${T().whoSits}</h2>
     <p>${T().picked(BAND.filter(b=>S.picked.has(b.id)&&!charLocked(b)).length,BAND.length)}</p>
@@ -3162,6 +3175,7 @@ function pageMe(){
     ${levelStripHTML()}
     <button class="aceinvite${ME?'':' new'}" id="editace2">${ME?T().edEdit:T().edNew}</button>
   </section>
+  ${miniBoxHTML()}
   ${turnHTML()}`;
 }
 function turnSheetHTML(){
@@ -3202,26 +3216,27 @@ function turnHTML(){
 }
 // ---------- Desafios da banda: Kart com o Luiz ----------
 const MINI_T={
-  pt:{boxT:'🏁 Desafios da banda',boxSub:'Ganhe da banda nos mini-jogos e leve poderes pro seu estoque, desde o primeiro dia.',kartT:'Kart com o Luiz',kartSub:'Ganhe a corrida e leve um prêmio surpresa.',go:'Correr',done:'Amanhã tem mais ✓',soon:'Em breve',soonList:['Pescaria com o Thomaz','Tênis com o Chris','Surfe com o Julio','Yoga com a Bia'],
-    introT:'Luiz, o piloto',introP:'Toque no lado <b>esquerdo</b> ou <b>direito</b> da tela pra trocar de pista. Pegue as ⭐ pra turbinar e desvie dos cones, pneus e óleo.',prizes:'Se ganhar, leva um destes:',once:'1 tentativa por dia.',start:'Largar!',back:'Voltar',
-    offline:'Sem conexão: essa corrida vale só pela diversão, sem prêmio.',tried:'Você já correu hoje. Volta amanhã!',go3:'JÁ!',win:'Você ganhou do Luiz!',lose:'O Luiz chegou primeiro!',loseSub:'Tenta de novo amanhã.',prizeT:'Seu prêmio',
+  pt:{boxT:'🏁 Desafios da banda',boxSub:'Ganhe da banda nos mini-jogos e leve poderes pro seu estoque, desde o primeiro dia.',kartT:'Kart com o Luiz Piloto',kartSub:'Ganhe a corrida e leve um prêmio surpresa.',go:'Correr',done:'Amanhã tem mais ✓',soon:'Em breve',soonList:['Pescaria com o Thomaz','Tênis com o Chris','Surfe com o Julio','Yoga com a Bia'],
+    introT:'Luiz Piloto',introP:'Toque no lado <b>esquerdo</b> ou <b>direito</b> da tela pra trocar de pista. Pegue as ⭐ pra turbinar e desvie dos cones, pneus e óleo.',prizes:'Se ganhar, leva um destes:',once:'1 tentativa por dia.',start:'Largar!',back:'Voltar',
+    offline:'Sem conexão: essa corrida vale só pela diversão, sem prêmio.',tried:'Você já correu hoje. Volta amanhã!',go3:'JÁ!',win:'Você ganhou do Luiz Piloto!',lose:'O Luiz Piloto chegou primeiro!',loseSub:'Tenta de novo amanhã.',prizeT:'Seu prêmio',
     full:'Seu estoque já está cheio de tudo! Use uns poderes e volte amanhã.',names:{beer:'Cerveja',jack:'Jack and Coke',cat:'Mystical Cat',dark:'Dark Side'},toStock:'Foi pro seu estoque.',practice:'Corrida de treino: sem prêmio.',err:'Não deu pra registrar o resultado. Tenta de novo amanhã.',
     lz:{start:'Bora, Ace!',spin:'Rodei! 😵',lead:'Tchau! 🏎️',boost:'Turbo!'},pos:n=>n+'º',finish:'Chegada'},
-  en:{boxT:'🏁 Band challenges',boxSub:'Beat the band at mini-games and take powers to your stock, from day one.',kartT:'Kart vs. Luiz',kartSub:'Win the race and get a surprise prize.',go:'Race',done:'More tomorrow ✓',soon:'Coming soon',soonList:['Fishing with Thomaz','Tennis with Chris','Surfing with Julio','Yoga with Bia'],
-    introT:'Luiz, the racer',introP:'Tap the <b>left</b> or <b>right</b> side of the screen to switch lanes. Grab the ⭐ for a boost and dodge the cones, tires and oil.',prizes:'Win and you get one of these:',once:'1 try per day.',start:'Go!',back:'Back',
-    offline:'No connection: this race is just for fun, no prize.',tried:'You already raced today. Come back tomorrow!',go3:'GO!',win:'You beat Luiz!',lose:'Luiz got there first!',loseSub:'Try again tomorrow.',prizeT:'Your prize',
+  en:{boxT:'🏁 Band challenges',boxSub:'Beat the band at mini-games and take powers to your stock, from day one.',kartT:'Kart vs. Luiz the Racer',kartSub:'Win the race and get a surprise prize.',go:'Race',done:'More tomorrow ✓',soon:'Coming soon',soonList:['Fishing with Thomaz','Tennis with Chris','Surfing with Julio','Yoga with Bia'],
+    introT:'Luiz the Racer',introP:'Tap the <b>left</b> or <b>right</b> side of the screen to switch lanes. Grab the ⭐ for a boost and dodge the cones, tires and oil.',prizes:'Win and you get one of these:',once:'1 try per day.',start:'Go!',back:'Back',
+    offline:'No connection: this race is just for fun, no prize.',tried:'You already raced today. Come back tomorrow!',go3:'GO!',win:'You beat Luiz the Racer!',lose:'Luiz the Racer got there first!',loseSub:'Try again tomorrow.',prizeT:'Your prize',
     full:'Your stock is already full of everything! Use some powers and come back tomorrow.',names:{beer:'Beer',jack:'Jack and Coke',cat:'Mystical Cat',dark:'Dark Side'},toStock:'It went to your stock.',practice:'Practice race: no prize.',err:"Couldn't save the result. Try again tomorrow.",
     lz:{start:"Let's go, Ace!",spin:'I spun! 😵',lead:'Bye! 🏎️',boost:'Boost!'},pos:n=>['','1st','2nd'][n],finish:'Finish'},
-  es:{boxT:'🏁 Desafíos de la banda',boxSub:'Gánale a la banda en los minijuegos y lleva poderes a tu inventario, desde el primer día.',kartT:'Kart con Luiz',kartSub:'Gana la carrera y llévate un premio sorpresa.',go:'Correr',done:'Mañana hay más ✓',soon:'Pronto',soonList:['Pesca con Thomaz','Tenis con Chris','Surf con Julio','Yoga con Bia'],
-    introT:'Luiz, el piloto',introP:'Toca el lado <b>izquierdo</b> o <b>derecho</b> de la pantalla para cambiar de carril. Agarra las ⭐ para turbo y esquiva los conos, neumáticos y aceite.',prizes:'Si ganas, te llevas uno de estos:',once:'1 intento por día.',start:'¡Arrancar!',back:'Volver',
-    offline:'Sin conexión: esta carrera es solo por diversión, sin premio.',tried:'Ya corriste hoy. ¡Vuelve mañana!',go3:'¡YA!',win:'¡Le ganaste a Luiz!',lose:'¡Luiz llegó primero!',loseSub:'Inténtalo de nuevo mañana.',prizeT:'Tu premio',
+  es:{boxT:'🏁 Desafíos de la banda',boxSub:'Gánale a la banda en los minijuegos y lleva poderes a tu inventario, desde el primer día.',kartT:'Kart con Luiz Piloto',kartSub:'Gana la carrera y llévate un premio sorpresa.',go:'Correr',done:'Mañana hay más ✓',soon:'Pronto',soonList:['Pesca con Thomaz','Tenis con Chris','Surf con Julio','Yoga con Bia'],
+    introT:'Luiz Piloto',introP:'Toca el lado <b>izquierdo</b> o <b>derecho</b> de la pantalla para cambiar de carril. Agarra las ⭐ para turbo y esquiva los conos, neumáticos y aceite.',prizes:'Si ganas, te llevas uno de estos:',once:'1 intento por día.',start:'¡Arrancar!',back:'Volver',
+    offline:'Sin conexión: esta carrera es solo por diversión, sin premio.',tried:'Ya corriste hoy. ¡Vuelve mañana!',go3:'¡YA!',win:'¡Le ganaste a Luiz Piloto!',lose:'¡Luiz Piloto llegó primero!',loseSub:'Inténtalo de nuevo mañana.',prizeT:'Tu premio',
     full:'¡Tu inventario ya está lleno de todo! Usa unos poderes y vuelve mañana.',names:{beer:'Cerveza',jack:'Jack and Coke',cat:'Mystical Cat',dark:'Dark Side'},toStock:'Fue a tu inventario.',practice:'Carrera de práctica: sin premio.',err:'No se pudo guardar el resultado. Inténtalo mañana.',
     lz:{start:'¡Vamos, Ace!',spin:'¡Giré! 😵',lead:'¡Chau! 🏎️',boost:'¡Turbo!'},pos:n=>n+'º',finish:'Meta'},
 };
 const MT=()=>MINI_T[LANG]||MINI_T.pt;
+const LZP={look:'luizpilot',short:'Luiz'};
 function miniTried(g){ return !!(Rank.me&&!Rank.me.tester&&Rank.me.mini&&Rank.me.mini[g]); }
 function miniBoxHTML(){
-  const m=MT(), lz=BAND.find(b=>b.id==='luiz'), tried=miniTried('kart');
+  const m=MT(), lz=LZP, tried=miniTried('kart');
   const soon=['thomaz','chris','julio','bia'].map((id,i)=>`<span class="msoon"><span class="mav">${avatarHTML(BAND.find(b=>b.id===id))}</span><small>${m.soonList[i]}</small></span>`).join('');
   return `<section class="box minibox"><h2>${m.boxT}</h2><p>${m.boxSub}</p>
     <div class="mcard"><span class="mav big">${avatarHTML(lz)}<i>🏁</i></span><div class="mtxt"><b>${m.kartT}</b><small>${m.kartSub}</small></div>
@@ -3237,8 +3252,8 @@ const Kart={
     Snd.init(); Music.hold=true; Music.sync(); document.body.classList.add('ingame');
     const d=document.createElement('div'); d.id='kartov'; d.innerHTML='<canvas id="kartcv"></canvas><div id="kartcard"></div>'; document.body.appendChild(d); this.el=d;
     this.cv=d.querySelector('canvas'); this.card=d.querySelector('#kartcard');
-    const lz=BAND.find(b=>b.id==='luiz');
-    this.imgs={}; this.me=this.img('me',ME?avatarSVG(composeLook(ME)):youSVG()); this.lz=this.img('lz',avatarSVG(LOOKS[lz.look]));
+    const lz=LZP;
+    this.imgs={}; this.me=this.img('me',ME?avatarSVG(composeLook(ME)):youSVG()); this.lz=this.img('lz',avatarSVG(LOOKS.luizpilot));
     this.cv.addEventListener('pointerdown',e=>this.tap(e)); this.key=e=>{ if(!this.st||this.st.phase!=='race') return; if(e.key==='ArrowLeft') this.move(-1); if(e.key==='ArrowRight') this.move(1); };
     document.addEventListener('keydown',this.key);
     this.resize(); this.reset(); this.intro();
@@ -3261,7 +3276,7 @@ const Kart={
   cardHTML(h){ this.card.innerHTML=`<div class="sheet ksheet">${h}</div>`; },
   toast(t){ if(this.st) this.st.toast={t,until:performance.now()+3500}; },
   intro(){
-    const m=MT(), lz=BAND.find(b=>b.id==='luiz');
+    const m=MT(), lz=LZP;
     this.cardHTML(`<div class="kav"><span class="frame">${avatarHTML(lz)}</span><i>🏁</i></div><h2>${m.introT}</h2><p>${m.introP}</p>
       <p class="kpz"><small>${m.prizes}</small><span>${['beer','jack','cat','dark'].map(k=>`<span class="kpi">${prizeIcon(k)}</span>`).join('')}</span></p>
       <p class="konce">${Rank.me&&Rank.me.tester?'🧪 teste: sem limite':m.once}</p>
@@ -3281,7 +3296,7 @@ const Kart={
       if(p-lastStar>1100&&Math.random()<.6){ const free=[0,1,2].filter(l=>!lanes.includes(l)); obj.push({pos:p+150,lane:free[Math.random()*free.length|0],type:'star'}); lastStar=p; }
       p+=360-130*k+Math.random()*140;
     }
-    const spins=[L*(.25+Math.random()*.2),L*(.6+Math.random()*.2)];
+    const spins=[L*(.35+Math.random()*.35)];
     this.st={phase:'intro',L,obj,t:-3.2,me:{pos:0,v:0,lane:1,x:this.laneX(1),spin:0,boost:0},lz:{pos:0,v:0,lane:0,x:this.laneX(0),spin:0,spins,say:null},shake:0,win:null,endT:0,toast:null,last:performance.now(),cd:4};
   },
   go(){ const s=this.st; s.phase='count'; s.t=-3.2; s.cd=4; },
@@ -3315,7 +3330,7 @@ const Kart={
     // Luiz: ritmo firme, acelera um pouco se ficar pra trás e roda duas vezes na corrida
     lz.spin=Math.max(0,lz.spin-dt);
     if(lz.spins.length&&lz.pos>=lz.spins[0]){ lz.spins.shift(); lz.spin=.9; lz.v=140; this.say(m.lz.spin); }
-    let lt=334+12*Math.sin(s.t*.6); if(lz.pos<me.pos-260) lt+=22; if(lz.pos>me.pos+500) lt-=14;
+    let lt=350+12*Math.sin(s.t*.6); if(lz.pos<me.pos-260) lt+=22; if(lz.pos>me.pos+500) lt-=14;
     lz.v=lz.spin>0?lz.v*.99:lz.v+(lt-lz.v)*Math.min(1,dt*1.3);
     const ahead=l=>s.obj.some(o=>o.type!=='star'&&o.lane===l&&o.pos>lz.pos&&o.pos-lz.pos<160);
     if(ahead(lz.lane)){ const c=[0,1,2].filter(l=>!ahead(l)).sort((a,b)=>Math.abs(a-lz.lane)-Math.abs(b-lz.lane)); if(c.length) lz.lane=c[0]; }
@@ -3340,7 +3355,7 @@ const Kart={
   },
   async finish(){
     const s=this.st, m=MT();
-    if(!s.win){ this.cardHTML(`<div class="kav"><span class="frame">${avatarHTML(BAND.find(b=>b.id==='luiz'))}</span><i>🏆</i></div><h2>${m.lose}</h2><p>${m.loseSub}</p><div class="row"><button class="cta" id="k-back">${m.back}</button></div>`);
+    if(!s.win){ this.cardHTML(`<div class="kav"><span class="frame">${avatarHTML(LZP)}</span><i>🏆</i></div><h2>${m.lose}</h2><p>${m.loseSub}</p><div class="row"><button class="cta" id="k-back">${m.back}</button></div>`);
       if(!s.practice) Rank.post({a:'minidone',game:'kart',win:false}).catch(()=>{}); return; }
     if(s.practice){ this.cardHTML(`<h2 class="kwin">${m.win}</h2><p>${m.practice}</p><div class="row"><button class="cta" id="k-back">${m.back}</button></div>`); return; }
     this.cardHTML(`<h2 class="kwin">${m.win}</h2><p><small>${m.prizeT}</small></p><div class="kroll"><span class="kpi big" id="k-roll">${prizeIcon('beer')}</span></div><p class="kname" id="k-name">…</p>`);

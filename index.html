@@ -754,6 +754,7 @@ details.rulesbox .rules{margin-top:8px}
 .bosswarn{color:#ffb3a8!important;font-weight:700}
 .bosslost h2{color:#ff8a7a}
 .quickbtn{width:100%;font-size:28px;margin:6px 0 0}
+.quicksub{margin:14px 0 4px!important;font-size:14px}
 .oncount{display:block;color:#5fe08a;margin-top:4px}
 .hallh{font-family:var(--f-display);font-weight:400;font-size:22px;color:var(--gold);margin:14px 0 6px;text-align:left}
 .hall{list-style:none;padding:0;margin:0;display:grid;gap:8px}
@@ -2391,7 +2392,7 @@ document.addEventListener('submit',e=>{ if(e.target.id!=='nameform') return; e.p
 function onlineBoxHTML(){
   const o=OT(), R=S.room||{};
   return `<section class="box onlinebox"><h2>${o.boxT}</h2><p>${o.boxSub}${Hall.count?` <b class="oncount">${o.onlineN(Hall.count)}</b>`:''}</p>
-    <button class="cta quickbtn" id="quickbtn" ${R.busy?'disabled':''}>${o.quick}</button><p class="hint">${o.quickSub}</p>
+    <button class="cta quickbtn" id="quickbtn" ${R.busy?'disabled':''}>${o.quick}</button><p class="hint quicksub">${o.quickSub}</p>
     ${hallRoomsHTML()}
     ${hallNowHTML(false)}
     <div class="item lbots"><span><b>${o.acceptInv}</b><small>${o.acceptInvSub}</small></span><button class="toggle" id="accinv" aria-pressed="${Hall.accept}"></button></div>

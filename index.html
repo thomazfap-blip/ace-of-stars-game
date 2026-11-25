@@ -795,7 +795,13 @@ details.rulesbox .rules{margin-top:8px}
 .mcard{display:flex;flex-wrap:wrap;align-items:center;gap:12px;background:rgba(0,0,0,.3);border:1px solid rgba(245,201,79,.35);border-radius:14px;padding:12px}
 .mav{display:block;width:40px;height:40px;border-radius:8px;overflow:hidden;position:relative;flex:none}.mav.big{width:62px;height:62px;overflow:visible}.mav.big .avatar{border-radius:10px;overflow:hidden;box-shadow:0 0 0 2px #fff}.mav i{position:absolute;right:-10px;bottom:-10px;font-style:normal;font-size:24px}
 .mtxt{flex:1;min-width:0}.mtxt b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;color:var(--gold);letter-spacing:.03em;line-height:1}.mtxt small{font-size:12px}
-.mlist{display:grid;gap:8px}.mcard.tried{opacity:.6}.minibox .mcard{padding:8px 10px;gap:10px}.mcard .mtxt b{font-size:24px}.mcard .mtxt small{display:block;line-height:1.25}.mcard .mtxt small.mvs{color:var(--ink);font-weight:700}.minibox .mav.big{width:52px;height:52px}.minibox .mgo{font-size:20px!important;padding:6px 16px!important}
+.mlist{display:grid;gap:8px}
+.bonusbtn{display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;text-align:left;background:linear-gradient(135deg,rgba(245,201,79,.22),rgba(214,38,43,.25));border:1.5px solid var(--gold);border-radius:14px;padding:10px 12px;color:var(--ink);position:relative}
+.bonusbtn .bz{font-size:26px;line-height:1}.bonusbtn .bt{flex:1;min-width:0}.bonusbtn b{display:block;font-family:var(--f-display);font-weight:400;font-size:24px;color:var(--gold);letter-spacing:.03em;line-height:1}.bonusbtn small{font-size:12px}
+.bonusbtn i{font-style:normal;color:var(--gold);font-size:22px}.bonusbtn em{font-style:normal;background:#d6262b;color:#fff;font-weight:800;font-size:12px;border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;padding:0 6px}
+.mcard.secret{opacity:.55;border-style:dashed}.mcard.secret .mav.big{display:grid;place-items:center;background:rgba(255,255,255,.08);border-radius:10px}.mcard.secret .q{font-family:var(--f-display);font-size:34px;color:var(--gold)}
+.minibox.sheet{text-align:left}.minibox.sheet>p{text-align:left}
+.miniinv{z-index:60}.ksheet .kick{font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-size:13px}.mcard.tried{opacity:.6}.minibox .mcard{padding:8px 10px;gap:10px}.mcard .mtxt b{font-size:24px}.mcard .mtxt small{display:block;line-height:1.25}.mcard .mtxt small.mvs{color:var(--ink);font-weight:700}.minibox .mav.big{width:52px;height:52px}.minibox .mgo{font-size:20px!important;padding:6px 16px!important}
 .ksheet h2{font-size:34px}
 .minibox .mgo{align-self:center;flex:none;font-size:22px;padding:8px 18px}.minibox .ghost.mgo{flex-basis:100%;font-size:13px;padding:8px 10px;opacity:.8}
 .msoonrow{display:flex;gap:6px;align-items:flex-start;margin-top:12px;overflow-x:auto;scrollbar-width:none}.msoonrow em{font-style:normal;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);align-self:center}
@@ -2800,6 +2806,7 @@ function finishFor(place){
     if(d.prevLevel!=null&&lv>d.prevLevel) S.levelUp=lv;
     if(d.catGot){ S.catWon=true; if(d.catFirst) S.catGot=true; }
     if(d.darkGot){ S.darkWon=true; if(d.darkFirst) S.darkGotFx=true; }
+    miniMaybeInvite();
     // convite pro e-mail: na 1ª partida e, se dispensou, mais uma vez quando fizer pontos
     let asked=0; try{ asked=+(localStorage.getItem('fodinha-mailask')||0); }catch(e){}
     if(d.profile&&!d.profile.linked&&(asked===0||(asked===1&&pts>0))){
@@ -3162,9 +3169,9 @@ function pageMe(){
     <div class="acerow"><button class="acebtn" id="editace" aria-label="${ME?T().edEdit:T().edNew}"><span class="frame">${avatarHTML({isHuman:true})}<span class="pencil">✏️</span></span></button>
     <div class="acefield"><span class="acestar">★</span><input id="acename" type="text" maxlength="14" autocomplete="nickname" enterkeyhint="done" placeholder="${T().acePh}" value="${ACE.replace(/"/g,'&quot;')}" aria-label="${T().aceT}"></div></div>
     ${levelStripHTML()}
+    ${bonusBtnHTML()}
     <button class="aceinvite${ME?'':' new'}" id="editace2">${ME?T().edEdit:T().edNew}</button>
   </section>
-  ${miniBoxHTML()}
   ${turnHTML()}`;
 }
 function turnSheetHTML(){
@@ -3206,7 +3213,7 @@ function turnHTML(){
 }
 // ---------- Desafios da banda: mini-jogos contra os especiais ----------
 const MINI_T={
-  pt:{short:{kart:'Kart',fish:'Pescaria',surf:'Surfe',yoga:'Yoga',tennis:'Tênis'},vs:'contra',boxT:'🏁 Desafios da banda',boxSub:'Ganhe dos especiais nos mini-jogos e leve poderes pro seu estoque, desde o primeiro dia. Uma tentativa por dia em cada um.',go:'Jogar',done:'Amanhã tem mais ✓',
+  pt:{short:{kart:'Kart',fish:'Pescaria',surf:'Surfe',yoga:'Yoga',tennis:'Tênis'},vs:'contra',boxT:'🏁 Desafios da banda',bonusT:'⚡ Desafios bônus',found:(n,t)=>`${n} de ${t} descobertos`,today:k=>k?`${k} pra jogar hoje`:'amanhã tem mais',secret:'Desafio secreto',secretSub:'Continue jogando Fodinha pra descobrir.',invT:'⚡ Novo desafio bônus!',invP:(n,g)=>`${n} te desafiou: ${g}!`,invSub:'Ganhe e leve um poder pro seu estoque.',accept:'Aceitar!',later:'Agora não',saved:'Fica guardado em ⚡ Desafios bônus, no seu Perfil. Uma tentativa por dia.',ok:'Beleza',boxSub:'Ganhe dos especiais nos mini-jogos e leve poderes pro seu estoque, desde o primeiro dia. Uma tentativa por dia em cada um.',go:'Jogar',done:'Amanhã tem mais ✓',
     g:{kart:{t:'Kart com o Luiz Piloto',s:'Chegue na frente dele.',p:'Toque no lado <b>esquerdo</b> ou <b>direito</b> da tela pra trocar de pista. Pegue as ⭐ pra turbinar e desvie dos cones, pneus e óleo.'},
        fish:{t:'Pescaria com o Thomaz Pescador',s:'Pesque mais quilos em 30 segundos.',p:'Quando a boia <b>afundar</b> e aparecer o <b>!</b>, toque rápido pra fisgar. Quanto mais rápido, maior o peixe. Se tocar antes da hora ou numa beliscada, o peixe foge.'},
        surf:{t:'Surfe com o Julio Surfista',s:'Faça mais pontos nas ondas.',p:'Toque pra <b>pular</b> as pedras. No ar, toque de novo pra dar uma <b>manobra</b> (vale muito ponto), mas se não der tempo de completar antes de cair, você toma vaca.'},
@@ -3216,7 +3223,7 @@ const MINI_T={
     win:n=>`Você ganhou do ${n}!`,lose:n=>`${n} ganhou!`,loseSub:'Tenta de novo amanhã.',prizeT:'Seu prêmio',full:'Seu estoque já está cheio de tudo! Use uns poderes e volte amanhã.',names:{beer:'Cerveja',jack:'Jack and Coke',cat:'Mystical Cat',dark:'Dark Side'},toStock:'Foi pro seu estoque.',practice:'Partida de treino: sem prêmio.',err:'Não deu pra registrar o resultado. Tenta de novo amanhã.',
     say:{start:'Bora, Ace!',spin:'Rodei! 😵',lead:'Tchau! 🏎️',fish:'Esse é dos bons! 🎣',wave:'Que onda! 🤙',calm:'Respira… 🧘',ace:'Ace! 🎾'},pos:n=>n+'º',finish:'Chegada',kg:'kg',pts:'pts',
     fx:{early:'Assustou! 🐟💨',miss:'Escapou!',perfect:'Fisgada perfeita!',wipe:'Vaca! 🌊',trick:'Manobra!',fall:'Caiu!',zone:'Perfeito!',you:'Ponto seu!',op:'Ponto dele!'}},
-  en:{short:{kart:'Kart',fish:'Fishing',surf:'Surfing',yoga:'Yoga',tennis:'Tennis'},vs:'vs.',boxT:'🏁 Band challenges',boxSub:'Beat the special characters at mini-games and take powers to your stock, from day one. One try per day in each.',go:'Play',done:'More tomorrow ✓',
+  en:{short:{kart:'Kart',fish:'Fishing',surf:'Surfing',yoga:'Yoga',tennis:'Tennis'},vs:'vs.',boxT:'🏁 Band challenges',bonusT:'⚡ Bonus challenges',found:(n,t)=>`${n} of ${t} found`,today:k=>k?`${k} to play today`:'more tomorrow',secret:'Secret challenge',secretSub:'Keep playing Fodinha to find it.',invT:'⚡ New bonus challenge!',invP:(n,g)=>`${n} challenged you: ${g}!`,invSub:'Win and take a power to your stock.',accept:'Accept!',later:'Not now',saved:'It stays in ⚡ Bonus challenges, on your Profile. One try per day.',ok:'OK',boxSub:'Beat the special characters at mini-games and take powers to your stock, from day one. One try per day in each.',go:'Play',done:'More tomorrow ✓',
     g:{kart:{t:'Kart vs. Racer Luiz',s:'Get there first.',p:'Tap the <b>left</b> or <b>right</b> side of the screen to switch lanes. Grab the ⭐ for a boost and dodge the cones, tires and oil.'},
        fish:{t:'Fishing vs. Fisherman Thomaz',s:'Catch more kilos in 30 seconds.',p:'When the float <b>sinks</b> and the <b>!</b> shows up, tap fast to hook. The faster, the bigger the fish. Tap too early or on a nibble and the fish gets away.'},
        surf:{t:'Surfing vs. Surfer Julio',s:'Score more on the waves.',p:'Tap to <b>jump</b> the rocks. In the air, tap again for a <b>trick</b> (big points), but if it isn\'t done before you land, you wipe out.'},
@@ -3226,7 +3233,7 @@ const MINI_T={
     win:n=>`You beat ${n}!`,lose:n=>`${n} won!`,loseSub:'Try again tomorrow.',prizeT:'Your prize',full:'Your stock is already full of everything! Use some powers and come back tomorrow.',names:{beer:'Beer',jack:'Jack and Coke',cat:'Mystical Cat',dark:'Dark Side'},toStock:'It went to your stock.',practice:'Practice game: no prize.',err:"Couldn't save the result. Try again tomorrow.",
     say:{start:"Let's go, Ace!",spin:'I spun! 😵',lead:'Bye! 🏎️',fish:'What a catch! 🎣',wave:'Sick wave! 🤙',calm:'Breathe… 🧘',ace:'Ace! 🎾'},pos:n=>['','1st','2nd'][n],finish:'Finish',kg:'kg',pts:'pts',
     fx:{early:'Scared it! 🐟💨',miss:'Got away!',perfect:'Perfect hook!',wipe:'Wipeout! 🌊',trick:'Trick!',fall:'Fell!',zone:'Perfect!',you:'Your point!',op:'His point!'}},
-  es:{short:{kart:'Kart',fish:'Pesca',surf:'Surf',yoga:'Yoga',tennis:'Tenis'},vs:'contra',boxT:'🏁 Desafíos de la banda',boxSub:'Gánales a los especiales en los minijuegos y lleva poderes a tu inventario, desde el primer día. Un intento por día en cada uno.',go:'Jugar',done:'Mañana hay más ✓',
+  es:{short:{kart:'Kart',fish:'Pesca',surf:'Surf',yoga:'Yoga',tennis:'Tenis'},vs:'contra',boxT:'🏁 Desafíos de la banda',bonusT:'⚡ Desafíos bonus',found:(n,t)=>`${n} de ${t} descubiertos`,today:k=>k?`${k} para jugar hoy`:'mañana hay más',secret:'Desafío secreto',secretSub:'Sigue jugando Fodinha para descubrirlo.',invT:'⚡ ¡Nuevo desafío bonus!',invP:(n,g)=>`¡${n} te desafió: ${g}!`,invSub:'Gana y llévate un poder a tu inventario.',accept:'¡Aceptar!',later:'Ahora no',saved:'Queda guardado en ⚡ Desafíos bonus, en tu Perfil. Un intento por día.',ok:'Listo',boxSub:'Gánales a los especiales en los minijuegos y lleva poderes a tu inventario, desde el primer día. Un intento por día en cada uno.',go:'Jugar',done:'Mañana hay más ✓',
     g:{kart:{t:'Kart con Luiz Piloto',s:'Llega primero.',p:'Toca el lado <b>izquierdo</b> o <b>derecho</b> de la pantalla para cambiar de carril. Agarra las ⭐ para turbo y esquiva los conos, neumáticos y aceite.'},
        fish:{t:'Pesca con Thomaz Pescador',s:'Pesca más kilos en 30 segundos.',p:'Cuando la boya se <b>hunda</b> y aparezca el <b>!</b>, toca rápido para enganchar. Cuanto más rápido, más grande el pez. Si tocas antes o en un mordisqueo, el pez se escapa.'},
        surf:{t:'Surf con Julio Surfista',s:'Haz más puntos en las olas.',p:'Toca para <b>saltar</b> las rocas. En el aire, toca otra vez para una <b>maniobra</b> (vale mucho), pero si no la terminas antes de caer, te revuelca la ola.'},
@@ -3241,11 +3248,36 @@ const MT=()=>MINI_T[LANG]||MINI_T.pt;
 const MINI_LIST=[['kart','sp_luiz','🏁'],['fish','sp_thomaz','🎣'],['surf','sp_julio','🏄'],['yoga','sp_bia','🧘'],['tennis','sp_chris','🎾']];
 const miniOpp=g=>BAND.find(b=>b.id===MINI_LIST.find(x=>x[0]===g)[1]);
 function miniTried(g){ return !!(Rank.me&&!Rank.me.tester&&Rank.me.mini&&Rank.me.mini[g]); }
-function miniBoxHTML(){
-  const m=MT();
-  return `<section class="box minibox"><h2>${m.boxT}</h2><p>${m.boxSub}</p><div class="mlist">${MINI_LIST.map(([g,id,ic])=>{ const tried=miniTried(g), b=BAND.find(x=>x.id===id);
+function miniDisc(){ let l=[]; try{ l=JSON.parse(localStorage.getItem('fodinha-disc')||'[]'); }catch(e){} const r=(Rank.me&&Rank.me.disc)||[]; return MINI_LIST.map(x=>x[0]).filter(g=>l.includes(g)||r.includes(g)); }
+function miniDiscover(g){ const l=miniDisc(); if(!l.includes(g)) l.push(g); try{ localStorage.setItem('fodinha-disc',JSON.stringify(l)); }catch(e){} if(Rank.me){ Rank.me.disc=l.slice(); } Rank.post({a:'discover',game:g}).catch(()=>{}); }
+function miniToday(){ return miniDisc().filter(g=>!miniTried(g)).length; }
+function bonusBtnHTML(){
+  const d=miniDisc(); if(!d.length) return '';
+  const m=MT(), k=miniToday();
+  return `<button class="bonusbtn" id="bonusopen"><span class="bt"><b>${m.bonusT}</b><small>${m.found(d.length,MINI_LIST.length)} · ${m.today(k)}</small></span>${k?`<em>${k}</em>`:''}<i>›</i></button>`;
+}
+function bonusSheetHTML(){
+  if(!S.bonusOpen) return '';
+  const m=MT(), d=miniDisc();
+  const cards=MINI_LIST.map(([g,id,ic])=>{ if(!d.includes(g)) return `<div class="mcard secret"><span class="mav big"><span class="q">?</span></span><div class="mtxt"><b>${m.secret}</b><small>${m.secretSub}</small></div></div>`;
+    const tried=miniTried(g), b=BAND.find(x=>x.id===id);
     return `<div class="mcard${tried?' tried':''}"><span class="mav big">${avatarHTML(b)}<i>${ic}</i></span><div class="mtxt"><b>${m.short[g]}</b><small class="mvs">${m.vs} ${(T().spNames||{})[id]||b.name}</small><small>${tried?m.done:m.g[g].s}</small></div>
-    ${tried?'':`<button class="cta mgo" data-mini="${g}">${m.go}</button>`}</div>`; }).join('')}</div></section>`;
+    ${tried?'':`<button class="cta mgo" data-mini="${g}">${m.go}</button>`}</div>`; }).join('');
+  return `<div class="overlay rankov"><div class="sheet minibox" role="dialog" aria-label="${m.bonusT}"><button class="iconbtn sheetx" id="bonusclose" aria-label="${T().rankClose}">✕</button>
+    <h2>${m.bonusT}</h2><p>${m.boxSub}</p><div class="mlist">${cards}</div></div></div>`;
+}
+function miniMaybeInvite(){
+  if(S.tut) return; const d=miniDisc(), g=MINI_LIST.map(x=>x[0]).find(x=>!d.includes(x)); if(!g) return;
+  if(d.length&&Math.random()>.4) return;
+  setTimeout(()=>{ if(S.miniInvite||Mini.el) return; S.miniInvite={g}; render(); Snd.fanfare&&Snd.fanfare(); },2600);
+}
+function miniInviteHTML(){
+  const v=S.miniInvite; if(!v) return '';
+  const m=MT(), b=miniOpp(v.g), ic=MINI_LIST.find(x=>x[0]===v.g)[2], nm=(T().spNames||{})[b.id]||b.name;
+  if(v.saved) return `<div class="overlay rankov miniinv"><div class="sheet ksheet"><h2>${m.bonusT}</h2><p>${m.saved}</p><div class="row"><button class="cta" id="mi-ok">${m.ok}</button></div></div></div>`;
+  return `<div class="overlay rankov miniinv"><div class="sheet ksheet"><p class="kick">${m.invT}</p><div class="kav"><span class="frame">${avatarHTML(b)}</span><i>${ic}</i></div>
+    <h2>${m.invP(nm,m.short[v.g])}</h2><p>${m.invSub}</p>
+    <div class="row"><button class="ghost" id="mi-no">${m.later}</button><button class="cta" id="mi-yes">${m.accept}</button></div></div></div>`;
 }
 function prizeIcon(k){ return k==='beer'?beerSVG(false):k==='jack'?jackSVG(false):k==='cat'?crystalSVG():YY_SVG; }
 const rnd=(a,b)=>a+Math.random()*(b-a);
@@ -3890,7 +3922,7 @@ function render(){
   const SCR='.sheet,.scroll,.tbl'; const keepSc=[...app.querySelectorAll(SCR)].map(e=>[e.getAttribute('aria-label')||e.className,e.scrollTop]);
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+inviteHTML()+levelsHTML()+powersHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+inviteHTML()+levelsHTML()+powersHTML()+bonusSheetHTML()+miniInviteHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   { const els=[...app.querySelectorAll(SCR)]; keepSc.forEach(([k,top],i)=>{ const e=els[i]; if(e&&(e.getAttribute('aria-label')||e.className)===k&&top) e.scrollTop=top; }); }
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
@@ -3920,7 +3952,12 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('button'); if(!t) return;
   Snd.init(); Music.sync();
   if(!t.dataset.play && !t.dataset.bet) Snd.click();
-  if(t.dataset.mini){ Mini.open(t.dataset.mini); return; }
+  if(t.dataset.mini){ S.bonusOpen=false; render(); Mini.open(t.dataset.mini); return; }
+  if(t.id==='bonusopen'){ S.bonusOpen=true; render(); return; }
+  if(t.id==='bonusclose'){ S.bonusOpen=false; render(); return; }
+  if(t.id==='mi-yes'){ const g=S.miniInvite.g; miniDiscover(g); S.miniInvite=null; render(); Mini.open(g); return; }
+  if(t.id==='mi-no'){ miniDiscover(S.miniInvite.g); S.miniInvite={...S.miniInvite,saved:true}; render(); return; }
+  if(t.id==='mi-ok'){ S.miniInvite=null; render(); return; }
   if(t.id&&t.id.startsWith('k-')){ Mini.btn(t.id); return; }
   if(t.dataset.lang){ LANG=t.dataset.lang; try{localStorage.setItem('fodinha-lang',LANG)}catch(e){} render(); return; }
   if(t.dataset.pick){ const id=t.dataset.pick, b=BAND.find(x=>x.id===id);

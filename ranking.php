@@ -5,6 +5,7 @@
 // GET  ranking.php?id=XYZ                      -> placar geral/semanal + perfil do jogador
 // POST {a:'game', id, name, av, pts, ...}      -> soma uma partida
 // POST {a:'use', id, item:'beer'|'jack'|'cat'|'dark'} -> gasta um drinque ou uma bola de cristal do estoque
+// POST {a:'discover', id, game}              -> o jogador descobriu um desafio bônus (convite no fim da partida)
 // POST {a:'ministart', id, game}             -> gasta a tentativa do dia num desafio (kart...)
 // POST {a:'minidone', id, game, win}          -> fim do desafio; se ganhou, sorteia um prêmio
 // POST {a:'code', id, email, lang}             -> manda código de confirmação pro e-mail
@@ -53,7 +54,7 @@ function mask_email($e) { [$u, $d] = explode('@', $e, 2); return mb_substr($u, 0
 
 function norm(&$R, &$P) {
     foreach (['all', 'weeks'] as $k) if (!isset($R[$k]) || !is_array($R[$k])) $R[$k] = [];
-    foreach (['links', 'acc', 'inv', 'codes', 'cat', 'dark', 'mini'] as $k) if (!isset($P[$k]) || !is_array($P[$k])) $P[$k] = [];
+    foreach (['links', 'acc', 'inv', 'codes', 'cat', 'dark', 'mini', 'disc'] as $k) if (!isset($P[$k]) || !is_array($P[$k])) $P[$k] = [];
 }
 function day_key() { return gmdate('Y-m-d', time() - 3 * 3600); }
 function mini_today($P, $key) { $o = []; foreach (MINI_GAMES as $g => $_) { $m = $P['mini'][$key][$g] ?? null; $o[$g] = $m && ($m['d'] ?? '') === day_key(); } return $o; }
@@ -115,14 +116,14 @@ function profile($R, $P, $key) {
     $acc = $P['acc'][$key] ?? null;
     // contas de teste: tudo liberado e estoque cheio (o ranking continua com os pontos reais)
     if ($acc && in_array($acc['email'], TESTERS, true)) {
-        return ['pts' => max($pts, 5000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true, 'mini' => array_map(function () { return false; }, MINI_GAMES),
+        return ['pts' => max($pts, 5000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true, 'mini' => array_map(function () { return false; }, MINI_GAMES), 'disc' => array_values($P['disc'][$key] ?? []),
                 'linked' => true, 'email' => mask_email($acc['email']), 'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
     }
     return ['pts' => $pts, 'level' => $lv, 'next' => LV_PTS[$lv + 1] ?? null,
             'beer' => max(0, earned($lv, LV_BEER) - ($used['b'] ?? 0)), 'jack' => max(0, earned($lv, LV_JACK) - ($used['j'] ?? 0)),
             'cat' => cat_of($P, $key)['n'], 'catW' => cat_of($P, $key)['w'],
             'dark' => pow_of($P, 'dark', $key)['n'], 'darkW' => pow_of($P, 'dark', $key)['w'],
-            'mini' => mini_today($P, $key),
+            'mini' => mini_today($P, $key), 'disc' => array_values($P['disc'][$key] ?? []),
             'linked' => (bool)$acc, 'email' => $acc ? mask_email($acc['email']) : null,
             'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
 }
@@ -243,6 +244,13 @@ if ($a === 'use') {
     out(['profile' => profile($R, $P, $key)]);
 }
 
+if ($a === 'discover') {
+    $game = $in['game'] ?? '';
+    if (isset(MINI_GAMES[$game])) { $d = $P['disc'][$key] ?? []; if (!in_array($game, $d, true)) { $d[] = $game; $P['disc'][$key] = $d; jsave($playFile, $P); } }
+    flock($lock, LOCK_UN);
+    out(['profile' => profile($R, $P, $key)]);
+}
+
 if ($a === 'ministart' || $a === 'minidone') {
     $game = $in['game'] ?? '';
     if (!isset(MINI_GAMES[$game])) { flock($lock, LOCK_UN); out(['error' => 'game'], 400); }
@@ -342,6 +350,7 @@ if ($a === 'verify' || $a === 'link') {
             $P['inv'][$acctKey] = $u; unset($P['inv'][$key]);
         }
         merge_cat($P, $key, $acctKey);
+        if (isset($P['disc'][$key])) { $P['disc'][$acctKey] = array_values(array_unique(array_merge($P['disc'][$acctKey] ?? [], $P['disc'][$key]))); unset($P['disc'][$key]); }
         foreach ($P['links'] as $d => $k) if ($k === $key) $P['links'][$d] = $acctKey;
     }
     $P['links'][$id] = $acctKey;

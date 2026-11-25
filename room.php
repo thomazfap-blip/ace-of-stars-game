@@ -15,6 +15,7 @@
 //      (lobby, poll e take devolvem as mensagens novas: mande cs = id da última que já tem)
 // POST {a:'reopen', code, token}                   -> anfitrião volta todo mundo pra sala de espera
 // POST {a:'hello', id, name, av, lv, inv, room}     -> marca que está online; devolve quem está online, convites e mesas abertas
+// POST {a:'dm', id, to, m}                          -> manda uma mensagem pronta (número da frase) pra quem está online
 // POST {a:'invite', id, to, code, token}           -> convida alguém que está online pra sua sala
 // POST {a:'setopen', code, token, open}            -> anfitrião deixa a sala aberta (aparece no saguão) ou fechada
 // POST {a:'quick', id, name, av, lang}             -> jogo rápido: entra numa mesa rápida esperando gente ou cria uma
@@ -44,6 +45,7 @@ if (!is_array($in)) out(['error' => 'bad'], 400);
 $a = $in['a'] ?? '';
 
 // limpa salas velhas de vez em quando
+const DM_COUNT = 12;
 const QUICK_WAIT = 30;
 const ONLINE_SECS = 40;
 
@@ -91,7 +93,29 @@ if ($a === 'hello') {
         foreach ($D as $k => $v) { $D[$k] = array_values(array_filter($v, fn($i) => time() - $i['t'] < 600)); if (!$D[$k]) unset($D[$k]); }
         return [$D, $mine];
     });
-    out(['online' => $online, 'invites' => $invites, 'rooms' => open_rooms($dir, $me['room']), 'count' => count($online) + 1]);
+    $dms = with_json($base . '/dms.json', function ($D) use ($id) {
+        $mine = array_values(array_filter($D[$id] ?? [], fn($i) => time() - $i['t'] < 600));
+        unset($D[$id]);
+        foreach ($D as $k => $v) { $D[$k] = array_values(array_filter($v, fn($i) => time() - $i['t'] < 600)); if (!$D[$k]) unset($D[$k]); }
+        return [$D, $mine];
+    });
+    out(['online' => $online, 'invites' => $invites, 'dms' => $dms, 'rooms' => open_rooms($dir, $me['room']), 'count' => count($online) + 1]);
+}
+
+// mensagens prontas pra quem está online: só o número da frase viaja, nunca texto livre
+if ($a === 'dm') {
+    $id = clean_id($in['id'] ?? ''); $to = clean_id($in['to'] ?? ''); $m = (int)($in['m'] ?? -1);
+    if ($id === '' || $to === '' || $id === $to || $m < 0 || $m >= DM_COUNT) out(['error' => 'bad'], 400);
+    $P = json_decode(@file_get_contents($base . '/presence.json'), true) ?: [];
+    if (!isset($P[$to]) || time() - $P[$to]['t'] > ONLINE_SECS) out(['error' => 'off']);
+    $res = with_json($base . '/dms.json', function ($D) use ($id, $to, $m, $P) {
+        $last = 0; foreach ($D[$to] ?? [] as $i) if ($i['from'] === $id) $last = max($last, $i['t']);
+        if (time() - $last < 3) return [$D, ['error' => 'wait']];
+        $D[$to][] = ['from' => $id, 'name' => $P[$id]['name'] ?? '', 'av' => $P[$id]['av'] ?? '', 'm' => $m, 't' => time()];
+        $D[$to] = array_slice($D[$to], -10);
+        return [$D, ['ok' => true]];
+    });
+    out($res);
 }
 
 if ($a === 'invite') {

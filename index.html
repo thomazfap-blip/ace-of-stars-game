@@ -796,6 +796,12 @@ details.rulesbox .rules{margin-top:8px}
 .mav{display:block;width:40px;height:40px;border-radius:8px;overflow:hidden;position:relative;flex:none}.mav.big{width:62px;height:62px;overflow:visible}.mav.big .avatar{border-radius:10px;overflow:hidden;box-shadow:0 0 0 2px #fff}.mav i{position:absolute;right:-10px;bottom:-10px;font-style:normal;font-size:24px}
 .mtxt{flex:1;min-width:0}.mtxt b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;color:var(--gold);letter-spacing:.03em;line-height:1}.mtxt small{font-size:12px}
 .mlist{display:grid;gap:8px}
+.dmsheet{text-align:left}.dmhead{display:flex;align-items:center;gap:10px;padding-right:44px}.dmhead .mini{width:40px;height:40px;border-radius:8px;overflow:hidden;flex:none}.dmhead h2{text-align:left;font-size:30px}
+.dmlog{display:flex;flex-direction:column;gap:6px;max-height:34vh;overflow:auto;background:rgba(0,0,0,.25);border-radius:12px;padding:10px}
+.dmlog p{margin:0;max-width:80%;padding:6px 10px;border-radius:12px;font-size:14px;text-align:left}.dmlog p.me{align-self:flex-end;background:var(--gold);color:#2a1d00}.dmlog p.them{align-self:flex-start;background:#fff;color:#2a0a10}.dmlog p.hint{max-width:none;align-self:center}
+.dmhint{font-weight:700}.dmpicks{display:flex;flex-wrap:wrap;gap:6px}.dmpicks .chipbtn{font-size:13px;padding:7px 12px;background:rgba(0,0,0,.3)}
+.ghost.sm.dmb{padding:6px 10px;margin-right:6px}.ghost.sm.dmb.new{border-color:#d6262b;box-shadow:0 0 0 2px #d6262b}
+.dmtoast{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:71;width:min(520px,calc(100% - 24px));background:#fffaf0;color:#2a0a10;border:3px solid var(--gold);border-radius:14px;padding:10px 14px;font:600 14px var(--f-body);text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.5);animation:coachin .35s ease-out;cursor:pointer}
 .invbanner{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:70;width:min(520px,calc(100% - 24px));background:#fffaf0;color:#2a0a10;border:3px solid var(--gold);border-radius:14px;padding:10px 14px;font-weight:700;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.5);pointer-events:none;animation:coachin .35s ease-out}
 .pickic{height:1.1em;width:auto;vertical-align:-.2em}
 .pickbtn{flex:none;display:flex;align-items:center;gap:5px;border:1px solid var(--gold);border-radius:999px;padding:5px 10px;background:rgba(0,0,0,.3);color:var(--gold);font:800 13px Montserrat,sans-serif;cursor:pointer}
@@ -2497,7 +2503,8 @@ const Hall={online:[],rooms:[],count:0,invites:[],sent:{},msg:null,accept:(()=>{
     try{ const d=await Online.post({a:'hello',id:DEVICE_ID,name:me.name,av:me.av,lv:myLevel(),inv:this.accept,room:S.room&&S.room.code||'',play:S.phase==='table'});
       this.online=d.online||[]; this.rooms=d.rooms||[]; this.count=d.count||0;
       (d.invites||[]).forEach(i=>{ if(!this.invites.some(x=>x.from===i.from&&x.code===i.code)) { i.seen=Date.now(); this.invites.push(i); Snd.bell&&Snd.bell(1318,0,.08,.7); } });
-      const sig=JSON.stringify([this.online,this.rooms,this.invites.length]);
+      (d.dms||[]).forEach(i=>{ const th=DM.thread(i.from,i.name,i.av); th.msgs.push({me:false,m:i.m,t:Date.now()}); th.unread=!(S.dmTo===i.from); DM.toast={from:i.from,name:i.name,m:i.m,at:Date.now()}; setTimeout(()=>render(),6100); Snd.bell&&Snd.bell(988,0,.06,.4); });
+      const sig=JSON.stringify([this.online,this.rooms,this.invites.length,DM.sig()]);
       if(sig!==this.sig&&S.phase!=='table'){ this.sig=sig; const a=document.activeElement; if(!(a&&a.tagName==='INPUT'&&a.closest('#app'))) render(); }
     }catch(e){}
   },
@@ -2510,7 +2517,37 @@ const Hall={online:[],rooms:[],count:0,invites:[],sent:{},msg:null,accept:(()=>{
     render();
   }
 };
-setInterval(()=>Hall.tick(),8000); setTimeout(()=>Hall.tick(),1500);
+setInterval(()=>{ if(S.dmTo) Hall.tick(); },3000); setInterval(()=>Hall.tick(),8000); setTimeout(()=>Hall.tick(),1500);
+// ---------- mensagens prontas entre quem está online ----------
+const DM_T={
+  pt:['👋 Oi!','🃏 Bora jogar?','🎟️ Entra na minha mesa!','⏳ Já vou, tô terminando uma partida','👍 Boa partida!','🤝 GG!','🙏 Valeu!','😂😂😂','🔥🔥🔥','🤘 Rock and roll!','⭐ Vamos de StarAce!','👋 Até mais!'],
+  en:['👋 Hi!',"🃏 Let's play?",'🎟️ Join my table!','⏳ Coming, finishing a game','👍 Good game!','🤝 GG!','🙏 Thanks!','😂😂😂','🔥🔥🔥','🤘 Rock and roll!',"⭐ Let's go StarAce!",'👋 See you!'],
+  es:['👋 ¡Hola!','🃏 ¿Jugamos?','🎟️ ¡Entra a mi mesa!','⏳ Ya voy, estoy terminando una partida','👍 ¡Buena partida!','🤝 ¡GG!','🙏 ¡Gracias!','😂😂😂','🔥🔥🔥','🤘 ¡Rock and roll!','⭐ ¡Vamos StarAce!','👋 ¡Hasta luego!'],
+};
+const DM_U={pt:{t:n=>`💬 ${n}`,hint:'Escolha uma mensagem pronta:',empty:'Mande um oi!',off:'Essa pessoa saiu.',wait:'Calma, espera uns segundos.',btn:'Mensagem'},
+  en:{t:n=>`💬 ${n}`,hint:'Pick a ready message:',empty:'Say hi!',off:'This person left.',wait:'Easy, wait a few seconds.',btn:'Message'},
+  es:{t:n=>`💬 ${n}`,hint:'Elige un mensaje listo:',empty:'¡Manda un hola!',off:'Esta persona se fue.',wait:'Calma, espera unos segundos.',btn:'Mensaje'}};
+const DM={threads:{},toast:null,msg:null,
+  thread(id,name,av){ const t=this.threads[id]||(this.threads[id]={msgs:[],unread:false}); if(name) t.name=name; if(av!=null) t.av=av; return t; },
+  sig(){ return Object.values(this.threads).map(t=>t.msgs.length+(t.unread?'u':'')).join(','); },
+  unread(){ return Object.values(this.threads).filter(t=>t.unread).length; },
+  open(id){ const p=Hall.online.find(x=>x.id===id), th=this.thread(id,p&&p.name,p&&p.av); th.unread=false; S.dmTo=id; this.msg=null; render(); },
+  async send(i){ const id=S.dmTo, u=DM_U[LANG]||DM_U.pt; if(!id) return;
+    try{ const d=await Online.post({a:'dm',id:DEVICE_ID,to:id,m:i}); if(d.error==='wait') this.msg=u.wait; else if(d.error) this.msg=u.off; else { this.thread(id).msgs.push({me:true,m:i,t:Date.now()}); this.msg=null; } }
+    catch(e){ this.msg=Online.errText(e); } render(); },
+};
+function dmSheetHTML(){
+  if(!S.dmTo) return ''; const th=DM.thread(S.dmTo), L=DM_T[LANG]||DM_T.pt, u=DM_U[LANG]||DM_U.pt;
+  return `<div class="overlay rankov"><div class="sheet dmsheet" role="dialog"><button class="iconbtn sheetx" id="dmclose" aria-label="${T().rankClose}">✕</button>
+    <div class="dmhead"><span class="mini">${avatarHTML({av:th.av,short:th.name})}</span><h2>${esc(u.t(th.name||''))}</h2></div>
+    <div class="dmlog">${th.msgs.length?th.msgs.slice(-12).map(x=>`<p class="${x.me?'me':'them'}">${L[x.m]||''}</p>`).join(''):`<p class="hint">${u.empty}</p>`}</div>
+    ${DM.msg?`<p class="warn">${DM.msg}</p>`:''}<small class="dmhint">${u.hint}</small>
+    <div class="dmpicks">${L.map((x,i)=>`<button class="chipbtn" data-dmsend="${i}">${x}</button>`).join('')}</div></div></div>`;
+}
+function dmToastHTML(){
+  const t=DM.toast; if(!t||Date.now()-t.at>6000||S.dmTo===t.from) return ''; const L=DM_T[LANG]||DM_T.pt;
+  return `<button class="dmtoast" data-dmopen="${esc(t.from)}"><b>💬 ${esc(t.name)}:</b> ${L[t.m]||''}</button>`;
+}
 function hallRoomsHTML(){
   const o=OT(); if(!Hall.rooms.length) return `<h3 class="hallh">${o.openT}</h3><p class="hint">${o.openEmpty}</p>`;
   return `<h3 class="hallh">${o.openT}</h3><ul class="hall">${Hall.rooms.map(r=>`<li><span class="mini">${avatarHTML({av:r.av,short:r.host})}</span><span class="hn"><b>${esc(o.tableOf(r.host))}</b><small>${r.n}/8${r.quick&&r.startIn!=null?' · '+o.startsIn(r.startIn):''}</small></span><button class="cta sm" data-sit="${esc(r.code)}">${o.sit}</button></li>`).join('')}</ul>`;
@@ -2521,7 +2558,7 @@ function hallNowHTML(inRoom){
   return `<h3 class="hallh">${o.nowT}</h3>${Hall.msg?`<p class="warn">${Hall.msg}</p>`:''}${list.length?`<ul class="hall">${list.map(p=>{
     const sent=Hall.sent[p.id]&&Date.now()-Hall.sent[p.id]<180000;
     const st=p.busy?o.busy:!p.inv?o.noInv:'';
-    return `<li><span class="mini">${avatarHTML({av:p.av,short:p.name})}</span><span class="hn"><b>${esc(p.name)}</b><small>${T().lvNames[p.lv]||''}${st?' · '+st:''}</small></span>${p.inv?`<button class="ghost sm" data-invite="${esc(p.id)}" data-busy="${p.busy?1:''}" ${sent?'disabled':''}>${sent?o.invited:o.invite}</button>`:''}</li>`; }).join('')}</ul>`:`<p class="hint">${o.nowEmpty}</p>`}`;
+    return `<li><span class="mini">${avatarHTML({av:p.av,short:p.name})}</span><span class="hn"><b>${esc(p.name)}</b><small>${T().lvNames[p.lv]||''}${st?' · '+st:''}</small></span><button class="ghost sm dmb${DM.threads[p.id]&&DM.threads[p.id].unread?' new':''}" data-dmopen="${esc(p.id)}" aria-label="${(DM_U[LANG]||DM_U.pt).btn}">💬</button>${p.inv?`<button class="ghost sm" data-invite="${esc(p.id)}" data-busy="${p.busy?1:''}" ${sent?'disabled':''}>${sent?o.invited:o.invite}</button>`:''}</li>`; }).join('')}</ul>`:`<p class="hint">${o.nowEmpty}</p>`}`;
 }
 function inviteHTML(){
   const i=Hall.invites[0]; if(!i||S.phase==='table'||S.namePrompt) return ''; const o=OT();
@@ -3670,7 +3707,7 @@ const Kart={ get st(){ return Mini.mod===MINI_GAMES.kart&&Mini.el?Object.assign(
 
 const NAV_IC={"play": "<svg viewBox=\"0 0 40 40\"><g transform=\"rotate(-18 20 32)\"><rect x=\"9\" y=\"6\" width=\"15\" height=\"21\" rx=\"2.5\" fill=\"#f7f1e3\" stroke=\"#1a0a0c\" stroke-width=\"1\"/><text x=\"12\" y=\"13\" font-size=\"6\" font-weight=\"800\" fill=\"#1a0a0c\">3</text></g><g transform=\"rotate(16 20 32)\"><rect x=\"16\" y=\"6\" width=\"15\" height=\"21\" rx=\"2.5\" fill=\"#f7f1e3\" stroke=\"#1a0a0c\" stroke-width=\"1\"/><text x=\"27\" y=\"13\" font-size=\"6\" fill=\"#d6262b\">♥</text></g><rect x=\"12.5\" y=\"4\" width=\"15\" height=\"21\" rx=\"2.5\" fill=\"#f7f1e3\" stroke=\"#f5c94f\" stroke-width=\"1.6\"/><path d=\"M20 9.5 L21.6 13.4 L25.8 13.6 L22.5 16.2 L23.7 20.2 L20 17.9 L16.3 20.2 L17.5 16.2 L14.2 13.6 L18.4 13.4Z\" fill=\"#d6262b\" stroke=\"#1a0a0c\" stroke-width=\".6\"/></svg>", "online": "<svg viewBox=\"0 0 40 40\"><g stroke=\"#f5c94f\" stroke-width=\"1.7\" fill=\"none\" opacity=\"1\"><circle cx=\"20\" cy=\"20\" r=\"14\"></circle><path d=\"M6 20 H34\"></path><path d=\"M8 13 Q20 15.5 32 13\"></path><path d=\"M8 27 Q20 24.5 32 27\"></path><ellipse cx=\"20\" cy=\"20\" rx=\"6\" ry=\"14\"></ellipse><path d=\"M20 6 V34\"></path></g><path d=\"M20.00 0.50L21.45 4.00L25.23 4.30L22.35 6.76L23.23 10.45L20.00 8.47L16.77 10.45L17.65 6.76L14.77 4.30L18.55 4.00Z\" fill=\"#d6262b\" stroke=\"#f5c94f\" stroke-width=\"1\"></path><circle cx=\"33\" cy=\"31\" r=\"3.4\" fill=\"#3bbf6a\" stroke=\"#1a0a0c\" stroke-width=\"1\"></circle></svg>", "rank": "<svg viewBox=\"0 0 40 40\"><path d=\"M11 6 H29 V14 Q29 23 20 24 Q11 23 11 14Z\" fill=\"#f5c94f\" stroke=\"#1a0a0c\" stroke-width=\"1\"/><path d=\"M11 9 H6 Q6 17 12 18 M29 9 H34 Q34 17 28 18\" stroke=\"#f5c94f\" stroke-width=\"2\" fill=\"none\"/><path d=\"M20 9 L21.3 12.3 L24.8 12.5 L22.1 14.6 L23 18 L20 16.1 L17 18 L17.9 14.6 L15.2 12.5 L18.7 12.3Z\" fill=\"#d6262b\"/><rect x=\"18\" y=\"24\" width=\"4\" height=\"5\" fill=\"#f5c94f\"/><rect x=\"12\" y=\"29\" width=\"16\" height=\"6\" rx=\"1.5\" fill=\"#8a6414\" stroke=\"#f5c94f\" stroke-width=\"1\"/><text x=\"20\" y=\"34\" font-size=\"4.5\" font-weight=\"800\" fill=\"#f5c94f\" text-anchor=\"middle\">#1</text></svg>"};
 function navHTML(){
-  const o=OT(), pg=S.page||'play', b=(Hall.invites.length||0);
+  const o=OT(), pg=S.page||'play', b=(Hall.invites.length||0)+DM.unread();
   const it=(k,ico,lab,extra)=>`<button class="navbtn" data-page="${k}" aria-current="${pg===k?'page':'false'}"><span class="ni">${ico}</span><span>${lab}</span>${extra||''}</button>`;
   return `<nav class="appnav" aria-label="Menu">${it('play',NAV_IC.play,T().navPlay)}${it('me',`<span class="navav">${avatarHTML({isHuman:true})}</span>`,T().navMe)}${it('online',NAV_IC.online,T().navOnline,b?`<em class="inv">${b}</em>`:Hall.count>1?`<em>${Hall.count-1}</em>`:'')}<button class="navbtn" id="rankbtn"><span class="ni">${NAV_IC.rank}</span><span>${T().rankBtn}</span></button></nav>`;
 }
@@ -3963,7 +4000,7 @@ function modalHTML(){
 
 function render(){
   svgSeq=0;
-  { const fx=(S.phase==='table'?introHTML()+catVeilHTML()+darkVeilHTML():'')+(S.room&&S.room.token?Chat.toastHTML():'')+(S.phase==='table'&&Hall.invites[0]&&Date.now()-(Hall.invites[0].seen||0)<9000?`<div class="invbanner">${esc(OT().invBanner(Hall.invites[0].name))}</div>`:''); let L=document.getElementById('fxlayer'); if(!L){ L=document.createElement('div'); L.id='fxlayer'; document.body.appendChild(L); } if(L._h!==fx){ L._h=fx; L.innerHTML=fx; } svgSeq=500; }
+  { const fx=(S.phase==='table'?introHTML()+catVeilHTML()+darkVeilHTML():'')+(S.room&&S.room.token?Chat.toastHTML():'')+dmToastHTML()+(S.phase==='table'&&Hall.invites[0]&&Date.now()-(Hall.invites[0].seen||0)<9000?`<div class="invbanner">${esc(OT().invBanner(Hall.invites[0].name))}</div>`:''); let L=document.getElementById('fxlayer'); if(!L){ L=document.createElement('div'); L.id='fxlayer'; document.body.appendChild(L); } if(L._h!==fx){ L._h=fx; L.innerHTML=fx; } svgSeq=500; }
   document.documentElement.lang={pt:'pt-BR',en:'en',es:'es'}[LANG];
   const app=document.getElementById('app'), game=S.phase==='table';
   if(!game) Music.clearSolo();
@@ -3971,7 +4008,7 @@ function render(){
   const SCR='.sheet,.scroll,.tbl'; const keepSc=[...app.querySelectorAll(SCR)].map(e=>[e.getAttribute('aria-label')||e.className,e.scrollTop]);
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+inviteHTML()+levelsHTML()+powersHTML()+bonusSheetHTML()+miniInviteHTML()+giftHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+inviteHTML()+levelsHTML()+powersHTML()+bonusSheetHTML()+miniInviteHTML()+giftHTML()+dmSheetHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   { const els=[...app.querySelectorAll(SCR)]; keepSc.forEach(([k,top],i)=>{ const e=els[i]; if(e&&(e.getAttribute('aria-label')||e.className)===k&&top) e.scrollTop=top; }); }
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
@@ -4088,6 +4125,9 @@ document.addEventListener('click',e=>{
   if(t.id==='chatopen'||t.id==='chatopen2'){ Chat.toggle(true); return; }
   if(t.id==='quickbtn'){ roomQuick(); return; }
   if(t.dataset.sit){ roomJoin(t.dataset.sit); return; }
+  if(t.dataset.dmopen){ DM.toast=null; DM.open(t.dataset.dmopen); return; }
+  if(t.dataset.dmsend!=null){ DM.send(+t.dataset.dmsend); return; }
+  if(t.id==='dmclose'){ S.dmTo=null; render(); return; }
   if(t.dataset.invite){ t.disabled=true; Hall.invite(t.dataset.invite,!!t.dataset.busy); return; }
   if(t.id==='accinv'){ Hall.accept=!Hall.accept; try{ localStorage.setItem('fodinha-inv',Hall.accept?'1':'0'); }catch(e){} Hall.tick(); render(); return; }
   if(t.id==='invno'){ Hall.invites.shift(); render(); return; }

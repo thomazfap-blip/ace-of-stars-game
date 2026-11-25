@@ -799,6 +799,10 @@ details.rulesbox .rules{margin-top:8px}
 .invbanner{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:70;width:min(520px,calc(100% - 24px));background:#fffaf0;color:#2a0a10;border:3px solid var(--gold);border-radius:14px;padding:10px 14px;font-weight:700;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.5);pointer-events:none;animation:coachin .35s ease-out}
 .pickic{height:1.1em;width:auto;vertical-align:-.2em}
 .pickbtn{flex:none;display:flex;align-items:center;gap:5px;border:1px solid var(--gold);border-radius:999px;padding:5px 10px;background:rgba(0,0,0,.3);color:var(--gold);font:800 13px Montserrat,sans-serif;cursor:pointer}
+.shopbig{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;text-align:left;background:linear-gradient(135deg,#5a2a9a,#2a1450);border:2px solid #c9a6ff;border-radius:14px;padding:12px 14px;color:var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.45),0 0 18px rgba(170,110,255,.35);cursor:pointer}
+.shopbig:active{transform:translateY(2px)}.shopbig .sbic .pickic{height:40px;filter:drop-shadow(0 2px 6px rgba(245,201,79,.6))}.shopbig .bt{flex:1;min-width:0}
+.shopbig b{display:block;font-family:var(--f-display);font-weight:400;font-size:28px;color:var(--gold);letter-spacing:.03em;line-height:1}.shopbig small{font-size:13px;color:var(--ink)}.shopbig .sbal{font-weight:800;color:var(--gold)}.shopbig i{font-style:normal;color:var(--gold);font-size:24px}
+.bonusbtn{box-shadow:0 4px 0 rgba(0,0,0,.45),0 0 18px rgba(245,201,79,.25);padding:12px 14px}.bonusbtn b{font-size:28px}
 .giftpick .pickic{height:96px;filter:drop-shadow(0 6px 14px rgba(245,201,79,.5));animation:boom .6s cubic-bezier(.2,1.7,.4,1) both}.shoprow.ok b{color:#9ee07a}
 .pickgot{font-weight:800;color:var(--gold);font-size:16px;margin:4px 0 0}
 .shop{background:rgba(0,0,0,.28);border-radius:14px;padding:12px;text-align:left}.shop h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:24px;color:var(--gold);letter-spacing:.03em}
@@ -2835,7 +2839,7 @@ function levelStripHTML(){
   const t=T(), m=Rank.me, lv=m.level|0, next=LV_PTS[lv+1];
   const pct=next!=null?Math.round(100*(m.pts-LV_PTS[lv])/(next-LV_PTS[lv])):100;
   return `<div class="lvstrip">
-    <div class="lvtop"><button class="lvhead" id="lvopen" aria-label="${t.lvSeeAll}"><b>${t.lvLevel(t.lvNames[lv])}</b><span>${m.tester?'🧪 teste':m.pts+' pts'}</span><i>›</i></button><button class="powbtn" id="powopen" aria-label="${PT().title}"><span class="powlab">${PT().open}</span>🍺${m.beer} 🥃${m.jack}${lv>=3||m.cat>0?` 🔮${m.cat|0}`:''}${lv>=4||m.dark>0?` ☯${m.dark|0}`:''}<i>›</i></button><button class="pickbtn" id="powopen4" aria-label="StarPicks">${PICK_SVG}<b>${m.picks|0}</b></button></div>
+    <div class="lvtop"><button class="lvhead" id="lvopen" aria-label="${t.lvSeeAll}"><b>${t.lvLevel(t.lvNames[lv])}</b><span>${m.tester?'🧪 teste':m.pts+' pts'}</span><i>›</i></button></div>
     <div class="lvbar"><i style="width:${Math.max(3,Math.min(100,pct))}%"></i></div>
     <small>${next!=null?t.lvNext(next-m.pts,t.lvNames[lv+1]):t.lvMax}</small>
     ${lv>=3&&!m.tester?`<small>${(m.cat|0)>=3?CT().full:CT().next}</small>`:''}
@@ -2886,11 +2890,15 @@ function PT(){ return POW_T[LANG]||POW_T.pt; }
 // ---------- StarPicks: a moeda do jogo ----------
 const PICK_SVG=`<svg class="pickic" viewBox="0 0 40 44" aria-hidden="true"><path d="M20 42 C10 34 3 22 3 12 C3 5 10 2 20 2 C30 2 37 5 37 12 C37 22 30 34 20 42Z" fill="#f5c94f" stroke="#8a6414" stroke-width="2"/><path d="M20 6 C12 6 7 8 7 12" stroke="#fff3c4" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M20 11 l2.6 5.4 5.9.6-4.4 3.9 1.3 5.8-5.4-3.1-5.4 3.1 1.3-5.8-4.4-3.9 5.9-.6z" fill="#d6262b"/></svg>`;
 const PK_T={
-  pt:{name:'StarPicks',sub:'A moeda do jogo. Você ganha jogando e troca por drinques e desafios extras.',how:'Ganhe: +2 por partida, +5 por vitória, +5 na primeira partida do dia, +25 por nível e +5 por desafio bônus vencido.',done:'✓ Comprado!',giftT:'🎁 Presente de lançamento!',giftP:'Chegaram os StarPicks, a moeda do jogo. Obrigado por jogar desde o começo!',giftUse:'Use na loja do estoque ou pra jogar desafios bônus extras.',giftShop:'Ver a loja',giftOk:'Valeu!',shop:'🛒 Loja',have:n=>`Você tem ${n} StarPicks`,buy:'Comprar',full:'Estoque cheio',noMoney:'Faltam StarPicks',got:n=>`+${n} StarPicks`},
-  en:{name:'StarPicks',sub:'The game currency. Earn it by playing and trade it for drinks and extra challenges.',how:'Earn: +2 per game, +5 per win, +5 for the first game of the day, +25 per level and +5 per bonus challenge won.',done:'✓ Bought!',giftT:'🎁 Launch gift!',giftP:'StarPicks are here, the game currency. Thanks for playing since the beginning!',giftUse:'Use them in the stock shop or to play extra bonus challenges.',giftShop:'See the shop',giftOk:'Thanks!',shop:'🛒 Shop',have:n=>`You have ${n} StarPicks`,buy:'Buy',full:'Stock full',noMoney:'Not enough StarPicks',got:n=>`+${n} StarPicks`},
-  es:{name:'StarPicks',sub:'La moneda del juego. La ganas jugando y la cambias por tragos y desafíos extra.',how:'Gana: +2 por partida, +5 por victoria, +5 en la primera partida del día, +25 por nivel y +5 por desafío bonus ganado.',done:'✓ ¡Comprado!',giftT:'🎁 ¡Regalo de lanzamiento!',giftP:'Llegaron los StarPicks, la moneda del juego. ¡Gracias por jugar desde el principio!',giftUse:'Úsalos en la tienda del inventario o para jugar desafíos bonus extra.',giftShop:'Ver la tienda',giftOk:'¡Gracias!',shop:'🛒 Tienda',have:n=>`Tienes ${n} StarPicks`,buy:'Comprar',full:'Inventario lleno',noMoney:'Faltan StarPicks',got:n=>`+${n} StarPicks`},
+  pt:{name:'StarPicks',sub:'A moeda do jogo. Você ganha jogando e troca por drinques e desafios extras.',how:'Ganhe: +2 por partida, +5 por vitória, +5 na primeira partida do dia, +25 por nível e +5 por desafio bônus vencido.',done:'✓ Comprado!',giftT:'🎁 Presente de lançamento!',giftP:'Chegaram os StarPicks, a moeda do jogo. Obrigado por jogar desde o começo!',giftUse:'Use na loja do estoque ou pra jogar desafios bônus extras.',giftShop:'Ver a loja',giftOk:'Valeu!',shop:'🛒 Loja',shopBtn:'Loja e poderes',have:n=>`Você tem ${n} StarPicks`,buy:'Comprar',full:'Estoque cheio',noMoney:'Faltam StarPicks',got:n=>`+${n} StarPicks`},
+  en:{name:'StarPicks',sub:'The game currency. Earn it by playing and trade it for drinks and extra challenges.',how:'Earn: +2 per game, +5 per win, +5 for the first game of the day, +25 per level and +5 per bonus challenge won.',done:'✓ Bought!',giftT:'🎁 Launch gift!',giftP:'StarPicks are here, the game currency. Thanks for playing since the beginning!',giftUse:'Use them in the stock shop or to play extra bonus challenges.',giftShop:'See the shop',giftOk:'Thanks!',shop:'🛒 Shop',shopBtn:'Shop & powers',have:n=>`You have ${n} StarPicks`,buy:'Buy',full:'Stock full',noMoney:'Not enough StarPicks',got:n=>`+${n} StarPicks`},
+  es:{name:'StarPicks',sub:'La moneda del juego. La ganas jugando y la cambias por tragos y desafíos extra.',how:'Gana: +2 por partida, +5 por victoria, +5 en la primera partida del día, +25 por nivel y +5 por desafío bonus ganado.',done:'✓ ¡Comprado!',giftT:'🎁 ¡Regalo de lanzamiento!',giftP:'Llegaron los StarPicks, la moneda del juego. ¡Gracias por jugar desde el principio!',giftUse:'Úsalos en la tienda del inventario o para jugar desafíos bonus extra.',giftShop:'Ver la tienda',giftOk:'¡Gracias!',shop:'🛒 Tienda',shopBtn:'Tienda y poderes',have:n=>`Tienes ${n} StarPicks`,buy:'Comprar',full:'Inventario lleno',noMoney:'Faltan StarPicks',got:n=>`+${n} StarPicks`},
 };
 function KT(){ return PK_T[LANG]||PK_T.pt; }
+function shopBtnHTML(){
+  if(!Rank.me) return ''; const m=Rank.me, lv=myLevel(), k=KT();
+  return `<button class="shopbig" id="powopen4"><span class="sbic">${PICK_SVG}</span><span class="bt"><b>${k.shopBtn}</b><small><span class="sbal">${m.picks|0} StarPicks</span> · 🍺${m.beer} 🥃${m.jack}${lv>=3||m.cat>0?` 🔮${m.cat|0}`:''}${lv>=4||m.dark>0?` ☯${m.dark|0}`:''}</small></span><i>›</i></button>`;
+}
 function giftHTML(){
   if(!S.giftShow) return ''; const k=KT();
   return `<div class="overlay rankov miniinv"><div class="sheet ksheet gift"><h2>${k.giftT}</h2><div class="giftpick">${PICK_SVG}</div><p class="kname">+${S.giftShow} StarPicks</p><p>${k.giftP}</p><p><small>${k.giftUse}</small></p>
@@ -3204,6 +3212,7 @@ function pageMe(){
     <div class="acerow"><button class="acebtn" id="editace" aria-label="${ME?T().edEdit:T().edNew}"><span class="frame">${avatarHTML({isHuman:true})}<span class="pencil">✏️</span></span></button>
     <div class="acefield"><span class="acestar">★</span><input id="acename" type="text" maxlength="14" autocomplete="nickname" enterkeyhint="done" placeholder="${T().acePh}" value="${ACE.replace(/"/g,'&quot;')}" aria-label="${T().aceT}"></div></div>
     ${levelStripHTML()}
+    ${shopBtnHTML()}
     ${bonusBtnHTML()}
     <button class="aceinvite${ME?'':' new'}" id="editace2">${ME?T().edEdit:T().edNew}</button>
   </section>

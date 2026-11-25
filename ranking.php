@@ -5,6 +5,8 @@
 // GET  ranking.php?id=XYZ                      -> placar geral/semanal + perfil do jogador
 // POST {a:'game', id, name, av, pts, ...}      -> soma uma partida
 // POST {a:'use', id, item:'beer'|'jack'|'cat'|'dark'} -> gasta um drinque ou uma bola de cristal do estoque
+// POST {a:'ministart', id, game}             -> gasta a tentativa do dia num desafio (kart...)
+// POST {a:'minidone', id, game, win}          -> fim do desafio; se ganhou, sorteia um prêmio
 // POST {a:'code', id, email, lang}             -> manda código de confirmação pro e-mail
 // POST {a:'verify', id, email, code, optin, src, name, av, lang} -> liga o aparelho à conta
 
@@ -19,6 +21,10 @@ const LV_JACK = [0, 0, 0, 1, 1];
 // Mystical Cat: libera no Palco (ganha 1 bola de presente) e dá +1 bola a cada vitória, até 3 no estoque
 const CAT_LV = 3; const CAT_WINS = 1; const CAT_MAX = 3;
 // Dark Side: libera na Lenda (ganha 1 de presente) e dá +1 a cada 3 vitórias, até 3 no estoque
+// Desafios da banda: 1 tentativa por dia em cada um; quem ganha leva um prêmio sorteado
+const MINI_GAMES = ['kart' => 25];               // jogo => segundos mínimos de partida
+const MINI_PRIZES = ['beer' => 60, 'jack' => 25, 'cat' => 12, 'dark' => 3];
+const DRINK_MAX = 3;                              // prêmio de drinque só entra se tiver menos que isso
 const DARK_LV = 4; const DARK_WINS = 3; const DARK_MAX = 3;
 
 $dir = dirname(__DIR__, 2) . '/ace-of-stars-ranking';
@@ -47,8 +53,10 @@ function mask_email($e) { [$u, $d] = explode('@', $e, 2); return mb_substr($u, 0
 
 function norm(&$R, &$P) {
     foreach (['all', 'weeks'] as $k) if (!isset($R[$k]) || !is_array($R[$k])) $R[$k] = [];
-    foreach (['links', 'acc', 'inv', 'codes', 'cat', 'dark'] as $k) if (!isset($P[$k]) || !is_array($P[$k])) $P[$k] = [];
+    foreach (['links', 'acc', 'inv', 'codes', 'cat', 'dark', 'mini'] as $k) if (!isset($P[$k]) || !is_array($P[$k])) $P[$k] = [];
 }
+function day_key() { return gmdate('Y-m-d', time() - 3 * 3600); }
+function mini_today($P, $key) { $o = []; foreach (MINI_GAMES as $g => $_) { $m = $P['mini'][$key][$g] ?? null; $o[$g] = $m && ($m['d'] ?? '') === day_key(); } return $o; }
 function key_for($P, $id) { return $P['links'][$id] ?? $id; }
 // poderes guardados por jogador: n = no estoque, w = vitórias contando pra próxima, g = já ganhou o presente
 function pow_of($P, $pw, $key) { return $P[$pw][$key] ?? ['n' => 0, 'w' => 0, 'g' => 0]; }
@@ -107,13 +115,14 @@ function profile($R, $P, $key) {
     $acc = $P['acc'][$key] ?? null;
     // contas de teste: tudo liberado e estoque cheio (o ranking continua com os pontos reais)
     if ($acc && in_array($acc['email'], TESTERS, true)) {
-        return ['pts' => max($pts, 5000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true,
+        return ['pts' => max($pts, 5000), 'level' => 4, 'next' => null, 'beer' => 9, 'jack' => 9, 'cat' => 9, 'catW' => 0, 'dark' => 9, 'darkW' => 0, 'tester' => true, 'mini' => array_map(function () { return false; }, MINI_GAMES),
                 'linked' => true, 'email' => mask_email($acc['email']), 'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
     }
     return ['pts' => $pts, 'level' => $lv, 'next' => LV_PTS[$lv + 1] ?? null,
             'beer' => max(0, earned($lv, LV_BEER) - ($used['b'] ?? 0)), 'jack' => max(0, earned($lv, LV_JACK) - ($used['j'] ?? 0)),
             'cat' => cat_of($P, $key)['n'], 'catW' => cat_of($P, $key)['w'],
             'dark' => pow_of($P, 'dark', $key)['n'], 'darkW' => pow_of($P, 'dark', $key)['w'],
+            'mini' => mini_today($P, $key),
             'linked' => (bool)$acc, 'email' => $acc ? mask_email($acc['email']) : null,
             'name' => $acc['name'] ?? null, 'av' => $acc['av'] ?? null];
 }
@@ -232,6 +241,37 @@ if ($a === 'use') {
     jsave($playFile, $P);
     flock($lock, LOCK_UN);
     out(['profile' => profile($R, $P, $key)]);
+}
+
+if ($a === 'ministart' || $a === 'minidone') {
+    $game = $in['game'] ?? '';
+    if (!isset(MINI_GAMES[$game])) { flock($lock, LOCK_UN); out(['error' => 'game'], 400); }
+    $pr = profile($R, $P, $key); $tester = !empty($pr['tester']);
+    $m = $P['mini'][$key][$game] ?? ['d' => '', 's' => 0, 'done' => 1];
+    if ($a === 'ministart') {
+        if (!$tester && ($m['d'] ?? '') === day_key()) { flock($lock, LOCK_UN); out(['error' => 'tried', 'profile' => $pr], 409); }
+        $P['mini'][$key][$game] = ['d' => day_key(), 's' => time(), 'done' => 0];
+        jsave($playFile, $P); flock($lock, LOCK_UN);
+        out(['ok' => true, 'profile' => profile($R, $P, $key)]);
+    }
+    // minidone: só vale uma vez por largada, e a corrida precisa ter durado o mínimo
+    if (!empty($m['done']) || time() - ($m['s'] ?? 0) < MINI_GAMES[$game]) { flock($lock, LOCK_UN); out(['error' => 'bad', 'profile' => $pr], 409); }
+    $m['done'] = 1; $P['mini'][$key][$game] = $m;
+    $prize = null;
+    if (!empty($in['win'])) {
+        $room = ['beer' => $pr['beer'] < DRINK_MAX, 'jack' => $pr['jack'] < DRINK_MAX, 'cat' => $pr['cat'] < CAT_MAX, 'dark' => $pr['dark'] < DARK_MAX];
+        $pool = array_filter(MINI_PRIZES, function ($w, $k) use ($room) { return $room[$k]; }, ARRAY_FILTER_USE_BOTH);
+        if ($pool) {
+            $r = random_int(1, array_sum($pool));
+            foreach ($pool as $k => $w) { $r -= $w; if ($r <= 0) { $prize = $k; break; } }
+            if (!$tester) {
+                if ($prize === 'beer' || $prize === 'jack') { $u = $P['inv'][$key] ?? ['b' => 0, 'j' => 0]; $f = $prize === 'beer' ? 'b' : 'j'; $u[$f] = ($u[$f] ?? 0) - 1; $P['inv'][$key] = $u; }
+                else { $c = pow_of($P, $prize, $key); $c['n']++; $P[$prize][$key] = $c; }
+            }
+        } else $prize = 'full';
+    }
+    jsave($playFile, $P); flock($lock, LOCK_UN);
+    out(['prize' => $prize, 'profile' => profile($R, $P, $key)]);
 }
 
 if ($a === 'code') {

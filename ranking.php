@@ -22,7 +22,7 @@ const LV_JACK = [0, 0, 0, 1, 1];
 const CAT_LV = 3; const CAT_WINS = 1; const CAT_MAX = 3;
 // Dark Side: libera na Lenda (ganha 1 de presente) e dá +1 a cada 3 vitórias, até 3 no estoque
 // Desafios da banda: 1 tentativa por dia em cada um; quem ganha leva um prêmio sorteado
-const MINI_GAMES = ['kart' => 25];               // jogo => segundos mínimos de partida
+const MINI_GAMES = ['kart' => 25, 'fish' => 25, 'surf' => 25, 'yoga' => 25, 'tennis' => 10];               // jogo => segundos mínimos de partida
 const MINI_PRIZES = ['beer' => 60, 'jack' => 25, 'cat' => 12, 'dark' => 3];
 const DRINK_MAX = 3;                              // prêmio de drinque só entra se tiver menos que isso
 const DARK_LV = 4; const DARK_WINS = 3; const DARK_MAX = 3;

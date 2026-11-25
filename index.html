@@ -1292,20 +1292,6 @@ const LOOKS={
     top:`<path d="M24 50 Q18 16 50 14 Q82 16 76 50 Q74 36 66 30 Q60 38 52 30 Q42 36 34 30 Q26 38 24 50Z" fill="#1a1310"/>
       ${curls(50,40,28,195,345,7,6,'#231a15')}`,
   },
-  // Luiz Piloto: macacão de corrida e óculos de piloto em cima dos cachos
-  luizpilot:{
-    bg:'#1d5fd6', checker:true, skin:'#dfa47e', hair:'#1a1310', back:'shoulder', stache:true, beard:'short', beardColor:'#2a1d17', mouth:'grin', brow:36,
-    outfit:s=>`<path d="M8 100 Q10 76 50 74 Q90 76 92 100Z" fill="#d6262b"/>
-      <path d="M8 100 Q10 82 24 78 L30 100Z M92 100 Q90 82 76 78 L70 100Z" fill="#fff"/>
-      <path d="M38 74 Q50 80 62 74 L60 70 Q50 75 40 70Z" fill="#111"/>
-      <path d="M50 80 V100" stroke="#111" stroke-width="2"/>
-      <rect x="56" y="84" width="14" height="9" rx="2" fill="#f5c94f"/><text x="63" y="91.5" font-size="7" text-anchor="middle" fill="#d6262b">★</text>`,
-    top:`<path d="M24 50 Q18 16 50 14 Q82 16 76 50 Q74 36 66 30 Q60 38 52 30 Q42 36 34 30 Q26 38 24 50Z" fill="#1a1310"/>
-      ${curls(50,40,28,195,345,7,6,'#231a15')}
-      <path d="M26 31 Q50 24 74 31" stroke="#3a2a20" stroke-width="3.2" fill="none"/>
-      <ellipse cx="40" cy="27" rx="8" ry="6" fill="#36d2e2" stroke="#5a4a3a" stroke-width="2.4"/><ellipse cx="60" cy="27" rx="8" ry="6" fill="#36d2e2" stroke="#5a4a3a" stroke-width="2.4"/>
-      <path d="M36 25 Q39 23 42 24 M56 25 Q59 23 62 24" stroke="#fff" stroke-width="1.6" fill="none"/>`,
-  },
   // Bia: cabelo preto com mechas roxas, estrelinha no olho, rede vermelha
   bia:{
     bg:'#c8262b', skin:'#f3cdb2', hair:'#141014', back:'long', mouth:'grin', lashes:true, lips:'#c43a3a', brow:37, browColor:'#141014',
@@ -3233,11 +3219,11 @@ const MINI_T={
     lz:{start:'¡Vamos, Ace!',spin:'¡Giré! 😵',lead:'¡Chau! 🏎️',boost:'¡Turbo!'},pos:n=>n+'º',finish:'Meta'},
 };
 const MT=()=>MINI_T[LANG]||MINI_T.pt;
-const LZP={look:'luizpilot',short:'Luiz'};
+const LZP=BAND.find(b=>b.id==='sp_luiz');
 function miniTried(g){ return !!(Rank.me&&!Rank.me.tester&&Rank.me.mini&&Rank.me.mini[g]); }
 function miniBoxHTML(){
   const m=MT(), lz=LZP, tried=miniTried('kart');
-  const soon=['thomaz','chris','julio','bia'].map((id,i)=>`<span class="msoon"><span class="mav">${avatarHTML(BAND.find(b=>b.id===id))}</span><small>${m.soonList[i]}</small></span>`).join('');
+  const soon=['sp_thomaz','sp_chris','sp_julio','sp_bia'].map((id,i)=>`<span class="msoon"><span class="mav">${avatarHTML(BAND.find(b=>b.id===id))}</span><small>${m.soonList[i]}</small></span>`).join('');
   return `<section class="box minibox"><h2>${m.boxT}</h2><p>${m.boxSub}</p>
     <div class="mcard"><span class="mav big">${avatarHTML(lz)}<i>🏁</i></span><div class="mtxt"><b>${m.kartT}</b><small>${m.kartSub}</small></div>
     <button class="${tried?'ghost':'cta'} mgo" id="kartopen" ${tried?'disabled':''}>${tried?m.done:m.go}</button></div>
@@ -3253,7 +3239,7 @@ const Kart={
     const d=document.createElement('div'); d.id='kartov'; d.innerHTML='<canvas id="kartcv"></canvas><div id="kartcard"></div>'; document.body.appendChild(d); this.el=d;
     this.cv=d.querySelector('canvas'); this.card=d.querySelector('#kartcard');
     const lz=LZP;
-    this.imgs={}; this.me=this.img('me',ME?avatarSVG(composeLook(ME)):youSVG()); this.lz=this.img('lz',avatarSVG(LOOKS.luizpilot));
+    this.imgs={}; this.me=this.img('me',ME?avatarSVG(composeLook(ME)):youSVG()); this.lz=this.img('lz',avatarSVG(LOOKS[LZP.look]));
     this.cv.addEventListener('pointerdown',e=>this.tap(e)); this.key=e=>{ if(!this.st||this.st.phase!=='race') return; if(e.key==='ArrowLeft') this.move(-1); if(e.key==='ArrowRight') this.move(1); };
     document.addEventListener('keydown',this.key);
     this.resize(); this.reset(); this.intro();

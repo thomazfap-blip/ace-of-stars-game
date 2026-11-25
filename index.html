@@ -802,6 +802,11 @@ details.rulesbox .rules{margin-top:8px}
 .dmhint{font-weight:700}.dmpicks{display:flex;flex-wrap:wrap;gap:6px}.dmpicks .chipbtn{font-size:13px;padding:7px 12px;background:rgba(0,0,0,.3)}
 .ghost.sm.dmb{padding:6px 10px;margin-right:6px}.ghost.sm.dmb.new{border-color:#d6262b;box-shadow:0 0 0 2px #d6262b}
 .dmtoast{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:71;width:min(520px,calc(100% - 24px));background:#fffaf0;color:#2a0a10;border:3px solid var(--gold);border-radius:14px;padding:10px 14px;font:600 14px var(--f-body);text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.5);animation:coachin .35s ease-out;cursor:pointer}
+.navbtn em.todo{background:#d6262b;color:#fff}
+.savecard{border:2px solid #d6262b;background:linear-gradient(135deg,rgba(214,38,43,.25),rgba(12,3,6,.8));box-shadow:0 0 18px rgba(214,38,43,.35)}
+.savesteps{display:grid;gap:8px}.savesteps>div{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.3);border-radius:12px;padding:8px 10px}
+.savesteps b{flex:none;width:28px;height:28px;border-radius:50%;background:#d6262b;color:#fff;display:grid;place-items:center;font-size:14px}.savesteps .ok b{background:#3bbf6a}.savesteps .ok span{opacity:.6;text-decoration:line-through}
+.savesteps span{flex:1;font-weight:700;font-size:14px}.savesteps .cta{font-size:20px!important;padding:6px 18px!important;align-self:center!important;flex:none}
 .invbanner{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:70;width:min(520px,calc(100% - 24px));background:#fffaf0;color:#2a0a10;border:3px solid var(--gold);border-radius:14px;padding:10px 14px;font-weight:700;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.5);pointer-events:none;animation:coachin .35s ease-out}
 .pickic{height:1.1em;width:auto;vertical-align:-.2em}
 .pickbtn{flex:none;display:flex;align-items:center;gap:5px;border:1px solid var(--gold);border-radius:999px;padding:5px 10px;background:rgba(0,0,0,.3);color:var(--gold);font:800 13px Montserrat,sans-serif;cursor:pointer}
@@ -962,7 +967,7 @@ const TXT={
     lockPts:p=>`🔒 ${p} pts`, stockT:'Seu estoque',
     stockBeer:n=>`🍺 Cerveja do estoque (tem ${n}) · sem penalidade`, stockJack:n=>`🥃 Jack and Coke (tem ${n}) · volta com 2 vidas`, stockSub:'Use um drinque do seu estoque pra voltar pra mesa, sem perder pontos.', jackBack:'Jack and Coke! Você voltou com 2 vidas!',
     mailT1:p=>`🏆 +${p} pontos!`, mailT0:'Não foi dessa vez!', mailSub1:'Salve seus pontos, jogue em qualquer aparelho e concorra a prêmios da StarAce.', mailSub0:'Deixe seu e-mail pra guardar seu personagem e seus pontos, entrar no ranking e receber a revanche: novidades e prêmios da StarAce.',
-    mailSubGen:'Já jogou em outro aparelho? Digite o mesmo e-mail e seu personagem, seus pontos e seu estoque voltam. Primeira vez? Eles ficam salvos pra você jogar no app e no site.', mailTGen:'Entrar com e-mail',
+    mailSubGen:'Já jogou em outro aparelho? Digite o mesmo e-mail e seu personagem, seus pontos e seu estoque voltam. Primeira vez? Eles ficam salvos pra você jogar no app e no site.', mailTGen:'Entrar com e-mail',saveT:'⚠️ Monte seu perfil',saveSub:'Sem perfil, seu progresso fica só neste aparelho e pode se perder. Com ele, seus pontos, poderes e StarPicks ficam salvos pra jogar no app e no site.',saveAce:'Crie seu personagem',saveAceBtn:'Criar',saveMail:'Salve seu progresso com e-mail',saveMailBtn:'Salvar',saveAceT:'Monte seu Ace!',saveAceP:'Crie seu personagem pra aparecer com a sua cara na mesa e no ranking.',
     mailPh:'seu@email.com', mailOpt:'Quero receber novidades da StarAce: shows, lançamentos e prêmios do ranking.', mailPriv:'Usamos seu e-mail só pra salvar seu progresso e, se você marcar, mandar novidades da banda.',
     mailSend:'Salvar', mailLater:'Agora não', mailCodeT:'Confira seu e-mail', mailCodeSub:e=>`Mandamos um código de 6 números pra ${e}. Se não chegar, olhe a caixa de spam.`, mailCodePh:'000000', mailConfirm:'Confirmar', mailBack:'Trocar e-mail',
     mailDoneT:'Progresso salvo!', mailDoneSub:'Agora é só entrar com esse e-mail em outro aparelho pra continuar de onde parou.', mailOk:'Show!',
@@ -1059,7 +1064,7 @@ const TXT={
     lockPts:p=>`🔒 ${p} pts`, stockT:'Your stock',
     stockBeer:n=>`🍺 Beer from stock (${n} left) · no penalty`, stockJack:n=>`🥃 Jack and Coke (${n} left) · back with 2 lives`, stockSub:'Use a drink from your stock to get back to the table without losing points.', jackBack:'Jack and Coke! You’re back with 2 lives!',
     mailT1:p=>`🏆 +${p} points!`, mailT0:'Not this time!', mailSub1:'Save your points, play on any device and compete for StarAce prizes.', mailSub0:'Leave your email to keep your character and points, join the leaderboard and get your rematch: StarAce news and prizes.',
-    mailSubGen:'Played on another device? Enter the same email and your character, points and stock come back. First time? They’ll be saved so you can play in the app and on the site.', mailTGen:'Sign in with email',
+    mailSubGen:'Played on another device? Enter the same email and your character, points and stock come back. First time? They’ll be saved so you can play in the app and on the site.', mailTGen:'Sign in with email',saveT:'⚠️ Set up your profile',saveSub:'Without a profile, your progress lives only on this device and can get lost. With one, your points, powers and StarPicks are saved to play in the app and on the site.',saveAce:'Create your character',saveAceBtn:'Create',saveMail:'Save your progress with email',saveMailBtn:'Save',saveAceT:'Build your Ace!',saveAceP:'Create your character to show up with your own face at the table and on the leaderboard.',
     mailPh:'your@email.com', mailOpt:'Send me StarAce news: shows, releases and leaderboard prizes.', mailPriv:'We only use your email to save your progress and, if you check the box, to send band news.',
     mailSend:'Save', mailLater:'Not now', mailCodeT:'Check your email', mailCodeSub:e=>`We sent a 6-digit code to ${e}. If it doesn’t arrive, check your spam folder.`, mailCodePh:'000000', mailConfirm:'Confirm', mailBack:'Change email',
     mailDoneT:'Progress saved!', mailDoneSub:'Just sign in with this email on another device to pick up where you left off.', mailOk:'Rock on!',
@@ -1156,7 +1161,7 @@ const TXT={
     lockPts:p=>`🔒 ${p} pts`, stockT:'Tu inventario',
     stockBeer:n=>`🍺 Cerveza del inventario (te quedan ${n}) · sin penalidad`, stockJack:n=>`🥃 Jack and Coke (te quedan ${n}) · vuelves con 2 vidas`, stockSub:'Usa un trago de tu inventario para volver a la mesa sin perder puntos.', jackBack:'¡Jack and Coke! ¡Volviste con 2 vidas!',
     mailT1:p=>`🏆 ¡+${p} puntos!`, mailT0:'¡Esta vez no!', mailSub1:'Guarda tus puntos, juega en cualquier dispositivo y compite por premios de StarAce.', mailSub0:'Deja tu correo para guardar tu personaje y tus puntos, entrar al ranking y tener tu revancha: novedades y premios de StarAce.',
-    mailSubGen:'¿Jugaste en otro dispositivo? Escribe el mismo correo y vuelven tu personaje, tus puntos y tu inventario. ¿Primera vez? Quedan guardados para jugar en la app y en el sitio.', mailTGen:'Entrar con correo',
+    mailSubGen:'¿Jugaste en otro dispositivo? Escribe el mismo correo y vuelven tu personaje, tus puntos y tu inventario. ¿Primera vez? Quedan guardados para jugar en la app y en el sitio.', mailTGen:'Entrar con correo',saveT:'⚠️ Arma tu perfil',saveSub:'Sin perfil, tu progreso vive solo en este dispositivo y se puede perder. Con él, tus puntos, poderes y StarPicks quedan guardados para jugar en la app y en el sitio.',saveAce:'Crea tu personaje',saveAceBtn:'Crear',saveMail:'Guarda tu progreso con email',saveMailBtn:'Guardar',saveAceT:'¡Arma tu Ace!',saveAceP:'Crea tu personaje para aparecer con tu cara en la mesa y en el ranking.',
     mailPh:'tu@correo.com', mailOpt:'Quiero recibir novedades de StarAce: shows, lanzamientos y premios del ranking.', mailPriv:'Usamos tu correo solo para guardar tu progreso y, si marcas la casilla, enviarte novedades de la banda.',
     mailSend:'Guardar', mailLater:'Ahora no', mailCodeT:'Revisa tu correo', mailCodeSub:e=>`Enviamos un código de 6 números a ${e}. Si no llega, revisa el spam.`, mailCodePh:'000000', mailConfirm:'Confirmar', mailBack:'Cambiar correo',
     mailDoneT:'¡Progreso guardado!', mailDoneSub:'Entra con este correo en otro dispositivo para seguir donde lo dejaste.', mailOk:'¡Vamos!',
@@ -2860,12 +2865,9 @@ function finishFor(place){
     if(d.catGot){ S.catWon=true; if(d.catFirst) S.catGot=true; }
     if(d.darkGot){ S.darkWon=true; if(d.darkFirst) S.darkGotFx=true; }
     miniMaybeInvite();
-    // convite pro e-mail: na 1ª partida e, se dispensou, mais uma vez quando fizer pontos
-    let asked=0; try{ asked=+(localStorage.getItem('fodinha-mailask')||0); }catch(e){}
-    if(d.profile&&!d.profile.linked&&(asked===0||(asked===1&&pts>0))){
-      try{ localStorage.setItem('fodinha-mailask',String(asked+1)); }catch(e){}
-      S.mail={step:'email',email:'',code:'',optin:false,err:'',busy:false,pts,ctx:'end'};
-    }
+    // enquanto não salvar o progresso com e-mail, o convite aparece no fim de toda partida
+    if(d.profile&&!d.profile.linked) S.mail={step:'email',email:'',code:'',optin:false,err:'',busy:false,pts,ctx:'end'};
+    else if(!ME) S.makeAce=true;
     render();
     if(S.levelUp||S.catGot||S.darkGotFx){ Snd.fanfare(); }
   });
@@ -3243,7 +3245,7 @@ function pagePlay(lives,sample,picks,tabs){
   <div class="startbar">${S.picked.size?'':`<p class="hint">${T().pickOne}</p>`}<button class="cta" id="start" ${BAND.some(b=>S.picked.has(b.id)&&!charLocked(b))?'':'disabled'}>${T().sit}</button></div>`;
 }
 function pageMe(){
-  return `  <section class="box">
+  return `${saveCardHTML()}  <section class="box">
     <h2>${T().aceT}</h2>
     <p>${T().aceSub}</p>
     <div class="acerow"><button class="acebtn" id="editace" aria-label="${ME?T().edEdit:T().edNew}"><span class="frame">${avatarHTML({isHuman:true})}<span class="pencil">✏️</span></span></button>
@@ -3353,7 +3355,7 @@ function miniMaybeInvite(){
   if(S.tut) return; let n=0; try{ n=+(localStorage.getItem('fodinha-games')||0); }catch(e){} const sv=Rank.data&&Rank.data.all&&Rank.data.all.me; n=Math.max(n,sv?sv.games|0:0); if(n<3) return;
   const d=miniDisc(), g=MINI_LIST.map(x=>x[0]).find(x=>!d.includes(x)); if(!g) return;
   if(d.length&&Math.random()>.4) return;
-  setTimeout(()=>{ if(S.miniInvite||Mini.el) return; S.miniInvite={g}; render(); Snd.fanfare&&Snd.fanfare(); },2600);
+  setTimeout(()=>{ if(S.miniInvite||Mini.el||S.mail||S.makeAce) return; S.miniInvite={g}; render(); Snd.fanfare&&Snd.fanfare(); },2600);
 }
 function miniInviteHTML(){
   const v=S.miniInvite; if(!v) return '';
@@ -3706,10 +3708,21 @@ const Kart={ get st(){ return Mini.mod===MINI_GAMES.kart&&Mini.el?Object.assign(
 
 
 const NAV_IC={"play": "<svg viewBox=\"0 0 40 40\"><g transform=\"rotate(-18 20 32)\"><rect x=\"9\" y=\"6\" width=\"15\" height=\"21\" rx=\"2.5\" fill=\"#f7f1e3\" stroke=\"#1a0a0c\" stroke-width=\"1\"/><text x=\"12\" y=\"13\" font-size=\"6\" font-weight=\"800\" fill=\"#1a0a0c\">3</text></g><g transform=\"rotate(16 20 32)\"><rect x=\"16\" y=\"6\" width=\"15\" height=\"21\" rx=\"2.5\" fill=\"#f7f1e3\" stroke=\"#1a0a0c\" stroke-width=\"1\"/><text x=\"27\" y=\"13\" font-size=\"6\" fill=\"#d6262b\">♥</text></g><rect x=\"12.5\" y=\"4\" width=\"15\" height=\"21\" rx=\"2.5\" fill=\"#f7f1e3\" stroke=\"#f5c94f\" stroke-width=\"1.6\"/><path d=\"M20 9.5 L21.6 13.4 L25.8 13.6 L22.5 16.2 L23.7 20.2 L20 17.9 L16.3 20.2 L17.5 16.2 L14.2 13.6 L18.4 13.4Z\" fill=\"#d6262b\" stroke=\"#1a0a0c\" stroke-width=\".6\"/></svg>", "online": "<svg viewBox=\"0 0 40 40\"><g stroke=\"#f5c94f\" stroke-width=\"1.7\" fill=\"none\" opacity=\"1\"><circle cx=\"20\" cy=\"20\" r=\"14\"></circle><path d=\"M6 20 H34\"></path><path d=\"M8 13 Q20 15.5 32 13\"></path><path d=\"M8 27 Q20 24.5 32 27\"></path><ellipse cx=\"20\" cy=\"20\" rx=\"6\" ry=\"14\"></ellipse><path d=\"M20 6 V34\"></path></g><path d=\"M20.00 0.50L21.45 4.00L25.23 4.30L22.35 6.76L23.23 10.45L20.00 8.47L16.77 10.45L17.65 6.76L14.77 4.30L18.55 4.00Z\" fill=\"#d6262b\" stroke=\"#f5c94f\" stroke-width=\"1\"></path><circle cx=\"33\" cy=\"31\" r=\"3.4\" fill=\"#3bbf6a\" stroke=\"#1a0a0c\" stroke-width=\"1\"></circle></svg>", "rank": "<svg viewBox=\"0 0 40 40\"><path d=\"M11 6 H29 V14 Q29 23 20 24 Q11 23 11 14Z\" fill=\"#f5c94f\" stroke=\"#1a0a0c\" stroke-width=\"1\"/><path d=\"M11 9 H6 Q6 17 12 18 M29 9 H34 Q34 17 28 18\" stroke=\"#f5c94f\" stroke-width=\"2\" fill=\"none\"/><path d=\"M20 9 L21.3 12.3 L24.8 12.5 L22.1 14.6 L23 18 L20 16.1 L17 18 L17.9 14.6 L15.2 12.5 L18.7 12.3Z\" fill=\"#d6262b\"/><rect x=\"18\" y=\"24\" width=\"4\" height=\"5\" fill=\"#f5c94f\"/><rect x=\"12\" y=\"29\" width=\"16\" height=\"6\" rx=\"1.5\" fill=\"#8a6414\" stroke=\"#f5c94f\" stroke-width=\"1\"/><text x=\"20\" y=\"34\" font-size=\"4.5\" font-weight=\"800\" fill=\"#f5c94f\" text-anchor=\"middle\">#1</text></svg>"};
+function profileTodo(){ return !ME||!(Rank.me&&Rank.me.linked); }
+function saveCardHTML(){
+  if(!profileTodo()) return ''; const t=T(), noAce=!ME, noMail=!(Rank.me&&Rank.me.linked);
+  return `<section class="box savecard"><h2>${t.saveT}</h2><p>${t.saveSub}</p><div class="savesteps">
+    <div class="${noAce?'':'ok'}"><b>${noAce?'1':'✓'}</b><span>${t.saveAce}</span>${noAce?`<button class="cta" id="editace4">${t.saveAceBtn}</button>`:''}</div>
+    <div class="${noMail?'':'ok'}"><b>${noMail?'2':'✓'}</b><span>${t.saveMail}</span>${noMail?`<button class="cta" id="mailopen">${t.saveMailBtn}</button>`:''}</div></div></section>`;
+}
+function makeAceHTML(){
+  if(!S.makeAce||S.mail||S.levelUp||S.catGot||S.darkGotFx) return ''; const t=T();
+  return `<div class="overlay rankov"><div class="sheet ksheet"><h2>${t.saveAceT}</h2><p>${t.saveAceP}</p><div class="row"><button class="ghost" id="makeacelater">${t.mailLater}</button><button class="cta" id="editace4">${t.saveAceBtn}</button></div></div></div>`;
+}
 function navHTML(){
   const o=OT(), pg=S.page||'play', b=(Hall.invites.length||0)+DM.unread();
   const it=(k,ico,lab,extra)=>`<button class="navbtn" data-page="${k}" aria-current="${pg===k?'page':'false'}"><span class="ni">${ico}</span><span>${lab}</span>${extra||''}</button>`;
-  return `<nav class="appnav" aria-label="Menu">${it('play',NAV_IC.play,T().navPlay)}${it('me',`<span class="navav">${avatarHTML({isHuman:true})}</span>`,T().navMe)}${it('online',NAV_IC.online,T().navOnline,b?`<em class="inv">${b}</em>`:Hall.count>1?`<em>${Hall.count-1}</em>`:'')}<button class="navbtn" id="rankbtn"><span class="ni">${NAV_IC.rank}</span><span>${T().rankBtn}</span></button></nav>`;
+  return `<nav class="appnav" aria-label="Menu">${it('play',NAV_IC.play,T().navPlay)}${it('me',`<span class="navav">${avatarHTML({isHuman:true})}</span>`,T().navMe,profileTodo()?'<em class="todo">!</em>':'')}${it('online',NAV_IC.online,T().navOnline,b?`<em class="inv">${b}</em>`:Hall.count>1?`<em>${Hall.count-1}</em>`:'')}<button class="navbtn" id="rankbtn"><span class="ni">${NAV_IC.rank}</span><span>${T().rankBtn}</span></button></nav>`;
 }
 
 function seatHTML(p){
@@ -4008,7 +4021,7 @@ function render(){
   const SCR='.sheet,.scroll,.tbl'; const keepSc=[...app.querySelectorAll(SCR)].map(e=>[e.getAttribute('aria-label')||e.className,e.scrollTop]);
   app.className=game?'game':'';
   document.body.classList.toggle('ingame',game);
-  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+inviteHTML()+levelsHTML()+powersHTML()+bonusSheetHTML()+miniInviteHTML()+giftHTML()+dmSheetHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
+  app.innerHTML = (game ? tableHTML()+(S.online&&!S.online.host&&S.hostLost?`<div class="hostlost">${OT().hostLost}</div>`:'')+(S.dark&&!S.darkFx?'<div class="darkvig"></div>':'')+modalHTML()+rankingHTML() : rankingHTML()+(S.phase==='lobby'?lobbyHTML():setupHTML()))+namePromptHTML()+inviteHTML()+levelsHTML()+powersHTML()+bonusSheetHTML()+miniInviteHTML()+giftHTML()+dmSheetHTML()+makeAceHTML()+cheatHTML()+mailHTML()+levelUpHTML()+catGotHTML()+darkGotHTML()+(game?'':editorHTML()+(S.rulesOpen?fullRulesHTML():'')+(S.tutOffer?`<div class="overlay"><div class="sheet" role="dialog" aria-label="${T().tutOfferT}"><h2>${T().tutOfferT}</h2><p>${T().tutOfferSub}</p><div class="row"><button class="ghost" id="tutskip">${T().tutSkip}</button><button class="cta" id="tutyes">${T().tutYes}</button></div></div></div>`:''));
   { const els=[...app.querySelectorAll(SCR)]; keepSc.forEach(([k,top],i)=>{ const e=els[i]; if(e&&(e.getAttribute('aria-label')||e.className)===k&&top) e.scrollTop=top; }); }
   // animações só na primeira vez que algo aparece
   S.trick.forEach(x=>x.fresh=false);
@@ -4095,6 +4108,8 @@ document.addEventListener('click',e=>{
   if(t.id==='edcancel'){ S.editor=false; render(); return; }
   if(t.id==='edsave'){ ME={...S.draft}; try{ localStorage.setItem('fodinha-me',encodeAce(ME)); }catch(e){} S.editor=false; pushProfile(); render(); return; }
   if(t.dataset.page){ S.page=t.dataset.page; try{ localStorage.setItem('fodinha-page',S.page); }catch(e){} render(); window.scrollTo(0,0); return; }
+  if(t.id==='makeacelater'){ S.makeAce=false; render(); return; }
+  if(t.id==='editace4'){ if(S.phase!=='setup'&&S.phase!=='lobby'){ darkStop(true); S.token++; S.modal=null; S.menu=false; S.leaving=false; S.phase='setup'; } S.page='me'; try{ localStorage.setItem('fodinha-page','me'); }catch(e){} S.makeAce=false; S.draft=ME?{...ME}:randomAce(); S.editor=true; render(); return; }
   if(t.id==='editace3'){ S.turnOpen=false; S.draft=ME?{...ME}:randomAce(); S.editor=true; render(); return; }
   if(t.id==='turnopen'){ S.turnOpen=true; render(); return; }
   if(t.id==='turnclose'){ S.turnOpen=false; render(); return; }

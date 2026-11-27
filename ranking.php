@@ -90,6 +90,43 @@ function merge_pow(&$P, $pw, $max, $from, $to) {
     $P[$pw][$to] = $b ? ['n' => min($max, $a['n'] + $b['n']), 'w' => max($a['w'], $b['w']), 'g' => max($a['g'], $b['g'])] : $a;
     unset($P[$pw][$from]);
 }
+// passa tudo de um jogador (pontos, estoque, poderes, StarPicks) pra outro
+function absorb(&$R, &$P, $from, $to) {
+    merge_row($R['all'], $from, $to);
+    foreach ($R['weeks'] as $wk => $m) { merge_row($m, $from, $to); $R['weeks'][$wk] = $m; }
+    if (isset($P['inv'][$from])) {
+        $u = $P['inv'][$to] ?? ['b' => 0, 'j' => 0];
+        $u['b'] += $P['inv'][$from]['b'] ?? 0; $u['j'] += $P['inv'][$from]['j'] ?? 0;
+        $P['inv'][$to] = $u; unset($P['inv'][$from]);
+    }
+    merge_cat($P, $from, $to);
+    if (isset($P['picks'][$from])) { picks_add($P, $to, $P['picks'][$from]); unset($P['picks'][$from]); }
+    if (isset($P['disc'][$from])) { $P['disc'][$to] = array_values(array_unique(array_merge($P['disc'][$to] ?? [], $P['disc'][$from]))); unset($P['disc'][$from]); }
+    foreach ($P['links'] as $d => $k) if ($k === $from) $P['links'][$d] = $to;
+}
+// conserto único: devolve pra conta de um jogador as linhas soltas do ranking com o nome dele, e manda um relatório pro fans@
+function repair_once(&$R, &$P, $rankFile, $playFile, $tag, $email, $names) {
+    if (!empty($P['fix'][$tag])) return;
+    $acct = 'u' . substr(sha1(strtolower($email)), 0, 16);
+    if (!isset($P['acc'][$acct])) return;
+    $want = array_map(function ($n) { return mb_strtolower(trim($n)); }, $names);
+    $before = $R['all'][$acct]['pts'] ?? 0;
+    $keys = [];
+    foreach (array_merge([$R['all']], array_values($R['weeks'])) as $m) foreach ($m as $k => $r)
+        if ($k !== $acct && !isset($P['acc'][$k]) && in_array(mb_strtolower(trim($r['name'] ?? '')), $want, true)) $keys[$k] = $R['all'][$k]['pts'] ?? 0;
+    foreach ($keys as $k => $p) absorb($R, $P, $k, $acct);
+    if (!isset($P['fix'])) $P['fix'] = [];
+    $P['fix'][$tag] = time();
+    jsave($rankFile, $R); jsave($playFile, $P);
+    $similar = [];
+    foreach ($R['all'] as $k => $r) if (stripos($r['name'] ?? '', $names[0]) !== false || stripos($names[0], $r['name'] ?? '-') !== false) $similar[] = ($r['name'] ?? '?') . ' — ' . ($r['pts'] ?? 0) . ' pts' . ($k === $acct ? ' (conta dele)' : '');
+    $body = "Conserto de pontos: $email (" . implode(', ', $names) . ")\n\n"
+          . "Pontos da conta antes: $before\nPontos da conta agora: " . ($R['all'][$acct]['pts'] ?? 0) . "\n"
+          . "Linhas soltas juntadas: " . count($keys) . ($keys ? ' (' . implode(', ', array_map(function ($p) { return "$p pts"; }, $keys)) . ')' : '') . "\n\n"
+          . "Linhas parecidas no ranking geral:\n" . ($similar ? implode("\n", $similar) : '(nenhuma)') . "\n"
+          . "Aparelhos ligados à conta: " . count(array_filter($P['links'], function ($k) use ($acct) { return $k === $acct; })) . "\n";
+    send_mail(FANS, "[ACE OF STARS GAME] Conserto de pontos: " . $names[0], $body);
+}
 function merge_cat(&$P, $from, $to) { merge_pow($P, 'cat', CAT_MAX, $from, $to); merge_pow($P, 'dark', DARK_MAX, $from, $to); }
 // depois de cada partida: presente ao chegar no nível e +1 a cada N vitórias. Devolve [ganhou, primeira vez]
 function pow_after_game(&$P, $pw, $key, $lvl, $needLv, $wins, $max, $win) {
@@ -205,8 +242,9 @@ $lang = in_array($in['lang'] ?? '', ['pt', 'en', 'es'], true) ? $in['lang'] : 'p
 
 flock($lock, LOCK_EX);
 $R = jload($rankFile); $P = jload($playFile); norm($R, $P);
-$key = key_for($P, $id);
 gift_snap($R, $P, $playFile);
+repair_once($R, $P, $rankFile, $playFile, 'jamd1', 'joaodonadi@gmail.com', ['JAMD']);
+$key = key_for($P, $id);
 
 if ($a === 'game') {
     $nailed = clamp($in['nailed'] ?? 0, 0, 80);
@@ -384,31 +422,15 @@ if ($a === 'verify' || $a === 'link') {
             out(['conflict' => true, 'acc' => ['name' => $acc0['name'] ?? '', 'av' => $acc0['av'] ?? '']]);
         }
     }
-    // ficar com o personagem deste aparelho: o antigo continua no ranking, só sem o e-mail
+    // ficar com o personagem deste aparelho: só troca nome e visual, os pontos dos dois se juntam igual
     if (!$isNew && $mode === 'takeover' && $key !== $acctKey) {
-        $orphan = 'o' . substr(sha1($acctKey . microtime()), 0, 16);
-        merge_row($R['all'], $acctKey, $orphan);
-        foreach ($R['weeks'] as $wk => $m) { merge_row($m, $acctKey, $orphan); $R['weeks'][$wk] = $m; }
-        if (isset($P['inv'][$acctKey])) { $P['inv'][$orphan] = $P['inv'][$acctKey]; unset($P['inv'][$acctKey]); }
-        merge_cat($P, $acctKey, $orphan);
-        foreach ($P['links'] as $d => $k) if ($k === $acctKey) $P['links'][$d] = $orphan;
         $P['acc'][$acctKey]['name'] = $devName;
+        foreach ($R['weeks'] as $wk => $m) if (isset($m[$acctKey])) { $R['weeks'][$wk][$acctKey]['name'] = $devName; $R['weeks'][$wk][$acctKey]['t'] = time(); }
+        if (isset($R['all'][$acctKey])) { $R['all'][$acctKey]['name'] = $devName; $R['all'][$acctKey]['t'] = time(); }
         if ($devAv !== '') $P['acc'][$acctKey]['av'] = $devAv; else unset($P['acc'][$acctKey]['av']);
     }
     // junta o progresso deste aparelho na conta
-    if ($key !== $acctKey) {
-        merge_row($R['all'], $key, $acctKey);
-        foreach ($R['weeks'] as $wk => $m) { merge_row($m, $key, $acctKey); $R['weeks'][$wk] = $m; }
-        if (isset($P['inv'][$key])) {
-            $u = $P['inv'][$acctKey] ?? ['b' => 0, 'j' => 0];
-            $u['b'] += $P['inv'][$key]['b'] ?? 0; $u['j'] += $P['inv'][$key]['j'] ?? 0;
-            $P['inv'][$acctKey] = $u; unset($P['inv'][$key]);
-        }
-        merge_cat($P, $key, $acctKey);
-        if (isset($P['picks'][$key])) { picks_add($P, $acctKey, $P['picks'][$key]); unset($P['picks'][$key]); }
-        if (isset($P['disc'][$key])) { $P['disc'][$acctKey] = array_values(array_unique(array_merge($P['disc'][$acctKey] ?? [], $P['disc'][$key]))); unset($P['disc'][$key]); }
-        foreach ($P['links'] as $d => $k) if ($k === $key) $P['links'][$d] = $acctKey;
-    }
+    if ($key !== $acctKey) absorb($R, $P, $key, $acctKey);
     $P['links'][$id] = $acctKey;
     $src = ($in['src'] ?? '') === 'app' ? 'app' : 'site';
     $name = clean_name($in['name'] ?? '');

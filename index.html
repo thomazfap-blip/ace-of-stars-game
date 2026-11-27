@@ -108,6 +108,7 @@ small{color:var(--muted)}
 
 /* ---------- Setup ---------- */
 .topline{display:flex;justify-content:flex-end;gap:8px}
+.loginbtn{margin-right:auto;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid var(--gold,#e8b64c);background:rgba(232,182,76,.12);color:var(--gold,#e8b64c);font-weight:800;font-size:14px;white-space:nowrap}
 .seg{display:inline-flex;background:var(--panel);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:3px;gap:3px}
 .seg button{border:none;background:transparent;border-radius:7px;padding:6px 10px;font-weight:700;font-size:13px;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--gold);color:#2a1d00}
@@ -974,7 +975,7 @@ const TXT={
     mailSend:'Salvar', mailLater:'Agora não', mailCodeT:'Confira seu e-mail', mailCodeSub:e=>`Mandamos um código de 6 números pra ${e}. Se não chegar, olhe a caixa de spam.`, mailCodePh:'000000', mailConfirm:'Confirmar', mailBack:'Trocar e-mail',
     mailDoneT:'Progresso salvo!', mailDoneSub:'Agora é só entrar com esse e-mail em outro aparelho pra continuar de onde parou.', mailOk:'Show!',
     mailErrEmail:'Esse e-mail não parece certo. Confira e tente de novo.', mailErrCode:'Código errado. Confira os 6 números.', mailErrExp:'O código expirou. Peça um novo.', mailErrWait:'Espere um minutinho antes de pedir outro código.', mailErrNet:'Não deu pra falar com o servidor. Tente de novo.', mailErrMail:'Não conseguimos mandar o e-mail agora. Tente de novo daqui a pouco.',
-    chooseT:'Qual personagem fica?', chooseSub:'Esse e-mail já tinha um personagem. Escolha qual nome e visual ficam na sua conta. Seus pontos dos dois aparelhos se juntam de qualquer jeito.', chooseHere:'deste aparelho', chooseAcc:'já salvo na conta', mailLink:'Já jogou antes? Entrar com e-mail', mailWelcome:n=>`Bem-vindo de volta, ${n}!`, mailSwitch:'Trocar conta', mailLinked:e=>`✓ Progresso salvo em ${e}`,
+    chooseT:'Qual personagem fica?', chooseSub:'Esse e-mail já tinha um personagem. Escolha qual nome e visual ficam na sua conta. Seus pontos dos dois aparelhos se juntam de qualquer jeito.', chooseHere:'deste aparelho', chooseAcc:'já salvo na conta', mailLink:'Já jogou antes? Entrar com e-mail', loginBtn:'Entrar', mailWelcome:n=>`Bem-vindo de volta, ${n}!`, mailSwitch:'Trocar conta', mailLinked:e=>`✓ Progresso salvo em ${e}`,
     rankT:'Ranking', rankWeek:'Semana', rankAll:'Geral', rankBtn:'Ranking', rankLoading:'Carregando…', rankOff:'O ranking funciona no jogo do site: staraceband.com/game', rankEmpty:'Ninguém pontuou ainda. Seja o primeiro!', rankHow:'Toda partida dá pontos pela sua colocação: o 1º lugar ganha mais, mas 2º e 3º também pontuam. Mesa maior e com a equipe vale mais.', rankCols:['#','Ace','Pts','Vit.','Acertos','★'], rankPts:p=>`+${p} pontos no ranking`, rankClose:'Fechar', rankFoot:'★ = Matazaps feitos. Pedidos = % de mãos em que acertou o pedido.', rankYourPos:(p,n)=>`Você está em ${p}º de ${n}`,
     tutBtn:'Aprender jogando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jogar agora',
     tutOfferT:'Primeira vez na mesa?', tutOfferSub:'Jogue duas mãos guiadas contra o Julio e a Bia e aprenda as regras em 1 minuto.', tutYes:'Aprender jogando', tutSkip:'Pular, já sei jogar',
@@ -1071,7 +1072,7 @@ const TXT={
     mailSend:'Save', mailLater:'Not now', mailCodeT:'Check your email', mailCodeSub:e=>`We sent a 6-digit code to ${e}. If it doesn’t arrive, check your spam folder.`, mailCodePh:'000000', mailConfirm:'Confirm', mailBack:'Change email',
     mailDoneT:'Progress saved!', mailDoneSub:'Just sign in with this email on another device to pick up where you left off.', mailOk:'Rock on!',
     mailErrEmail:'That email doesn’t look right. Check it and try again.', mailErrCode:'Wrong code. Check the 6 digits.', mailErrExp:'The code expired. Ask for a new one.', mailErrWait:'Wait a minute before asking for another code.', mailErrNet:'Couldn’t reach the server. Try again.', mailErrMail:'We couldn’t send the email right now. Try again in a bit.',
-    chooseT:'Which character stays?', chooseSub:'This email already had a character. Pick which name and look stay on your account. Your points from both devices are combined either way.', chooseHere:'on this device', chooseAcc:'saved on the account', mailLink:'Played before? Sign in with email', mailWelcome:n=>`Welcome back, ${n}!`, mailSwitch:'Switch account', mailLinked:e=>`✓ Progress saved to ${e}`,
+    chooseT:'Which character stays?', chooseSub:'This email already had a character. Pick which name and look stay on your account. Your points from both devices are combined either way.', chooseHere:'on this device', chooseAcc:'saved on the account', mailLink:'Played before? Sign in with email', loginBtn:'Sign in', mailWelcome:n=>`Welcome back, ${n}!`, mailSwitch:'Switch account', mailLinked:e=>`✓ Progress saved to ${e}`,
     rankT:'Leaderboard', rankWeek:'This week', rankAll:'All time', rankBtn:'Leaderboard', rankLoading:'Loading…', rankOff:'The leaderboard works in the game on the site: staraceband.com/game', rankEmpty:'No one has scored yet. Be the first!', rankHow:'Every game gives points for where you finish: 1st place gets the most, but 2nd and 3rd score too. Bigger tables and the crew are worth more.', rankCols:['#','Ace','Pts','Wins','Nailed','★'], rankPts:p=>`+${p} leaderboard points`, rankClose:'Close', rankFoot:'★ = Zap kills. Bids = % of hands where you hit your bid.', rankYourPos:(p,n)=>`You’re #${p} of ${n}`,
     tutBtn:'Learn by playing', tutLabel:'Tutorial', tutNext:'Continue', tutPlay:'Play now',
     tutOfferT:'First time at the table?', tutOfferSub:'Play two guided hands against Julio and Bia and learn the rules in a minute.', tutYes:'Learn by playing', tutSkip:'Skip, I know how to play',
@@ -1168,7 +1169,7 @@ const TXT={
     mailSend:'Guardar', mailLater:'Ahora no', mailCodeT:'Revisa tu correo', mailCodeSub:e=>`Enviamos un código de 6 números a ${e}. Si no llega, revisa el spam.`, mailCodePh:'000000', mailConfirm:'Confirmar', mailBack:'Cambiar correo',
     mailDoneT:'¡Progreso guardado!', mailDoneSub:'Entra con este correo en otro dispositivo para seguir donde lo dejaste.', mailOk:'¡Vamos!',
     mailErrEmail:'Ese correo no parece correcto. Revísalo e inténtalo de nuevo.', mailErrCode:'Código incorrecto. Revisa los 6 números.', mailErrExp:'El código venció. Pide uno nuevo.', mailErrWait:'Espera un minuto antes de pedir otro código.', mailErrNet:'No pudimos conectar con el servidor. Inténtalo de nuevo.', mailErrMail:'No pudimos enviar el correo ahora. Inténtalo en un rato.',
-    chooseT:'¿Qué personaje se queda?', chooseSub:'Este correo ya tenía un personaje. Elige qué nombre y aspecto se quedan en tu cuenta. Tus puntos de los dos dispositivos se suman de todos modos.', chooseHere:'de este dispositivo', chooseAcc:'guardado en la cuenta', mailLink:'¿Ya jugaste? Entra con tu correo', mailWelcome:n=>`¡Bienvenido de nuevo, ${n}!`, mailSwitch:'Cambiar cuenta', mailLinked:e=>`✓ Progreso guardado en ${e}`,
+    chooseT:'¿Qué personaje se queda?', chooseSub:'Este correo ya tenía un personaje. Elige qué nombre y aspecto se quedan en tu cuenta. Tus puntos de los dos dispositivos se suman de todos modos.', chooseHere:'de este dispositivo', chooseAcc:'guardado en la cuenta', mailLink:'¿Ya jugaste? Entra con tu correo', loginBtn:'Entrar', mailWelcome:n=>`¡Bienvenido de nuevo, ${n}!`, mailSwitch:'Cambiar cuenta', mailLinked:e=>`✓ Progreso guardado en ${e}`,
     rankT:'Ranking', rankWeek:'Semana', rankAll:'General', rankBtn:'Ranking', rankLoading:'Cargando…', rankOff:'El ranking funciona en el juego del sitio: staraceband.com/game', rankEmpty:'Nadie sumó puntos todavía. ¡Sé el primero!', rankHow:'Cada partida da puntos según tu posición: el 1º gana más, pero el 2º y el 3º también suman. Las mesas más grandes y con el equipo valen más.', rankCols:['#','Ace','Pts','Vict.','Aciertos','★'], rankPts:p=>`+${p} puntos en el ranking`, rankClose:'Cerrar', rankFoot:'★ = Matazaps. Apuestas = % de manos en que acertaste.', rankYourPos:(p,n)=>`Estás en el puesto ${p} de ${n}`,
     tutBtn:'Aprender jugando', tutLabel:'Tutorial', tutNext:'Continuar', tutPlay:'Jugar ahora',
     tutOfferT:'¿Primera vez en la mesa?', tutOfferSub:'Juega dos manos guiadas contra Julio y Bia y aprende las reglas en un minuto.', tutYes:'Aprender jugando', tutSkip:'Saltar, ya sé jugar',
@@ -2461,7 +2462,7 @@ function lobbyHTML(){
   const R=S.room||{}, o=OT(), link=Online.link(R.code||'');
   const ps=(R.players||[]).map(p=>`<li><span class="mini">${avatarHTML({av:p.av,short:p.name})}</span><b>${esc(p.name)}</b>${p.pid===R.pid?`<small>${o.you}</small>`:''}${p.pid===(R.hostPid||'p1')?`<em>${o.hostTag}</em>`:''}</li>`).join('');
   const bots=roomBots().slice(0,Math.max(0,10-(R.players||[]).length));
-  return `<div class="topline">${langSeg()}</div>
+  return `<div class="topline">${Rank.ok===true&&Rank.me&&!Rank.me.linked?`<button class="loginbtn" id="mailopen">👤 ${T().loginBtn}</button>`:''}${langSeg()}</div>
   <section class="box lobby">
     <h2>${o.lobbyT} <span class="roomcode">${R.code||''}</span></h2>
     <p>${o.share}</p>
@@ -3247,7 +3248,7 @@ function setupHTML(){
   const lives=[1,2,3,4,5].map(n=>`<button class="pchip" data-lives="${n}" aria-pressed="${S.startLives===n}" aria-label="${n} ${T().lives}">${n}</button>`).join('');
   const sample=[{r:9,s:'c'},{r:0,s:'h'},{star:true,r:-1,s:'S'}];
   return `
-  <div class="topline">${langSeg()}<button class="iconbtn" id="mus" aria-pressed="${Music.on}" aria-label="${T().music}" style="height:40px;${Music.on?'':'opacity:.45'}">${ICON_MUSIC}</button><button class="iconbtn" id="snd" aria-pressed="${Snd.on}" aria-label="${T().sfx}" style="height:40px">${Snd.on?ICON_ON:ICON_OFF}</button></div>
+  <div class="topline">${Rank.ok===true&&Rank.me&&!Rank.me.linked?`<button class="loginbtn" id="mailopen">👤 ${T().loginBtn}</button>`:''}${langSeg()}<button class="iconbtn" id="mus" aria-pressed="${Music.on}" aria-label="${T().music}" style="height:40px;${Music.on?'':'opacity:.45'}">${ICON_MUSIC}</button><button class="iconbtn" id="snd" aria-pressed="${Snd.on}" aria-label="${T().sfx}" style="height:40px">${Snd.on?ICON_ON:ICON_OFF}</button></div>
   ${pg==='play'?pagePlay(lives,sample,picks,tabs):''}
   ${pg==='online'?onlineBoxHTML():''}
   ${pg==='me'?pageMe():''}

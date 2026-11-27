@@ -114,7 +114,17 @@ function repair_once(&$R, &$P, $rankFile, $playFile, $tag, $email, $names) {
     $keys = [];
     foreach (array_merge([$R['all']], array_values($R['weeks'])) as $m) foreach ($m as $k => $r)
         if ($k !== $acct && !isset($P['acc'][$k]) && in_array(mb_strtolower(trim($r['name'] ?? '')), $want, true)) $keys[$k] = $R['all'][$k]['pts'] ?? 0;
+    // o personagem que ele criou (nome e bonequinho) é o da linha solta com mais pontos
+    $best = null; foreach ($keys as $k => $p) if (isset($R['all'][$k]) && (!$best || $p > ($R['all'][$best]['pts'] ?? 0))) $best = $k;
+    $char = $best ? ['name' => $R['all'][$best]['name'], 'av' => $R['all'][$best]['av'] ?? ''] : null;
     foreach ($keys as $k => $p) absorb($R, $P, $k, $acct);
+    if ($char) {
+        $P['acc'][$acct]['name'] = $char['name'];
+        if ($char['av'] !== '') $P['acc'][$acct]['av'] = $char['av'];
+        $rows = [&$R['all']]; foreach ($R['weeks'] as $wk => $m) $rows[] = &$R['weeks'][$wk];
+        foreach ($rows as &$m) if (isset($m[$acct])) { $m[$acct]['name'] = $char['name']; if ($char['av'] !== '') $m[$acct]['av'] = $char['av']; }
+        unset($m, $rows);
+    }
     if (!isset($P['fix'])) $P['fix'] = [];
     $P['fix'][$tag] = time();
     jsave($rankFile, $R); jsave($playFile, $P);
@@ -122,6 +132,7 @@ function repair_once(&$R, &$P, $rankFile, $playFile, $tag, $email, $names) {
     foreach ($R['all'] as $k => $r) if (stripos($r['name'] ?? '', $names[0]) !== false || stripos($names[0], $r['name'] ?? '-') !== false) $similar[] = ($r['name'] ?? '?') . ' — ' . ($r['pts'] ?? 0) . ' pts' . ($k === $acct ? ' (conta dele)' : '');
     $body = "Conserto de pontos: $email (" . implode(', ', $names) . ")\n\n"
           . "Pontos da conta antes: $before\nPontos da conta agora: " . ($R['all'][$acct]['pts'] ?? 0) . "\n"
+          . "Personagem devolvido: " . ($char ? $char['name'] . ($char['av'] !== '' ? ' (com o bonequinho)' : ' (sem bonequinho salvo)') : 'nenhum') . "\n"
           . "Linhas soltas juntadas: " . count($keys) . ($keys ? ' (' . implode(', ', array_map(function ($p) { return "$p pts"; }, $keys)) . ')' : '') . "\n\n"
           . "Linhas parecidas no ranking geral:\n" . ($similar ? implode("\n", $similar) : '(nenhuma)') . "\n"
           . "Aparelhos ligados à conta: " . count(array_filter($P['links'], function ($k) use ($acct) { return $k === $acct; })) . "\n";
@@ -243,7 +254,7 @@ $lang = in_array($in['lang'] ?? '', ['pt', 'en', 'es'], true) ? $in['lang'] : 'p
 flock($lock, LOCK_EX);
 $R = jload($rankFile); $P = jload($playFile); norm($R, $P);
 gift_snap($R, $P, $playFile);
-repair_once($R, $P, $rankFile, $playFile, 'jamd1', 'joaodonadi@gmail.com', ['JAMD']);
+repair_once($R, $P, $rankFile, $playFile, 'jamd2', 'joaodonadi@gmail.com', ['JAMD']);
 $key = key_for($P, $id);
 
 if ($a === 'game') {
